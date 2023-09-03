@@ -1,12 +1,9 @@
-using NMolecules.DDD;
+namespace NMolecules.DDD.Analyzers.Test.EntityAnalyzerTests.SampleData;
 
-namespace NMolecules.DDD.Analyzers.Test.EntityAnalyzerTests.SampleData
+[Entity]
+public class EntityWithoutId
 {
-    [Entity]
-    public class EntityWithoutId
+    public EntityWithoutId()
     {
-        public EntityWithoutId()
-        {
-        }
     }
 }

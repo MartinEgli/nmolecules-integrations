@@ -9,7 +9,7 @@
         <AssemblyName>NMolecules.DDD.Analyzers</AssemblyName>
         <RootNamespace>NMolecules.DDD.Analyzers</RootNamespace>
         <Nullable>enable</Nullable>
-        <LangVersion>9</LangVersion>
+        <LangVersion>10</LangVersion>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
 

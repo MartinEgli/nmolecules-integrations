@@ -1,16 +1,12 @@
-using NMolecules.DDD;
+namespace NMolecules.DDD.Analyzers.Test.AggregateRootAnalyzerTests.SampleData;
 
-namespace NMolecules.DDD.Analyzers.Test.AggregateRootAnalyzerTests.SampleData
+public partial class AggregateRootWithIdAsPropertyInPartial
 {
-    public partial class AggregateRootWithIdAsPropertyInPartial
-    {
-        // SomeDomainLogic
-    }
-    
-    [AggregateRoot]
-    public partial class AggregateRootWithIdAsPropertyInPartial
-    {
-        [Identity] 
-        public string Id { get; } = "SomeId";
-    }
+    // SomeDomainLogic
+}
+
+[AggregateRoot]
+public partial class AggregateRootWithIdAsPropertyInPartial
+{
+    [Identity] public string Id { get; } = "SomeId";
 }

@@ -8,6 +8,9 @@ namespace NMolecules.DDD.Analyzers
 {
     public static class IdAnalyzer
     {
+        private const string Identity = "Identity";
+        private const string Object = "Object";
+
         public static void AnalyzeEntityForId(SymbolAnalysisContext it, Func<INamedTypeSymbol, Diagnostic> onViolation)
         {
             var classSymbol = (INamedTypeSymbol)it.Symbol;
@@ -38,7 +41,7 @@ namespace NMolecules.DDD.Analyzers
             if (!hasIdentity)
             {
                 var classSymbolBaseType = classSymbol.BaseType;
-                if (!classSymbolBaseType!.Name.Equals("Object"))
+                if (!classSymbolBaseType!.Name.Equals(Object))
                 {
                     return HasIdentity(classSymbolBaseType);
                 }
@@ -76,7 +79,7 @@ namespace NMolecules.DDD.Analyzers
                 hasIdentity = attributeList.Attributes.Any(it =>
                 {
                     var name = it.Name.ToString();
-                    var equals = name.Equals("Identity");
+                    var equals = name.Equals(Identity);
                     return equals;
                 });
             }

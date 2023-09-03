@@ -1,7 +1,6 @@
-namespace NMolecules.DDD.Analyzers
+namespace NMolecules.DDD.Analyzers;
+
+public static class Category
 {
-    public static class Category
-    {
-        public const string DDD = nameof(DDD);
-    }
+    public const string DDD = nameof(DDD);
 }

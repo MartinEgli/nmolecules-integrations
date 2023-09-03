@@ -1,11 +1,7 @@
-using NMolecules.DDD;
+namespace NMolecules.DDD.Analyzers.Test.EntityAnalyzerTests.SampleData;
 
-namespace NMolecules.DDD.Analyzers.Test.EntityAnalyzerTests.SampleData
+[Entity]
+public class EntityWithIdAsProperty
 {
-    [Entity]
-    public class EntityWithIdAsProperty
-    {
-        [Identity] 
-        public string Id { get; } = "SomeId";
-    }
+    [Identity] public string Id { get; } = "SomeId";
 }

@@ -2,22 +2,21 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
         <AssemblyName>NMolecules.DDD.Analyzers.Test</AssemblyName>
         <RootNamespace>NMolecules.DDD.Analyzers.Test</RootNamespace>
-        <LangVersion>9</LangVersion>
+        <LangVersion>10</LangVersion>
         <Nullable>enable</Nullable>
         <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <NoWarn>1701;1702;CA1051</NoWarn>
+        <NoWarn>1701;1702;CA1051</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <NoWarn>1701;1702;CA1051</NoWarn>
+        <NoWarn>1701;1702;CA1051</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -37,7 +36,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\NMolecules.DDD.Analyzers\NMolecules.DDD.Analyzers\nMolecules.DDD.Analyzers.csproj" />
+        <ProjectReference
+            Include="..\..\src\NMolecules.DDD.Analyzers\NMolecules.DDD.Analyzers\nMolecules.DDD.Analyzers.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -46,7 +46,8 @@
         <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsFieldInPartialClass.cs" />
         <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsProperty.cs" />
         <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsPropertyInBaseClass.cs" />
-        <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsPropertyInPartialClass.cs" />
+        <EmbeddedResource
+            Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsPropertyInPartialClass.cs" />
         <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithoutId.cs" />
         <EmbeddedResource Include="EntityAnalyzerTests\SampleData\EntityWithIdAsField.cs" />
         <EmbeddedResource Include="EntityAnalyzerTests\SampleData\EntityWithIdAsFieldInBaseClass.cs" />
@@ -81,18 +82,18 @@
             <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
         </Compile>
         <Compile Update="AggregateRootAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
-          <Generator>TextTemplatingFilePreprocessor</Generator>
-          <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+            <Generator>TextTemplatingFilePreprocessor</Generator>
+            <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
         </Compile>
         <Compile Update="RepositoryAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
-          <Generator>TextTemplatingFilePreprocessor</Generator>
-          <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+            <Generator>TextTemplatingFilePreprocessor</Generator>
+            <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
         </Compile>
-        
+
         <Compile Update="ValueObjectAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
-          <AutoGen>True</AutoGen>
-          <DesignTime>True</DesignTime>
-          <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
         </Compile>
         <Compile Update="EntityAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
             <AutoGen>True</AutoGen>
@@ -110,24 +111,24 @@
             <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
         </Compile>
         <Compile Update="AggregateRootAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
-          <AutoGen>True</AutoGen>
-          <DesignTime>True</DesignTime>
-          <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
         </Compile>
         <Compile Update="EntityAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
-          <AutoGen>True</AutoGen>
-          <DesignTime>True</DesignTime>
-          <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
         </Compile>
         <Compile Update="ValueObjectAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
-          <AutoGen>True</AutoGen>
-          <DesignTime>True</DesignTime>
-          <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
         </Compile>
         <Compile Update="RepositoryAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
-          <AutoGen>True</AutoGen>
-          <DesignTime>True</DesignTime>
-          <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
         </Compile>
         <Compile Remove="AggregateRootAnalyzerTests\SampleData\ValidMaximumAggregate.cs" />
         <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\ValidMaximumAggregate.cs" />
@@ -139,32 +140,32 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="nMolecules.DDD">
-        <HintPath>bin\Debug\net6.0\nMolecules.DDD.dll</HintPath>
-      </Reference>
+        <Reference Include="nMolecules.DDD">
+            <HintPath>bin\Debug\net6.0\nMolecules.DDD.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="AggregateRootAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
-        <Generator>TextTemplatingFilePreprocessor</Generator>
-        <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
-      </None>
-      <None Update="EntityAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
-        <Generator>TextTemplatingFileGenerator</Generator>
-        <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
-      </None>
-      <None Update="ValueObjectAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
-        <Generator>TextTemplatingFilePreprocessor</Generator>
-        <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
-      </None>
-      <None Update="RepositoryAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
-        <Generator>TextTemplatingFilePreprocessor</Generator>
-        <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
-      </None>
+        <None Update="AggregateRootAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+            <Generator>TextTemplatingFilePreprocessor</Generator>
+            <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+        </None>
+        <None Update="EntityAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+        </None>
+        <None Update="ValueObjectAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+            <Generator>TextTemplatingFilePreprocessor</Generator>
+            <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+        </None>
+        <None Update="RepositoryAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+            <Generator>TextTemplatingFilePreprocessor</Generator>
+            <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
-      <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+        <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
     </ItemGroup>
 
 </Project>

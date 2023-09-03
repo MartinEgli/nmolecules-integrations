@@ -2,44 +2,43 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NMolecules.DDD.Analyzers.ValueObjectAnalyzers
+namespace NMolecules.DDD.Analyzers.ValueObjectAnalyzers;
+
+public static class ClassSymbolAnalyzer
 {
-    public static class ClassSymbolAnalyzer
+    public static void AnalyzeType(SymbolAnalysisContext context)
     {
-        public static void AnalyzeType(SymbolAnalysisContext context)
+        var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+        EnsureValueObjectIsSealed(context, namedTypeSymbol);
+        EnsureValueObjectImplementsIEquatable(context, namedTypeSymbol);
+    }
+
+    private static void EnsureValueObjectIsSealed(SymbolAnalysisContext context, INamedTypeSymbol namedTypeSymbol)
+    {
+        if (namedTypeSymbol is { IsSealed: false, IsValueType: false })
         {
-            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-            EnsureValueObjectIsSealed(context, namedTypeSymbol);
-            EnsureValueObjectImplementsIEquatable(context, namedTypeSymbol);
+            context.ReportDiagnostic(namedTypeSymbol.IsNotSealed());
         }
+    }
 
-        private static void EnsureValueObjectIsSealed(SymbolAnalysisContext context, INamedTypeSymbol namedTypeSymbol)
+    private static void EnsureValueObjectImplementsIEquatable(
+        SymbolAnalysisContext context,
+        INamedTypeSymbol namedTypeSymbol)
+    {
+        if (!namedTypeSymbol.IsEnum())
         {
-            if (!namedTypeSymbol.IsSealed && !namedTypeSymbol.IsValueType)
+            var implementsIEquatable = namedTypeSymbol.AllInterfaces.Any(it =>
             {
-                context.ReportDiagnostic(namedTypeSymbol.IsNotSealed());
-            }
-        }
+                var implements = it.Name.Equals("IEquatable");
+                implements &= it.TypeArguments.Any(tp =>
+                    tp.Name.Equals(namedTypeSymbol.Name) &&
+                    SymbolEqualityComparer.Default.Equals(tp.ContainingNamespace, namedTypeSymbol.ContainingNamespace));
+                return implements;
+            });
 
-        private static void EnsureValueObjectImplementsIEquatable(
-            SymbolAnalysisContext context,
-            INamedTypeSymbol namedTypeSymbol)
-        {
-            if (!namedTypeSymbol.IsEnum())
+            if (!implementsIEquatable)
             {
-                var implementsIEquatable = namedTypeSymbol.AllInterfaces.Any(it =>
-                {
-                    var implements = it.Name.Equals("IEquatable");
-                    implements &= it.TypeArguments.Any(tp =>
-                        tp.Name.Equals(namedTypeSymbol.Name) &&
-                        SymbolEqualityComparer.Default.Equals(tp.ContainingNamespace, namedTypeSymbol.ContainingNamespace));
-                    return implements;
-                });
-
-                if (!implementsIEquatable)
-                {
-                    context.ReportDiagnostic(namedTypeSymbol.DoesNotImplementIEquatable());
-                }
+                context.ReportDiagnostic(namedTypeSymbol.DoesNotImplementIEquatable());
             }
         }
     }

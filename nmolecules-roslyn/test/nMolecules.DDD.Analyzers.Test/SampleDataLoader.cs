@@ -3,31 +3,30 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace NMolecules.DDD.Analyzers.Test
+namespace NMolecules.DDD.Analyzers.Test;
+
+public static class SampleDataLoader
 {
-    public static class SampleDataLoader
+    public static string LoadFromNamespaceOf<T>(string sampleName)
     {
-        public static string LoadFromNamespaceOf<T>(string sampleName)
+        var stringBuilder = new StringBuilder();
+        var type = typeof(T);
+        var resourcePath = $"{type.Namespace!}.SampleData.{sampleName}";
+        var assembly = type.Assembly;
+        var sampleData = LoadResource(assembly!, resourcePath!);
+        stringBuilder.AppendLine(sampleData);
+        return stringBuilder.ToString();
+    }
+
+    private static string LoadResource(Assembly assembly, string resourcePath)
+    {
+        var manifestResourceStream = assembly.GetManifestResourceStream(resourcePath)!;
+        if (manifestResourceStream == null)
         {
-            var stringBuilder = new StringBuilder();
-            var type = typeof(T);
-            var resourcePath = $"{type.Namespace!}.SampleData.{sampleName}";
-            var assembly = type.Assembly;
-            var sampleData = LoadResource(assembly!, resourcePath!);
-            stringBuilder.AppendLine(sampleData);
-            return stringBuilder.ToString();
+            throw new InvalidOperationException($"Resource {resourcePath} not found in assembly {assembly.FullName}");
         }
 
-        private static string LoadResource(Assembly assembly, string resourcePath)
-        {
-            var manifestResourceStream = assembly.GetManifestResourceStream(resourcePath)!;
-            if (manifestResourceStream == null)
-            {
-                throw new InvalidOperationException($"Resource {resourcePath} not found in assembly {assembly.FullName}");
-            }
-            
-            using var sr = new StreamReader(manifestResourceStream);
-            return sr.ReadToEnd();
-        }
+        using var sr = new StreamReader(manifestResourceStream);
+        return sr.ReadToEnd();
     }
 }

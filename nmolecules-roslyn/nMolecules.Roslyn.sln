@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nMolecules.DDD.Analyzers.Pa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nMolecules.DDD.Analyzers.Test", "test\nMolecules.DDD.Analyzers.Test\nMolecules.DDD.Analyzers.Test.csproj", "{6CA6B048-BA8F-4B77-8B9D-BDC6CA7BEE2E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nMolecules.DDD", "nMolecules.DDD", "{A24986C5-1BDF-4408-81DB-C5712A6F5BA6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DDD", "DDD", "{A24986C5-1BDF-4408-81DB-C5712A6F5BA6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B923FF0E-C2CB-4523-994A-C3FB4E798DCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

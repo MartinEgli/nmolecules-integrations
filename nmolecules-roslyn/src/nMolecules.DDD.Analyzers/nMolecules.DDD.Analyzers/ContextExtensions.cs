@@ -2,24 +2,23 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NMolecules.DDD.Analyzers
-{
-    public static class ContextExtensions
-    {
-        public static void ReportDiagnostics(this SymbolAnalysisContext context, IEnumerable<Diagnostic> violations)
-        {
-            foreach (var violation in violations)
-            {
-                context.ReportDiagnostic(violation);
-            }
-        }
+namespace NMolecules.DDD.Analyzers;
 
-        public static void ReportDiagnostics(this SyntaxNodeAnalysisContext context, IEnumerable<Diagnostic> violations)
+public static class ContextExtensions
+{
+    public static void ReportDiagnostics(this SymbolAnalysisContext context, IEnumerable<Diagnostic> violations)
+    {
+        foreach (var violation in violations)
         {
-            foreach (var violation in violations)
-            {
-                context.ReportDiagnostic(violation);
-            }
+            context.ReportDiagnostic(violation);
+        }
+    }
+
+    public static void ReportDiagnostics(this SyntaxNodeAnalysisContext context, IEnumerable<Diagnostic> violations)
+    {
+        foreach (var violation in violations)
+        {
+            context.ReportDiagnostic(violation);
         }
     }
 }

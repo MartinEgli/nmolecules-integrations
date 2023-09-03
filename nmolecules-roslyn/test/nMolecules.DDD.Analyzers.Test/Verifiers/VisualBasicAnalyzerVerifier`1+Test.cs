@@ -2,13 +2,12 @@
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.CodeAnalysis.VisualBasic.Testing;
 
-namespace NMolecules.DDD.Analyzers.Test.Verifiers
+namespace NMolecules.DDD.Analyzers.Test.Verifiers;
+
+public static partial class VisualBasicAnalyzerVerifier<TAnalyzer>
+    where TAnalyzer : DiagnosticAnalyzer, new()
 {
-    public static partial class VisualBasicAnalyzerVerifier<TAnalyzer>
-        where TAnalyzer : DiagnosticAnalyzer, new()
+    public class VisualBasicTest : VisualBasicAnalyzerTest<TAnalyzer, XUnitVerifier>
     {
-        public class VisualBasicTest : VisualBasicAnalyzerTest<TAnalyzer, XUnitVerifier>
-        {
-        }
     }
 }
