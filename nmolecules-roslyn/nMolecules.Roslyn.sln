@@ -1,12 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nMolecules.Analyzers", "src\nMolecules.Analyzers\nMolecules.Analyzers\nMolecules.Analyzers.csproj", "{1A97F6F3-C356-407E-A122-348BE5B1E87C}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34018.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nMolecules.DDD.Analyzers", "src\nMolecules.DDD.Analyzers\nMolecules.DDD.Analyzers\nMolecules.DDD.Analyzers.csproj", "{1A97F6F3-C356-407E-A122-348BE5B1E87C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nMolecules.Analyzers.CodeFixes", "src\nMolecules.Analyzers\nMolecules.Analyzers.CodeFixes\nMolecules.Analyzers.CodeFixes.csproj", "{A3310963-51FB-4969-A199-F15B8CB71412}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nMolecules.DDD.Analyzers.CodeFixes", "src\nMolecules.DDD.Analyzers\nMolecules.DDD.Analyzers.CodeFixes\nMolecules.DDD.Analyzers.CodeFixes.csproj", "{A3310963-51FB-4969-A199-F15B8CB71412}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nMolecules.Analyzers.Package", "src\nMolecules.Analyzers\nMolecules.Analyzers.Package\nMolecules.Analyzers.Package.csproj", "{A166040D-29FC-417A-AB93-2F9BA383DE24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nMolecules.DDD.Analyzers.Package", "src\nMolecules.DDD.Analyzers\nMolecules.DDD.Analyzers.Package\nMolecules.DDD.Analyzers.Package.csproj", "{A166040D-29FC-417A-AB93-2F9BA383DE24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nMolecules.Analyzers.Test", "test\nMolecules.Analyzers.Test\nMolecules.Analyzers.Test.csproj", "{6CA6B048-BA8F-4B77-8B9D-BDC6CA7BEE2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nMolecules.DDD.Analyzers.Test", "test\nMolecules.DDD.Analyzers.Test\nMolecules.DDD.Analyzers.Test.csproj", "{6CA6B048-BA8F-4B77-8B9D-BDC6CA7BEE2E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nMolecules.DDD", "nMolecules.DDD", "{A24986C5-1BDF-4408-81DB-C5712A6F5BA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +35,17 @@ Global
 		{6CA6B048-BA8F-4B77-8B9D-BDC6CA7BEE2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CA6B048-BA8F-4B77-8B9D-BDC6CA7BEE2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CA6B048-BA8F-4B77-8B9D-BDC6CA7BEE2E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1A97F6F3-C356-407E-A122-348BE5B1E87C} = {A24986C5-1BDF-4408-81DB-C5712A6F5BA6}
+		{A3310963-51FB-4969-A199-F15B8CB71412} = {A24986C5-1BDF-4408-81DB-C5712A6F5BA6}
+		{A166040D-29FC-417A-AB93-2F9BA383DE24} = {A24986C5-1BDF-4408-81DB-C5712A6F5BA6}
+		{6CA6B048-BA8F-4B77-8B9D-BDC6CA7BEE2E} = {A24986C5-1BDF-4408-81DB-C5712A6F5BA6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6BBA23ED-0E27-40AB-A77D-016049A59BDE}
 	EndGlobalSection
 EndGlobal

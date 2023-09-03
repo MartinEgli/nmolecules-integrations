@@ -1,0 +1,170 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+        <AssemblyName>NMolecules.DDD.Analyzers.Test</AssemblyName>
+        <RootNamespace>NMolecules.DDD.Analyzers.Test</RootNamespace>
+        <LangVersion>9</LangVersion>
+        <Nullable>enable</Nullable>
+        <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <NoWarn>1701;1702;CA1051</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <NoWarn>1701;1702;CA1051</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FluentAssertions" Version="6.12.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Testing.Verifiers.XUnit" Version="1.1.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+        <PackageReference Include="Microsoft.CodeAnalysis" Version="4.7.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.MSTest" Version="1.1.1" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.MSTest" Version="1.1.1" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.MSTest" Version="1.1.1" />
+        <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Analyzer.Testing.MSTest" Version="1.1.1" />
+        <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeFix.Testing.MSTest" Version="1.1.1" />
+        <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeRefactoring.Testing.MSTest" Version="1.1.1" />
+        <PackageReference Include="NMolecules.DDD" Version="0.2.2" />
+        <PackageReference Include="System.CodeDom" Version="7.0.0" />
+        <PackageReference Include="xunit" Version="2.5.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\NMolecules.DDD.Analyzers\NMolecules.DDD.Analyzers\nMolecules.DDD.Analyzers.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsField.cs" />
+        <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsFieldInBaseClass.cs" />
+        <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsFieldInPartialClass.cs" />
+        <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsProperty.cs" />
+        <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsPropertyInBaseClass.cs" />
+        <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsPropertyInPartialClass.cs" />
+        <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\AggregateRootWithoutId.cs" />
+        <EmbeddedResource Include="EntityAnalyzerTests\SampleData\EntityWithIdAsField.cs" />
+        <EmbeddedResource Include="EntityAnalyzerTests\SampleData\EntityWithIdAsFieldInBaseClass.cs" />
+        <EmbeddedResource Include="EntityAnalyzerTests\SampleData\EntityWithIdAsFieldInPartialClass.cs" />
+        <EmbeddedResource Include="EntityAnalyzerTests\SampleData\EntityWithIdAsProperty.cs" />
+        <EmbeddedResource Include="EntityAnalyzerTests\SampleData\EntityWithIdAsPropertyInBaseClass.cs" />
+        <EmbeddedResource Include="EntityAnalyzerTests\SampleData\EntityWithIdAsPropertyInPartialClass.cs" />
+        <EmbeddedResource Include="EntityAnalyzerTests\SampleData\EntityWithoutId.cs" />
+        <EmbeddedResource Include="ValueObjectAnalyzerTests\SampleData\ValueObjectWithFieldNotReadonly.cs" />
+        <EmbeddedResource Include="EntityAnalyzerTests\SampleData\ValidMaximumEntity.cs" />
+        <EmbeddedResource Include="RepositoryAnalyzerTests\SampleData\ValidMaximumRepository.cs" />
+        <EmbeddedResource Include="ValueObjectAnalyzerTests\SampleData\ValidValueObject.cs" />
+        <EmbeddedResource Include="ValueObjectAnalyzerTests\SampleData\ValueObjectWithoutIEquatable.cs" />
+        <EmbeddedResource Include="ValueObjectAnalyzerTests\SampleData\ValueObjectNotSealed.cs" />
+        <EmbeddedResource Include="ValueObjectAnalyzerTests\SampleData\ValueObjectWithPublicPropertyGetter.cs" />
+        <Compile Remove="ValueObjectAnalyzerTests\SampleData\ValueObjectWithFieldNotReadonly.cs" />
+        <Compile Remove="EntityAnalyzerTests\SampleData\ValidMaximumEntity.cs" />
+        <Compile Remove="RepositoryAnalyzerTests\SampleData\ValidMaximumRepository.cs" />
+        <Compile Remove="ValueObjectAnalyzerTests\SampleData\ValidValueObject.cs" />
+        <Compile Remove="ValueObjectAnalyzerTests\SampleData\ValueObjectNotSealed.cs" />
+        <Compile Remove="ValueObjectAnalyzerTests\SampleData\ValueObjectUsesEntity.cs" />
+        <Compile Remove="ValueObjectAnalyzerTests\SampleData\ValueObjectWithFiledNotReadonly.cs" />
+        <Compile Remove="ValueObjectAnalyzerTests\SampleData\ValueObjectWithoutIEquatable.cs" />
+        <Compile Remove="ValueObjectAnalyzerTests\SampleData\ValueObjectWithPublicPropertyGetter.cs" />
+        <Compile Remove="ValueObjectAnalyzerTests\SampleData\ValueObjectWithFieldNotReadonly.cs" />
+        <Compile Update="ValueObjectAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+            <Generator>TextTemplatingFilePreprocessor</Generator>
+            <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+        </Compile>
+        <Compile Update="EntityAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+            <Generator>TextTemplatingFilePreprocessor</Generator>
+            <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+        </Compile>
+        <Compile Update="AggregateRootAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+          <Generator>TextTemplatingFilePreprocessor</Generator>
+          <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+        </Compile>
+        <Compile Update="RepositoryAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+          <Generator>TextTemplatingFilePreprocessor</Generator>
+          <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+        </Compile>
+        
+        <Compile Update="ValueObjectAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+        </Compile>
+        <Compile Update="EntityAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+        </Compile>
+        <Compile Update="AggregateRootAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+        </Compile>
+        <Compile Update="RepositoryAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+        </Compile>
+        <Compile Update="AggregateRootAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+        </Compile>
+        <Compile Update="EntityAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+        </Compile>
+        <Compile Update="ValueObjectAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+        </Compile>
+        <Compile Update="RepositoryAnalyzerTests\SampleData\InvalidUsageTemplate.cs">
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>InvalidUsageTemplate.tt</DependentUpon>
+        </Compile>
+        <Compile Remove="AggregateRootAnalyzerTests\SampleData\ValidMaximumAggregate.cs" />
+        <EmbeddedResource Include="AggregateRootAnalyzerTests\SampleData\ValidMaximumAggregate.cs" />
+        <Compile Remove="AggregateRootAnalyzerTests\SampleData\AggregateRootWithoutId.cs" />
+        <Compile Remove="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsProperty.cs" />
+        <Compile Remove="AggregateRootAnalyzerTests\SampleData\AggregateRootWithIdAsField.cs" />
+        <Compile Remove="ValueObjectAnalyzerTests\SampleData\ValidEnumAsValueObject.cs" />
+        <EmbeddedResource Include="ValueObjectAnalyzerTests\SampleData\ValidEnumAsValueObject.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="nMolecules.DDD">
+        <HintPath>bin\Debug\net6.0\nMolecules.DDD.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="AggregateRootAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+        <Generator>TextTemplatingFilePreprocessor</Generator>
+        <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+      </None>
+      <None Update="EntityAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+      </None>
+      <None Update="ValueObjectAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+        <Generator>TextTemplatingFilePreprocessor</Generator>
+        <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+      </None>
+      <None Update="RepositoryAnalyzerTests\SampleData\InvalidUsageTemplate.tt">
+        <Generator>TextTemplatingFilePreprocessor</Generator>
+        <LastGenOutput>InvalidUsageTemplate.cs</LastGenOutput>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    </ItemGroup>
+
+</Project>
