@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace NMolecules.DDD.Analyzers.ValueObjectAnalyzers;
@@ -13,14 +12,6 @@ public static class ClassSymbolAnalyzer
         var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
         EnsureValueObjectIsSealed(context, namedTypeSymbol);
         EnsureValueObjectImplementsIEquatable(context, namedTypeSymbol);
-    }
-
-    private static void EnsureValueObjectIsSealed(SymbolAnalysisContext context, INamedTypeSymbol namedTypeSymbol)
-    {
-        if (namedTypeSymbol is { IsSealed: false, IsValueType: false })
-        {
-            context.ReportDiagnostic(namedTypeSymbol.IsNotSealed());
-        }
     }
 
     private static void EnsureValueObjectImplementsIEquatable(
@@ -44,6 +35,14 @@ public static class ClassSymbolAnalyzer
         if (!implementsIEquatable)
         {
             context.ReportDiagnostic(namedTypeSymbol.DoesNotImplementIEquatable());
+        }
+    }
+
+    private static void EnsureValueObjectIsSealed(SymbolAnalysisContext context, INamedTypeSymbol namedTypeSymbol)
+    {
+        if (namedTypeSymbol is { IsSealed: false, IsValueType: false })
+        {
+            context.ReportDiagnostic(namedTypeSymbol.IsNotSealed());
         }
     }
 }

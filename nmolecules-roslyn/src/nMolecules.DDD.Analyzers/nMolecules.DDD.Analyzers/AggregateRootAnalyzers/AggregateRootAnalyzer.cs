@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NMolecules.Shared.Analyzers;
-using static NMolecules.Shared.Analyzers.IdAnalyzer;
 
 namespace NMolecules.DDD.Analyzers.AggregateRootAnalyzers;
 

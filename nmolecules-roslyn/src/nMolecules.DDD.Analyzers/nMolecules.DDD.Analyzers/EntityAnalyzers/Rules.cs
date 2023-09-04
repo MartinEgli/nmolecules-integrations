@@ -4,23 +4,22 @@ namespace NMolecules.DDD.Analyzers.EntityAnalyzers;
 
 public static class Rules
 {
-    public const string EntitiesShouldNotUseRepositoriesId = "XMoleculesEntity0001";
-    public const string EntitiesShouldNotUseAggregateRootsId = "XMoleculesEntity0002";
-    public const string EntitiesShouldNotUseServicesId = "XMoleculesEntity0003";
     public const string EntitiesShouldHaveIdRuleId = "XMoleculesEntity0004";
-
-    public static readonly DiagnosticDescriptor EntitiesShouldNotUseRepositoriesRule = new(
-        EntitiesShouldNotUseRepositoriesId,
-        new LocalizableResourceString(nameof(Resources.EntityShouldNotUseRepositoryTitle),
+    public const string EntitiesShouldNotUseAggregateRootsId = "XMoleculesEntity0002";
+    public const string EntitiesShouldNotUseRepositoriesId = "XMoleculesEntity0001";
+    public const string EntitiesShouldNotUseServicesId = "XMoleculesEntity0003";
+    public static readonly DiagnosticDescriptor EntitiesShouldHaveIdRule = new(
+        EntitiesShouldHaveIdRuleId,
+        new LocalizableResourceString(nameof(Resources.EntityShouldHaveIdTitle),
             Resources.ResourceManager,
             typeof(Resources)),
-        new LocalizableResourceString(nameof(Resources.EntityShouldNotUseRepositoryFormat),
+        new LocalizableResourceString(nameof(Resources.EntityShouldHaveIdFormat),
             Resources.ResourceManager,
             typeof(Resources)),
         Category.DDD,
         DiagnosticSeverity.Error,
         true,
-        new LocalizableResourceString(nameof(Resources.EntityShouldNotUseRepositoryDescription),
+        new LocalizableResourceString(nameof(Resources.EntityShouldHaveIdDescription),
             Resources.ResourceManager,
             typeof(Resources)));
 
@@ -39,6 +38,20 @@ public static class Rules
             Resources.ResourceManager,
             typeof(Resources)));
 
+    public static readonly DiagnosticDescriptor EntitiesShouldNotUseRepositoriesRule = new(
+                EntitiesShouldNotUseRepositoriesId,
+        new LocalizableResourceString(nameof(Resources.EntityShouldNotUseRepositoryTitle),
+            Resources.ResourceManager,
+            typeof(Resources)),
+        new LocalizableResourceString(nameof(Resources.EntityShouldNotUseRepositoryFormat),
+            Resources.ResourceManager,
+            typeof(Resources)),
+        Category.DDD,
+        DiagnosticSeverity.Error,
+        true,
+        new LocalizableResourceString(nameof(Resources.EntityShouldNotUseRepositoryDescription),
+            Resources.ResourceManager,
+            typeof(Resources)));
     public static readonly DiagnosticDescriptor EntitiesShouldNotUseServicesRule = new(
         EntitiesShouldNotUseServicesId,
         new LocalizableResourceString(nameof(Resources.EntityShouldNotUseServiceTitle),
@@ -51,21 +64,6 @@ public static class Rules
         DiagnosticSeverity.Error,
         true,
         new LocalizableResourceString(nameof(Resources.EntityShouldNotUseServiceDescription),
-            Resources.ResourceManager,
-            typeof(Resources)));
-
-    public static readonly DiagnosticDescriptor EntitiesShouldHaveIdRule = new(
-        EntitiesShouldHaveIdRuleId,
-        new LocalizableResourceString(nameof(Resources.EntityShouldHaveIdTitle),
-            Resources.ResourceManager,
-            typeof(Resources)),
-        new LocalizableResourceString(nameof(Resources.EntityShouldHaveIdFormat),
-            Resources.ResourceManager,
-            typeof(Resources)),
-        Category.DDD,
-        DiagnosticSeverity.Error,
-        true,
-        new LocalizableResourceString(nameof(Resources.EntityShouldHaveIdDescription),
             Resources.ResourceManager,
             typeof(Resources)));
 }

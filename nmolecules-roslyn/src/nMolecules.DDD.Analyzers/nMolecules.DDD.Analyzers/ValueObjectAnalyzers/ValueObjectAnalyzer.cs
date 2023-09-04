@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NMolecules.Shared.Analyzers;
 using static NMolecules.DDD.Analyzers.ValueObjectAnalyzers.Rules;

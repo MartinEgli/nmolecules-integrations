@@ -1,9 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using NMolecules.Shared.Analyzers;
-using static NMolecules.Shared.Analyzers.IdAnalyzer;
 
 namespace NMolecules.DDD.Analyzers.EntityAnalyzers;
 

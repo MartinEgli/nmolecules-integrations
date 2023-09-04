@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using NMolecules.Shared.Analyzers;
 
 namespace NMolecules.DDD.Analyzers.RepositoryAnalyzers;
