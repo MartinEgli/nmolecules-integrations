@@ -23,6 +23,11 @@ public static class Diagnostics
             yield return symbol.ViolatesRepositoryUsage();
         }
 
+        if (type.IsFactory())
+        {
+            yield return symbol.ViolatesFactoryUsage();
+        }
+
         if (type.IsAggregateRoot())
         {
             yield return symbol.ViolatesAggregateRootUsage();
@@ -38,7 +43,9 @@ public static class Diagnostics
 
     private static Diagnostic ViolatesEntityUsage(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotUseEntityRule);
 
-    private static Diagnostic ViolatesRepositoryUsage(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotUseRepositoryRule);
+    private static Diagnostic ViolatesFactoryUsage(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotUseFactoryRule);
 
+    private static Diagnostic ViolatesRepositoryUsage(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotUseRepositoryRule);
+    
     private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotUseServiceRule);
 }

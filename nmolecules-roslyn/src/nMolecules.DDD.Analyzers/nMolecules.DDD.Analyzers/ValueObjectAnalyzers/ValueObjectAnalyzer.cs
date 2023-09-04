@@ -12,6 +12,7 @@ public class ValueObjectAnalyzer : Analyzer<ValueObjectAttribute>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ValueObjectMustNotUseEntityRule,
         ValueObjectMustNotUseServiceRule,
         ValueObjectMustNotUseRepositoryRule,
+        ValueObjectMustNotUseFactoryRule,
         ValueObjectMustNotUseAggregateRootRule,
         ValueObjectShouldBeImmutableRule,
         ValueObjectMustImplementIEquatableRule,

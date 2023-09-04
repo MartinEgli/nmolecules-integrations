@@ -94,6 +94,31 @@ public class ValueObjectUsesOtherElements
     }
 
     [Fact]
+    public async Task Analyze_WithValueObjectUsesFactory_EmitsCompilerError()
+    {
+        var testCode = GenerateClass(Factory);
+        var factoryAsField = CompilerError(Rules.NoFactoryInValueObjectsId)
+            .WithSpan(FieldLineNumber, 38, FieldLineNumber, 45);
+        var factoryAsParameterInCtor = CompilerError(Rules.NoFactoryInValueObjectsId)
+            .WithSpan(CtorLineNumber, 47, CtorLineNumber, 52);
+        var factoryAsProperty = CompilerError(Rules.NoFactoryInValueObjectsId)
+            .WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
+        var factoryAsReturnValue = CompilerError(Rules.NoFactoryInValueObjectsId)
+            .WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
+        var factoryAsParameterInMethod = CompilerError(Rules.NoFactoryInValueObjectsId)
+            .WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
+        var factoryUsedInMethodBody = CompilerError(Rules.NoFactoryInValueObjectsId)
+            .WithSpan(TypeInMethodBodyLineNumber, 17, TypeInMethodBodyLineNumber, 28);
+        await VerifyCS.VerifyAnalyzerAsync(testCode,
+            factoryAsField,
+            factoryAsParameterInCtor,
+            factoryAsProperty,
+            factoryAsReturnValue,
+            factoryAsParameterInMethod,
+            factoryUsedInMethodBody);
+    }
+
+    [Fact]
     public async Task Analyze_WithValueObjectUsesAggregateRoot_EmitsCompilerError()
     {
         var testCode = GenerateClass(AggregateRoot);

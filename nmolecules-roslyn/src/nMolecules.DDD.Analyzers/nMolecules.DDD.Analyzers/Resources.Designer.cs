@@ -412,6 +412,33 @@ namespace NMolecules.DDD.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Value objects should not reference factories..
+        /// </summary>
+        internal static string ValueObjectUsesFactoryDescription {
+            get {
+                return ResourceManager.GetString("ValueObjectUsesFactoryDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ValueObjects should not use factories.
+        /// </summary>
+        internal static string ValueObjectUsesFactoryMessageFormat {
+            get {
+                return ResourceManager.GetString("ValueObjectUsesFactoryMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ValueObject uses factories.
+        /// </summary>
+        internal static string ValueObjectUsesFactoryTitle {
+            get {
+                return ResourceManager.GetString("ValueObjectUsesFactoryTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value objects should not reference repositories..
         /// </summary>
         internal static string ValueObjectUsesRepositoryDescription {

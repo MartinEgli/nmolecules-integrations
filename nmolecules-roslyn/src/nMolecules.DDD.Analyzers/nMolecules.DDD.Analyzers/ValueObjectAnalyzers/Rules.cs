@@ -4,12 +4,14 @@ namespace NMolecules.DDD.Analyzers.ValueObjectAnalyzers;
 
 public static class Rules
 {
-    public const string NoAggregateRootsInValueObjectsId = "XMoleculesValueObject0004";
     public const string NoEntitiesInValueObjectsId = "XMoleculesValueObject0001";
-    public const string NoRepositoriesInValueObjectsId = "XMoleculesValueObject0003";
     public const string NoServicesInValueObjectsId = "XMoleculesValueObject0002";
-    public const string ValueObjectsMustImplementIEquatableId = "XMoleculesValueObject1001";
+    public const string NoRepositoriesInValueObjectsId = "XMoleculesValueObject0003";
+    public const string NoAggregateRootsInValueObjectsId = "XMoleculesValueObject0004";
     public const string ValueObjectsShouldBeImmutableId = "XMoleculesValueObject0005";
+    public const string NoFactoryInValueObjectsId = "XMoleculesValueObject0006";
+
+    public const string ValueObjectsMustImplementIEquatableId = "XMoleculesValueObject1001";
     public const string ValueObjectsShouldBeSealedId = "XMoleculesValueObject1002";
 
     public static readonly DiagnosticDescriptor ValueObjectMustImplementIEquatableRule = new(ValueObjectsMustImplementIEquatableId,
@@ -81,6 +83,22 @@ public static class Rules
         new LocalizableResourceString(nameof(Resources.ValueObjectUsesServiceDescription),
             Resources.ResourceManager,
             typeof(Resources)));
+
+
+    public static readonly DiagnosticDescriptor ValueObjectMustNotUseFactoryRule = new(NoFactoryInValueObjectsId,
+        new LocalizableResourceString(nameof(Resources.ValueObjectUsesFactoryTitle),
+            Resources.ResourceManager,
+            typeof(Resources)),
+        new LocalizableResourceString(nameof(Resources.ValueObjectUsesFactoryMessageFormat),
+            Resources.ResourceManager,
+            typeof(Resources)),
+        Category.DDD,
+        DiagnosticSeverity.Error,
+        true,
+        new LocalizableResourceString(nameof(Resources.ValueObjectUsesFactoryDescription),
+            Resources.ResourceManager,
+            typeof(Resources)));
+
     public static readonly DiagnosticDescriptor ValueObjectShouldBeImmutableRule = new(ValueObjectsShouldBeImmutableId,
         new LocalizableResourceString(nameof(Resources.ValueObjectShouldBeImmutableTitle),
             Resources.ResourceManager,
@@ -94,7 +112,8 @@ public static class Rules
         new LocalizableResourceString(nameof(Resources.ValueObjectShouldBeImmutableDescription),
             Resources.ResourceManager,
             typeof(Resources)));
-    public static readonly DiagnosticDescriptor ValueObjectShouldBeSealedRule = new(ValueObjectsShouldBeSealedId,
+
+   public static readonly DiagnosticDescriptor ValueObjectShouldBeSealedRule = new(ValueObjectsShouldBeSealedId,
         new LocalizableResourceString(nameof(Resources.ValueObjectShouldBeSealedTitle),
             Resources.ResourceManager,
             typeof(Resources)),

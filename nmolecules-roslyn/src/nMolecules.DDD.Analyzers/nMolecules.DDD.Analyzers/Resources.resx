@@ -1,297 +1,303 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-    <!-- 
-      Microsoft ResX Schema 
-      
-      Version 2.0
-      
-      The primary goals of this format is to allow a simple XML format 
-      that is mostly human readable. The generation and parsing of the 
-      various data types are done through the TypeConverter classes 
-      associated with the data types.
-      
-      Example:
-      
-      ... ado.net/XML headers & schema ...
-      <resheader name="resmimetype">text/microsoft-resx</resheader>
-      <resheader name="version">2.0</resheader>
-      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-          <value>[base64 mime encoded serialized .NET Framework object]</value>
-      </data>
-      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-          <comment>This is a comment</comment>
-      </data>
-                  
-      There are any number of "resheader" rows that contain simple 
-      name/value pairs.
-      
-      Each data row contains a name, and value. The row also contains a 
-      type or mimetype. Type corresponds to a .NET class that support 
-      text/value conversion through the TypeConverter architecture. 
-      Classes that don't support this are serialized and stored with the 
-      mimetype set.
-      
-      The mimetype is used for serialized objects, and tells the 
-      ResXResourceReader how to depersist the object. This is currently not 
-      extensible. For a given mimetype the value must be set accordingly:
-      
-      Note - application/x-microsoft.net.object.binary.base64 is the format 
-      that the ResXResourceWriter will generate, however the reader can 
-      read any of the formats listed below.
-      
-      mimetype: application/x-microsoft.net.object.binary.base64
-      value   : The object must be serialized with 
-              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-              : and then encoded with base64 encoding.
-      
-      mimetype: application/x-microsoft.net.object.soap.base64
-      value   : The object must be serialized with 
-              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-              : and then encoded with base64 encoding.
-  
-      mimetype: application/x-microsoft.net.object.bytearray.base64
-      value   : The object must be serialized into a byte array 
-              : using a System.ComponentModel.TypeConverter
-              : and then encoded with base64 encoding.
-      -->
-    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
-                id="root"
-                xmlns="">
-        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-        <xsd:element name="root" msdata:IsDataSet="true">
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
             <xsd:complexType>
-                <xsd:choice maxOccurs="unbounded">
-                    <xsd:element name="metadata">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" use="required" type="xsd:string"/>
-                            <xsd:attribute name="type" type="xsd:string"/>
-                            <xsd:attribute name="mimetype" type="xsd:string"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="assembly">
-                        <xsd:complexType>
-                            <xsd:attribute name="alias" type="xsd:string"/>
-                            <xsd:attribute name="name" type="xsd:string"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="data">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="resheader">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                </xsd:choice>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
-        </xsd:element>
-    </xsd:schema>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>2.0</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b77a5c561934e089
-        </value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b77a5c561934e089
-        </value>
-    </resheader>
-    <data name="ValueObjectShouldBeImmutableDescription" xml:space="preserve">
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ValueObjectShouldBeImmutableDescription" xml:space="preserve">
     <value>Value objects should be immutable.</value>
   </data>
-    <data name="ValueObjectShouldBeImmutableMessageFormat" xml:space="preserve">
+  <data name="ValueObjectShouldBeImmutableMessageFormat" xml:space="preserve">
     <value>ValueObjects should be immutable</value>
   </data>
-    <data name="ValueObjectShouldBeImmutableTitle" xml:space="preserve">
+  <data name="ValueObjectShouldBeImmutableTitle" xml:space="preserve">
     <value>ValueObjects should be immutable</value>
   </data>
-    <data name="ValueObjectShouldBeSealedDescription" xml:space="preserve">
+  <data name="ValueObjectShouldBeSealedDescription" xml:space="preserve">
     <value>Value objects should be declared as sealed.</value>
   </data>
-    <data name="ValueObjectShouldBeSealedMessageFormat" xml:space="preserve">
+  <data name="ValueObjectShouldBeSealedMessageFormat" xml:space="preserve">
     <value>Value objects should be declared as sealed</value>
   </data>
-    <data name="ValueObjectShouldBeSealedTitle" xml:space="preserve">
+  <data name="ValueObjectShouldBeSealedTitle" xml:space="preserve">
     <value>Value objects should be declared as sealed</value>
-    </data>
-    <data name="ValueObjectMustImplementIEquatableDescription" xml:space="preserve">
+  </data>
+  <data name="ValueObjectMustImplementIEquatableDescription" xml:space="preserve">
     <value>Value objects should implement IEqautable&lt;ValueObject&gt;.</value>
   </data>
-    <data name="ValueObjectMustImplementIEquatableMessageFormat" xml:space="preserve">
-        <value>Value objects should implement IEqautable&lt;ValueObject&gt;</value>
-    </data>
-    <data name="ValueObjectMustImplementIEquatableTitle" xml:space="preserve">
+  <data name="ValueObjectMustImplementIEquatableMessageFormat" xml:space="preserve">
     <value>Value objects should implement IEqautable&lt;ValueObject&gt;</value>
   </data>
-    <data name="ValueObjectUsesEntityDescription" xml:space="preserve">
+  <data name="ValueObjectMustImplementIEquatableTitle" xml:space="preserve">
+    <value>Value objects should implement IEqautable&lt;ValueObject&gt;</value>
+  </data>
+  <data name="ValueObjectUsesEntityDescription" xml:space="preserve">
     <value>Value objects should not reference entities.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="ValueObjectUsesEntityMessageFormat" xml:space="preserve">
+  <data name="ValueObjectUsesEntityMessageFormat" xml:space="preserve">
     <value>ValueObjects should not use entities</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="ValueObjectUsesEntityTitle" xml:space="preserve">
+  <data name="ValueObjectUsesEntityTitle" xml:space="preserve">
     <value>ValueObject uses entities</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
   </data>
-    <data name="ValueObjectUsesServiceDescription" xml:space="preserve">
+  <data name="ValueObjectUsesServiceDescription" xml:space="preserve">
     <value>Value objects should not reference services.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="ValueObjectUsesServiceMessageFormat" xml:space="preserve">
+  <data name="ValueObjectUsesServiceMessageFormat" xml:space="preserve">
     <value>ValueObjects should not use services</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="ValueObjectUsesServiceTitle" xml:space="preserve">
+  <data name="ValueObjectUsesServiceTitle" xml:space="preserve">
     <value>ValueObject uses services</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
   </data>
-    <data name="ValueObjectUsesRepositoryDescription" xml:space="preserve">
+  <data name="ValueObjectUsesRepositoryDescription" xml:space="preserve">
     <value>Value objects should not reference repositories.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="ValueObjectUsesRepositoryMessageFormat" xml:space="preserve">
+  <data name="ValueObjectUsesRepositoryMessageFormat" xml:space="preserve">
     <value>ValueObjects should not use repositories</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="ValueObjectUsesRepositoryTitle" xml:space="preserve">
+  <data name="ValueObjectUsesRepositoryTitle" xml:space="preserve">
     <value>ValueObject uses repositories</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
   </data>
-    <data name="ValueObjectUsesAggregateRootDescription" xml:space="preserve">
+  <data name="ValueObjectUsesAggregateRootDescription" xml:space="preserve">
     <value>Value objects should not reference aggregate roots.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="ValueObjectUsesAggregateRootMessageFormat" xml:space="preserve">
+  <data name="ValueObjectUsesAggregateRootMessageFormat" xml:space="preserve">
     <value>ValueObjects should not use aggregate roots</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="ValueObjectUsesAggregateRootTitle" xml:space="preserve">
+  <data name="ValueObjectUsesAggregateRootTitle" xml:space="preserve">
     <value>ValueObject uses aggregate roots</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
   </data>
-    <data name="EntityShouldNotUseRepositoryDescription" xml:space="preserve">
+  <data name="EntityShouldNotUseRepositoryDescription" xml:space="preserve">
     <value>Entities should not reference repositories.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="EntityShouldNotUseRepositoryFormat" xml:space="preserve">
+  <data name="EntityShouldNotUseRepositoryFormat" xml:space="preserve">
     <value>Entities should not reference repositories</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="EntityShouldNotUseRepositoryTitle" xml:space="preserve">
+  <data name="EntityShouldNotUseRepositoryTitle" xml:space="preserve">
     <value>Entities should not reference repositories</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
   </data>
-    <data name="EntityShouldNotUseAggregateRootDescription" xml:space="preserve">
+  <data name="EntityShouldNotUseAggregateRootDescription" xml:space="preserve">
     <value>Entities should not reference aggregate roots.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="EntityShouldNotUseAggregateRootFormat" xml:space="preserve">
+  <data name="EntityShouldNotUseAggregateRootFormat" xml:space="preserve">
     <value>Entities should not reference aggregate roots</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="EntityShouldNotUseAggregateRootTitle" xml:space="preserve">
+  <data name="EntityShouldNotUseAggregateRootTitle" xml:space="preserve">
     <value>Entities should not reference aggregate roots</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
   </data>
-    <data name="EntityShouldNotUseServiceDescription" xml:space="preserve">
+  <data name="EntityShouldNotUseServiceDescription" xml:space="preserve">
     <value>Entities should not reference services.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="EntityShouldNotUseServiceFormat" xml:space="preserve">
+  <data name="EntityShouldNotUseServiceFormat" xml:space="preserve">
     <value>Entities should not reference services</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="EntityShouldNotUseServiceTitle" xml:space="preserve">
+  <data name="EntityShouldNotUseServiceTitle" xml:space="preserve">
     <value>Entities should not reference services</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
   </data>
-    <data name="AggregateRootShouldNotUseRepositoryDescription" xml:space="preserve">
+  <data name="AggregateRootShouldNotUseRepositoryDescription" xml:space="preserve">
     <value>AggregateRoots should not reference repositories.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="AggregateRootShouldNotUseRepositoryFormat" xml:space="preserve">
+  <data name="AggregateRootShouldNotUseRepositoryFormat" xml:space="preserve">
     <value>AggregateRoots should not reference repositories</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="AggregateRootShouldNotUseRepositoryTitle" xml:space="preserve">
+  <data name="AggregateRootShouldNotUseRepositoryTitle" xml:space="preserve">
     <value>AggregateRoots should not reference repositories</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
   </data>
-    <data name="AggregateRootShouldNotUseServiceDescription" xml:space="preserve">
+  <data name="AggregateRootShouldNotUseServiceDescription" xml:space="preserve">
     <value>AggregateRoots should not reference services.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="AggregateRootShouldNotUseServiceFormat" xml:space="preserve">
+  <data name="AggregateRootShouldNotUseServiceFormat" xml:space="preserve">
     <value>AggregateRoots should not reference services</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="AggregateRootShouldNotUseServiceTitle" xml:space="preserve">
+  <data name="AggregateRootShouldNotUseServiceTitle" xml:space="preserve">
     <value>AggregateRoots should not reference services</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
   </data>
-    <data name="AggregateRootShouldHaveIdDescription" xml:space="preserve">
+  <data name="AggregateRootShouldHaveIdDescription" xml:space="preserve">
     <value>AggregateRoots should have an id.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="AggregateRootShouldHaveIdFormat" xml:space="preserve">
+  <data name="AggregateRootShouldHaveIdFormat" xml:space="preserve">
     <value>AggregateRoots should have an id</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="AggregateRootShouldHaveIdTitle" xml:space="preserve">
+  <data name="AggregateRootShouldHaveIdTitle" xml:space="preserve">
     <value>AggregateRoots should have an id</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
   </data>
-    <data name="EntityShouldHaveIdDescription" xml:space="preserve">
+  <data name="EntityShouldHaveIdDescription" xml:space="preserve">
     <value>Entities should have an id.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="EntityShouldHaveIdFormat" xml:space="preserve">
+  <data name="EntityShouldHaveIdFormat" xml:space="preserve">
     <value>Entities should have an id</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="EntityShouldHaveIdTitle" xml:space="preserve">
+  <data name="EntityShouldHaveIdTitle" xml:space="preserve">
     <value>Entities should have an id</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
   </data>
-    <data name="RepositoryShouldNotUseServiceDescription" xml:space="preserve">
+  <data name="RepositoryShouldNotUseServiceDescription" xml:space="preserve">
     <value>Repositories should have an id.</value>
-        <comment>An optional longer localizable description of the diagnostic.</comment>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
-    <data name="RepositoryShouldNotUseServiceFormat" xml:space="preserve">
+  <data name="RepositoryShouldNotUseServiceFormat" xml:space="preserve">
     <value>Repositories should not reference services</value>
-        <comment>The format-able message the diagnostic displays.</comment>
+    <comment>The format-able message the diagnostic displays.</comment>
   </data>
-    <data name="RepositoryShouldNotUseServiceTitle" xml:space="preserve">
+  <data name="RepositoryShouldNotUseServiceTitle" xml:space="preserve">
     <value>Repositories should not reference services</value>
-        <comment>The title of the diagnostic.</comment>
+    <comment>The title of the diagnostic.</comment>
+  </data>
+  <data name="ValueObjectUsesFactoryDescription" xml:space="preserve">
+    <value>Value objects should not reference factories.</value>
+    <comment>An optional longer localizable description of the diagnostic.</comment>
+  </data>
+  <data name="ValueObjectUsesFactoryMessageFormat" xml:space="preserve">
+    <value>ValueObjects should not use factories</value>
+    <comment>The format-able message the diagnostic displays.</comment>
+  </data>
+  <data name="ValueObjectUsesFactoryTitle" xml:space="preserve">
+    <value>ValueObject uses factories</value>
+    <comment>The title of the diagnostic.</comment>
   </data>
 </root>

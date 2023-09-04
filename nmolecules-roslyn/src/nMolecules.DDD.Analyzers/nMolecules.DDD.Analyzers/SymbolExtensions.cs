@@ -24,6 +24,12 @@ public static class SymbolExtensions
         return attributes.Any(it => it.AttributeClass!.Name.Equals(nameof(RepositoryAttribute)));
     }
 
+    public static bool IsFactory(this ITypeSymbol type)
+    {
+        var attributes = type.GetAttributes().ToArray();
+        return attributes.Any(it => it.AttributeClass!.Name.Equals(nameof(FactoryAttribute)));
+    }
+    
     public static bool IsService(this ITypeSymbol type)
     {
         var attributes = type.GetAttributes().ToArray();
