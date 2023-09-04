@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.CodeAnalysis.Diagnostics;
+﻿using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NMolecules.DDD.Analyzers;
+namespace NMolecules.Shared.Analyzers;
 
 public abstract class Analyzer<TAttribute> : DiagnosticAnalyzer where TAttribute : Attribute
 {

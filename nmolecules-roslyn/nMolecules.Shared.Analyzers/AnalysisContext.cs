@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NMolecules.DDD.Analyzers;
+namespace NMolecules.Shared.Analyzers;
 
 public class AnalysisContext<TAttribute> where TAttribute : Attribute
 {
@@ -32,8 +31,7 @@ public class AnalysisContext<TAttribute> where TAttribute : Attribute
                 {
                     analyze(it);
                 }
-            }
-            ,
+            },
             SymbolKind.Namespace => analyze,
             _ => it =>
             {

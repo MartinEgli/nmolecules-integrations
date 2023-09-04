@@ -1,17 +1,26 @@
-using System;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NMolecules.DDD.Analyzers
+namespace NMolecules.Shared.Analyzers
 {
     public static class IdAnalyzer
     {
         private const string Identity = "Identity";
         private const string Object = "Object";
 
-        public static void AnalyzeEntityForId(SymbolAnalysisContext it, Func<INamedTypeSymbol, Diagnostic> onViolation)
+        public static void AnalyzeEntityForId(this SymbolAnalysisContext context, Func<INamedTypeSymbol, Diagnostic> onViolation)
+        {
+            var classSymbol = (INamedTypeSymbol)context.Symbol;
+            var hasIdentity = HasIdentity(classSymbol);
+
+            if (!hasIdentity)
+            {
+                context.ReportDiagnostic(onViolation(classSymbol));
+            }
+        }
+
+        public static void AnalyzeEntityForId2(SymbolAnalysisContext it, Func<INamedTypeSymbol, Diagnostic> onViolation)
         {
             var classSymbol = (INamedTypeSymbol)it.Symbol;
             var hasIdentity = HasIdentity(classSymbol);

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,6 +6,7 @@
 
         <!-- Avoid ID conflicts with the package project. -->
         <PackageId>*$(MSBuildProjectFile)*</PackageId>
+        <ImplicitUsings>enable</ImplicitUsings>
         <AssemblyName>NMolecules.DDD.Analyzers</AssemblyName>
         <RootNamespace>NMolecules.DDD.Analyzers</RootNamespace>
         <Nullable>enable</Nullable>
@@ -21,6 +22,10 @@
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.7.0" />
         <PackageReference Include="NMolecules.DDD" Version="0.2.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\nMolecules.Shared.Analyzers\nMolecules.Shared.Analyzers.csproj" />
     </ItemGroup>
 
     <ItemGroup>

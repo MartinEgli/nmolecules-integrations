@@ -6,6 +6,8 @@ namespace NMolecules.DDD.Analyzers.ValueObjectAnalyzers;
 
 public static class ClassSymbolAnalyzer
 {
+    private const string IEquatable = "IEquatable";
+
     public static void AnalyzeType(SymbolAnalysisContext context)
     {
         var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
@@ -25,21 +27,23 @@ public static class ClassSymbolAnalyzer
         SymbolAnalysisContext context,
         INamedTypeSymbol namedTypeSymbol)
     {
-        if (!namedTypeSymbol.IsEnum())
+        if (namedTypeSymbol.IsEnum())
         {
-            var implementsIEquatable = namedTypeSymbol.AllInterfaces.Any(it =>
-            {
-                var implements = it.Name.Equals("IEquatable");
-                implements &= it.TypeArguments.Any(tp =>
-                    tp.Name.Equals(namedTypeSymbol.Name) &&
-                    SymbolEqualityComparer.Default.Equals(tp.ContainingNamespace, namedTypeSymbol.ContainingNamespace));
-                return implements;
-            });
+            return;
+        }
 
-            if (!implementsIEquatable)
-            {
-                context.ReportDiagnostic(namedTypeSymbol.DoesNotImplementIEquatable());
-            }
+        var implementsIEquatable = namedTypeSymbol.AllInterfaces.Any(it =>
+        {
+            var implements = it.Name.Equals(IEquatable);
+            implements &= it.TypeArguments.Any(tp =>
+                tp.Name.Equals(namedTypeSymbol.Name) &&
+                SymbolEqualityComparer.Default.Equals(tp.ContainingNamespace, namedTypeSymbol.ContainingNamespace));
+            return implements;
+        });
+
+        if (!implementsIEquatable)
+        {
+            context.ReportDiagnostic(namedTypeSymbol.DoesNotImplementIEquatable());
         }
     }
 }

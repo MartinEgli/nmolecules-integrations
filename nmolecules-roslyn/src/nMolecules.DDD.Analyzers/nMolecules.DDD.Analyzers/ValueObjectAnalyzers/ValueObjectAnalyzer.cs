@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using NMolecules.Shared.Analyzers;
 using static NMolecules.DDD.Analyzers.ValueObjectAnalyzers.Rules;
 
 namespace NMolecules.DDD.Analyzers.ValueObjectAnalyzers;
@@ -22,10 +23,12 @@ public class ValueObjectAnalyzer : Analyzer<ValueObjectAttribute>
         var methodAnalyzer = new MethodAnalyzer(Diagnostics.AnalyzeTypeUsageInSymbol);
         var propertyAnalyzer = new ValueObjectPropertyAnalyzer();
         var valueObjectFieldAnalyzer = new ValueObjectFieldAnalyzer();
-        context.RegisterSymbolAction(methodAnalyzer.AnalyzeMethod, SymbolKind.Method);
-        context.RegisterSymbolAction(propertyAnalyzer.AnalyzeProperty, SymbolKind.Property);
-        context.RegisterSymbolAction(ClassSymbolAnalyzer.AnalyzeType, SymbolKind.NamedType);
-        context.RegisterSymbolAction(valueObjectFieldAnalyzer.AnalyzeField, SymbolKind.Field);
-        context.RegisterSyntaxNodeAction(methodAnalyzer.AnalyzeDeclarations, SyntaxKind.LocalDeclarationStatement);
+        var namedTypeAnalyzer = new NamedTypeAnalyzer(ClassSymbolAnalyzer.AnalyzeType);
+        
+        context.RegisterSymbolAction(methodAnalyzer);
+        context.RegisterSymbolAction(propertyAnalyzer);
+        context.RegisterSymbolAction(namedTypeAnalyzer);
+        context.RegisterSymbolAction(valueObjectFieldAnalyzer);
+        context.RegisterSyntaxNodeAction(methodAnalyzer);
     }
 }

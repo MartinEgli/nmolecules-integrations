@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NMolecules.DDD.Analyzers;
+namespace NMolecules.Shared.Analyzers;
 
-public class FieldAnalyzer
+public class FieldAnalyzer : IFieldAnalyzer
 {
     private readonly Func<IFieldSymbol, IEnumerable<Diagnostic>> analyzeField;
 
@@ -20,4 +18,9 @@ public class FieldAnalyzer
         var violations = analyzeField(fieldSymbol);
         context.ReportDiagnostics(violations);
     }
+}
+
+public interface IFieldAnalyzer
+{
+    void AnalyzeField(SymbolAnalysisContext context);
 }

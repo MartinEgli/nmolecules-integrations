@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NMolecules.DDD.Analyzers;
+namespace NMolecules.Shared.Analyzers;
 
-public class MethodAnalyzer
+public class MethodAnalyzer : IMethodAnalyzer
 {
     private readonly Func<ISymbol, ITypeSymbol, IEnumerable<Diagnostic>> analyzeTypeUsageInSymbol;
 
@@ -59,4 +56,10 @@ public class MethodAnalyzer
         var violations = analyzeTypeUsageInSymbol(declaredSymbol, declaredSymbol.Type);
         context.ReportDiagnostics(violations);
     }
+}
+
+public interface IMethodAnalyzer
+{
+    void AnalyzeMethod(SymbolAnalysisContext context);
+    void AnalyzeDeclarations(SyntaxNodeAnalysisContext context);
 }

@@ -55,7 +55,7 @@ public class EntityShouldHaveId
     public async Task EntityShouldHaveId_WithNoIdProperty_EmitsError()
     {
         var validEntity = SampleDataLoader.LoadFromNamespaceOf<EntityUsesOtherElements>("EntityWithoutId.cs");
-        var compileError = CompilerError(Rules.EntitiesShouldHaveIdRuleId).WithSpan(6, 18, 6, 33);
+        var compileError = CompilerError(Rules.EntitiesShouldHaveIdRuleId).WithSpan(6, 14, 6, 29);
         await VerifyCS.VerifyAnalyzerAsync(validEntity, ShouldEmitIssues(compileError));
     }
 }

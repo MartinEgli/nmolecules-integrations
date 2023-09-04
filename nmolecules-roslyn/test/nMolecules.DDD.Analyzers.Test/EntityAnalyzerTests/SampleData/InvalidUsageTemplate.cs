@@ -25,8 +25,8 @@ namespace NMolecules.DDD.Analyzers.Test.EntityAnalyzerTests.SampleData
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("namespace RspDevTools.NMolecules.Analyzers.Test.EntityAnalyzerTests.SampleData\r\n{" +
-                    "\r\n    using System;\r\n    using RspDevTools.NMolecules.DDD;\r\n\r\n    [");
+            this.Write("namespace NMolecules.DDD.Analyzers.Test.EntityAnalyzerTests.SampleData\r\n{" +
+                    "\r\n    using System;\r\n    using NMolecules.DDD;\r\n\r\n    [");
 
 #line 7 "D:\Git\nmolecules-integrations\nmolecules-roslyn\test\nMolecules.Analyzers.Test\EntityAnalyzerTests\SampleData\InvalidUsageTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Session["type"]));

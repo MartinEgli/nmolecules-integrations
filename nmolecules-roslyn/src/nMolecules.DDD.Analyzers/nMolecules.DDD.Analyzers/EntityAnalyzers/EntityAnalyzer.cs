@@ -2,7 +2,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
-using static NMolecules.DDD.Analyzers.IdAnalyzer;
+using NMolecules.Shared.Analyzers;
+using static NMolecules.Shared.Analyzers.IdAnalyzer;
 
 namespace NMolecules.DDD.Analyzers.EntityAnalyzers;
 
@@ -16,13 +17,15 @@ public class EntityAnalyzer : Analyzer<EntityAttribute>
 
     protected override void Initialize(AnalysisContext<EntityAttribute> context)
     {
-        var fieldAnalyzer = new FieldAnalyzer(it => Diagnostics.AnalyzeTypeInSymbol(it, it.Type));
+        var fieldAnalyzer = new FieldAnalyzer(Diagnostics.AnalyzeTypeInSymbol);
         var methodAnalyzer = new MethodAnalyzer(Diagnostics.AnalyzeTypeInSymbol);
-        var propertyAnalyzer = new PropertyAnalyzer(it => Diagnostics.AnalyzeTypeInSymbol(it, it.Type));
-        context.RegisterSymbolAction(fieldAnalyzer.AnalyzeField, SymbolKind.Field);
-        context.RegisterSymbolAction(methodAnalyzer.AnalyzeMethod, SymbolKind.Method);
-        context.RegisterSymbolAction(propertyAnalyzer.AnalyzeProperty, SymbolKind.Property);
-        context.RegisterSymbolAction(it => AnalyzeEntityForId(it, typeSymbol => typeSymbol.ViolatesMandatoryId()), SymbolKind.NamedType);
-        context.RegisterSyntaxNodeAction(methodAnalyzer.AnalyzeDeclarations, SyntaxKind.LocalDeclarationStatement);
+        var propertyAnalyzer = new PropertyAnalyzer(Diagnostics.AnalyzeTypeInSymbol);
+        var namedTypeAnalyzer = new NamedTypeAnalyzer(it => it.AnalyzeEntityForId(typeSymbol => typeSymbol.ViolatesMandatoryId()));
+
+        context.RegisterSymbolAction(fieldAnalyzer);
+        context.RegisterSymbolAction(methodAnalyzer);
+        context.RegisterSymbolAction(propertyAnalyzer);
+        context.RegisterSymbolAction(namedTypeAnalyzer);
+        context.RegisterSyntaxNodeAction(methodAnalyzer);
     }
 }

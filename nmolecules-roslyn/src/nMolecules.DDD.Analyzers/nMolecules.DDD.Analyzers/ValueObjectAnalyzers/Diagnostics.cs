@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using NMolecules.Shared.Analyzers;
 using static NMolecules.DDD.Analyzers.ValueObjectAnalyzers.Rules;
 
 namespace NMolecules.DDD.Analyzers.ValueObjectAnalyzers;

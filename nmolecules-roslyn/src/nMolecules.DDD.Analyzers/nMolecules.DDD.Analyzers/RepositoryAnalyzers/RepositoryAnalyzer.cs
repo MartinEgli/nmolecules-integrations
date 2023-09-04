@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using NMolecules.Shared.Analyzers;
 
 namespace NMolecules.DDD.Analyzers.RepositoryAnalyzers;
 
@@ -13,12 +13,13 @@ public class RepositoryAnalyzer : Analyzer<RepositoryAttribute>
 
     protected override void Initialize(AnalysisContext<RepositoryAttribute> context)
     {
-        var fieldAnalyzer = new FieldAnalyzer(it => Diagnostics.AnalyzeTypeInSymbol(it, it.Type));
+        var fieldAnalyzer = new FieldAnalyzer(Diagnostics.AnalyzeTypeInSymbol);
         var methodAnalyzer = new MethodAnalyzer(Diagnostics.AnalyzeTypeInSymbol);
-        var propertyAnalyzer = new PropertyAnalyzer(it => Diagnostics.AnalyzeTypeInSymbol(it, it.Type));
-        context.RegisterSymbolAction(fieldAnalyzer.AnalyzeField, SymbolKind.Field);
-        context.RegisterSymbolAction(methodAnalyzer.AnalyzeMethod, SymbolKind.Method);
-        context.RegisterSymbolAction(propertyAnalyzer.AnalyzeProperty, SymbolKind.Property);
-        context.RegisterSyntaxNodeAction(methodAnalyzer.AnalyzeDeclarations, SyntaxKind.LocalDeclarationStatement);
+        var propertyAnalyzer = new PropertyAnalyzer(Diagnostics.AnalyzeTypeInSymbol);
+
+        context.RegisterSymbolAction(fieldAnalyzer);
+        context.RegisterSymbolAction(methodAnalyzer);
+        context.RegisterSymbolAction(propertyAnalyzer);
+        context.RegisterSyntaxNodeAction(methodAnalyzer);
     }
 }

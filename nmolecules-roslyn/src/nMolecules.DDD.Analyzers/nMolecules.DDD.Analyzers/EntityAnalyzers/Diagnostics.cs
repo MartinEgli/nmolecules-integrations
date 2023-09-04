@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using NMolecules.Shared.Analyzers;
 
 namespace NMolecules.DDD.Analyzers.EntityAnalyzers;
 
 public static class Diagnostics
 {
+    public static IEnumerable<Diagnostic> AnalyzeTypeInSymbol(IFieldSymbol symbol) => AnalyzeTypeInSymbol(symbol, symbol.Type);
+    public static IEnumerable<Diagnostic> AnalyzeTypeInSymbol(IPropertySymbol symbol) => AnalyzeTypeInSymbol(symbol, symbol.Type);
+
     public static IEnumerable<Diagnostic> AnalyzeTypeInSymbol(ISymbol symbol, ITypeSymbol type)
     {
         if (type.IsRepository())
