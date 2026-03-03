@@ -9,7 +9,7 @@
         <AssemblyName>NMolecules.Analyzers</AssemblyName>
         <RootNamespace>NMolecules.Analyzers</RootNamespace>
         <Nullable>enable</Nullable>
-        <LangVersion>9</LangVersion>
+        <LangVersion>latestMajor</LangVersion>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <!-- ReleaseTrackingAnalyzers currently do not recognize the generic Analyzer<TAttribute> base reliably. -->
         <NoWarn>$(NoWarn);RS2002;RS2003</NoWarn>

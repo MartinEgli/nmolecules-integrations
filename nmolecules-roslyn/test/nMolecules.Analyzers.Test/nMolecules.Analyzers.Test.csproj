@@ -7,7 +7,7 @@
         <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
         <AssemblyName>NMolecules.Analyzers.Test</AssemblyName>
         <RootNamespace>NMolecules.Analyzers.Test</RootNamespace>
-        <LangVersion>9</LangVersion>
+        <LangVersion>latestMajor</LangVersion>
         <Nullable>enable</Nullable>
         <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     </PropertyGroup>
