@@ -29,6 +29,11 @@ namespace NMolecules.Analyzers
                 ApplicationServiceAttributeName);
         }
 
+        public static bool IsLegacyService(this ITypeSymbol type)
+        {
+            return type.HasAttributeNamed(nameof(ServiceAttribute));
+        }
+
         public static bool IsDomainService(this ITypeSymbol type)
         {
             return type.HasAttributeNamed(DomainServiceAttributeName);
@@ -42,6 +47,11 @@ namespace NMolecules.Analyzers
         public static bool IsRepository(this ITypeSymbol type)
         {
             return type.HasAttributeNamed(nameof(RepositoryAttribute));
+        }
+
+        public static bool IsFactory(this ITypeSymbol type)
+        {
+            return type.HasAttributeNamed(nameof(FactoryAttribute));
         }
 
         public static bool IsAggregateRoot(this ITypeSymbol type)

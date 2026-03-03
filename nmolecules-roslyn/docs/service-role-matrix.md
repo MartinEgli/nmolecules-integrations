@@ -56,6 +56,7 @@ Phase 1:
 
 - `DomainService` und `ApplicationService` werden in allgemeinen Service-Verboten mitberuecksichtigt
 - dadurch bleiben bestehende Regeln konservativ und sicher
+- Legacy-`Service` wird mit einer Migrationswarnung markiert
 
 Beispiele:
 
@@ -80,12 +81,13 @@ Beispiele:
 - ApplicationService darf Repositories konsumieren
 - ApplicationService darf DomainService konsumieren
 - ApplicationService soll nicht selbst als Domain-Baustein verwendet werden
+- ApplicationService soll nicht auf den unscharfen Legacy-Marker `Service` setzen
 
 ### Regeln fuer historischen `Service`
 
 - bestehende Kompatibilitaet erhalten
 - fuer neue Projekte bevorzugt `DomainService` oder `ApplicationService` statt nur `Service`
-- spaeter Pruefung auf praeziseren Marker evaluieren
+- Migrationswarnung auf praeziseren Marker aktiv
 
 ## Offene Entscheidungen
 
@@ -95,7 +97,7 @@ Beispiele:
 
 ## Naechste technische Schritte
 
-1. Release-Tracking stabilisieren
-2. Diagnose-IDs fuer dedizierte Service-Rollen festlegen
-3. neue Analyzer fuer `DomainService` und `ApplicationService` entwerfen
+1. `ApplicationService -> ApplicationService` fachlich entscheiden
+2. `DomainService`-Signaturen gegen UI-/Infrastrukturtypen absichern
+3. `Service`-Migrationspfad dokumentarisch und paketseitig festziehen
 4. Layer-Regeln mit den Service-Rollen verknuepfen
