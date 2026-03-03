@@ -76,6 +76,46 @@ namespace NMolecules.Analyzers.Test.EntityAnalyzerTests
                 serviceAsPropertyType,
                 serviceInMethodBody);
         }
+
+        [Fact]
+        public async Task Analyze_WithEntityUsesDomainService_EmitsCompilerError()
+        {
+            var entity = GenerateClass(DomainService);
+            var serviceAsField = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(FieldLineNumber, 38, FieldLineNumber, 51);
+            var serviceAsParameterInCtor = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(CtorLineNumber, 42, CtorLineNumber, 47);
+            var serviceAsReturnValue = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
+            var serviceAsParameterInMethod = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
+            var serviceAsPropertyType = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
+            var serviceInMethodBody = CompilerError(Rules.EntitiesShouldNotUseServicesId)
+                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 34);
+            await VerifyCS.VerifyAnalyzerAsync(entity,
+                serviceAsField,
+                serviceAsParameterInCtor,
+                serviceAsParameterInMethod,
+                serviceAsReturnValue,
+                serviceAsPropertyType,
+                serviceInMethodBody);
+        }
+
+        [Fact]
+        public async Task Analyze_WithEntityUsesApplicationService_EmitsCompilerError()
+        {
+            var entity = GenerateClass(ApplicationService);
+            var serviceAsField = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(FieldLineNumber, 38, FieldLineNumber, 56);
+            var serviceAsParameterInCtor = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(CtorLineNumber, 42, CtorLineNumber, 47);
+            var serviceAsReturnValue = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
+            var serviceAsParameterInMethod = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
+            var serviceAsPropertyType = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
+            var serviceInMethodBody = CompilerError(Rules.EntitiesShouldNotUseServicesId)
+                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 39);
+            await VerifyCS.VerifyAnalyzerAsync(entity,
+                serviceAsField,
+                serviceAsParameterInCtor,
+                serviceAsParameterInMethod,
+                serviceAsReturnValue,
+                serviceAsPropertyType,
+                serviceInMethodBody);
+        }
         
         [Fact]
         public async Task Analyze_ValidEntity_DoesNotEmitAnyError()
@@ -90,7 +130,7 @@ namespace NMolecules.Analyzers.Test.EntityAnalyzerTests
             {
                 Session = new Dictionary<string, object> { { "type", type }, { "name", type.ToLowerInvariant() } }
             };
-            return invalidUsageTemplate.TransformText();
+            return ServiceRoleShims.AppendIfNeeded(invalidUsageTemplate.TransformText(), type);
         }
     }
 }

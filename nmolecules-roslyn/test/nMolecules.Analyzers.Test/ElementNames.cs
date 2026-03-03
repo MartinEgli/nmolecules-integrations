@@ -8,6 +8,8 @@
         public const string AggregateRoot = nameof(AggregateRoot);
         public const string Repository = nameof(Repository);
         public const string Service = nameof(Service);
+        public const string DomainService = nameof(DomainService);
+        public const string ApplicationService = nameof(ApplicationService);
         public const string Identity = nameof(Identity);
     }
 }

@@ -49,13 +49,63 @@ namespace NMolecules.Analyzers.Test.RepositoryAnalyzerTests
                 serviceUsedInMethodBody);
         }
 
+        [Fact]
+        public async Task Analyze_WithRepositoryUsesDomainService_EmitsCompilerError()
+        {
+            var testCode = GenerateClass(DomainService);
+            var serviceAsField = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(FieldLineNumber, 38, FieldLineNumber, 51);
+            var serviceAsParameterInCtor = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(CtorLineNumber, 46, CtorLineNumber, 51);
+            var serviceAsProperty = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
+            var serviceAsReturnValue = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
+            var serviceAsParameterInMethod = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
+            var serviceUsedInMethodBody = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 34);
+            await VerifyCS.VerifyAnalyzerAsync(testCode,
+                serviceAsField,
+                serviceAsProperty,
+                serviceAsParameterInCtor,
+                serviceAsParameterInMethod,
+                serviceAsReturnValue,
+                serviceUsedInMethodBody);
+        }
+
+        [Fact]
+        public async Task Analyze_WithRepositoryUsesApplicationService_EmitsCompilerError()
+        {
+            var testCode = GenerateClass(ApplicationService);
+            var serviceAsField = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(FieldLineNumber, 38, FieldLineNumber, 56);
+            var serviceAsParameterInCtor = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(CtorLineNumber, 46, CtorLineNumber, 51);
+            var serviceAsProperty = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
+            var serviceAsReturnValue = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
+            var serviceAsParameterInMethod = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
+            var serviceUsedInMethodBody = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
+                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 39);
+            await VerifyCS.VerifyAnalyzerAsync(testCode,
+                serviceAsField,
+                serviceAsProperty,
+                serviceAsParameterInCtor,
+                serviceAsParameterInMethod,
+                serviceAsReturnValue,
+                serviceUsedInMethodBody);
+        }
+
         private static string GenerateClass(string type)
         {
             var invalidUsageTemplate = new InvalidUsageTemplate
             {
                 Session = new Dictionary<string, object> { { "type", type }, { "name", type.ToLowerInvariant() } }
             };
-            return invalidUsageTemplate.TransformText();
+            return ServiceRoleShims.AppendIfNeeded(invalidUsageTemplate.TransformText(), type);
         }
     }
 }
