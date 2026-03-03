@@ -7,3 +7,5 @@
 For the current analyzer expansion work, see:
 
 - [nmolecules-roslyn/docs/mvp-rule-catalog.md](nmolecules-roslyn/docs/mvp-rule-catalog.md)
+- [nmolecules-roslyn/docs/service-role-matrix.md](nmolecules-roslyn/docs/service-role-matrix.md)
+- [nmolecules-roslyn/docs/release-tracking-investigation.md](nmolecules-roslyn/docs/release-tracking-investigation.md)

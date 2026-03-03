@@ -11,6 +11,8 @@
         <Nullable>enable</Nullable>
         <LangVersion>9</LangVersion>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <!-- ReleaseTrackingAnalyzers currently do not recognize the generic Analyzer<TAttribute> base reliably. -->
+        <NoWarn>$(NoWarn);RS2002;RS2003</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
