@@ -86,6 +86,7 @@ function registerCommands(vscodeApi, context, outputChannel) {
 
 module.exports = {
   COMMANDS,
+  readWorkspaceEntries,
   inspectWorkspace,
   openWorkspaceDocs,
   registerCommands,
