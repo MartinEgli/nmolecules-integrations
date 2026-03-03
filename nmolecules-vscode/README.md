@@ -16,6 +16,14 @@ The long-term direction is to reuse the same analyzer rule set that already exis
 - `nMolecules: Inspect Workspace`
 - `nMolecules: Open Workspace Docs`
 
+## Sample Workspace
+
+A detailed sample workspace is included in:
+
+- [sample-workspace/README.md](sample-workspace/README.md)
+
+It contains a layered .NET solution and the documentation files that the current extension knows how to open.
+
 ## Tests
 
 Run:

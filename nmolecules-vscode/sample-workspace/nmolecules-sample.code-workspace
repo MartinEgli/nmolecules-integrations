@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "nmolecules.docsRoot": "docs",
+    "nmolecules.traceLevel": "basic",
+    "nmolecules.autoInspectOnStartup": false
+  }
+}
