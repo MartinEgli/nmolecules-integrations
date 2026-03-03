@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using NMolecules.Analyzers.RepositoryAnalyzers;
@@ -55,14 +54,14 @@ namespace NMolecules.Analyzers.Test.RepositoryAnalyzerTests
         public async Task Analyze_WithRepositoryUsesDomainService_EmitsCompilerError()
         {
             var testCode = GenerateClass(DomainService);
-            await VerifyCS.VerifyAnalyzerAsync(testCode, ExpectedServiceRoleViolations(testCode, DomainService));
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ExpectedServiceRoleViolations(DomainService));
         }
 
         [Fact]
         public async Task Analyze_WithRepositoryUsesApplicationService_EmitsCompilerError()
         {
             var testCode = GenerateClass(ApplicationService);
-            await VerifyCS.VerifyAnalyzerAsync(testCode, ExpectedServiceRoleViolations(testCode, ApplicationService));
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ExpectedServiceRoleViolations(ApplicationService));
         }
 
         private static string GenerateClass(string type)
@@ -74,19 +73,22 @@ namespace NMolecules.Analyzers.Test.RepositoryAnalyzerTests
             return ServiceRoleShims.AppendIfNeeded(invalidUsageTemplate.TransformText(), type);
         }
 
-        private static DiagnosticResult[] ExpectedServiceRoleViolations(string source, string dependencyType)
+        private static DiagnosticResult[] ExpectedServiceRoleViolations(string dependencyType)
         {
             var roleLength = dependencyType.Length;
             var fieldStart = 31 + roleLength;
-            var methodParameterStart = 44 + roleLength;
+            var ctorStart = 39 + roleLength;
+            var propertyStart = 21 + roleLength;
+            var methodStart = 21 + roleLength;
+            var methodParameterStart = 37 + 2 * roleLength;
 
             return new[]
             {
                 CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(FieldLineNumber, fieldStart, FieldLineNumber, fieldStart + roleLength),
-                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33),
-                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(CtorLineNumber, 46, CtorLineNumber, 51),
+                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(PropertyLineNumber, propertyStart, PropertyLineNumber, propertyStart + 5),
+                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(CtorLineNumber, ctorStart, CtorLineNumber, ctorStart + 5),
                 CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(MethodLineNumber, methodParameterStart, MethodLineNumber, methodParameterStart + roleLength),
-                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38),
+                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(MethodLineNumber, methodStart, MethodLineNumber, methodStart + 10),
                 CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 21 + roleLength)
             };
         }

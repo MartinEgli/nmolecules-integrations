@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using NMolecules.Analyzers.DomainServiceAnalyzers;
@@ -15,13 +14,7 @@ namespace NMolecules.Analyzers.Test.DomainServiceAnalyzerTests
         public async Task Analyze_WithDomainServiceUsesApplicationService_EmitsCompilerError()
         {
             var testCode = GenerateClass(ApplicationService);
-            await VerifyCS.VerifyAnalyzerAsync(testCode,
-                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(13, 49, 13, 59),
-                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(15, 60, 15, 65),
-                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(20, 39, 20, 44),
-                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(22, 36, 22, 46),
-                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(22, 65, 22, 70),
-                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(24, 17, 24, 22));
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ExpectedViolations(ApplicationService));
         }
 
         [Fact]
@@ -63,6 +56,26 @@ namespace NMolecules.Analyzers.Test.DomainServiceAnalyzerTests
 }}";
 
             return ServiceRoleShims.AppendIfNeeded(code, DomainService, dependencyType);
+        }
+
+        private static DiagnosticResult[] ExpectedViolations(string dependencyType)
+        {
+            var roleLength = dependencyType.Length;
+            var fieldStart = 31 + roleLength;
+            var ctorStart = 42 + roleLength;
+            var propertyStart = 21 + roleLength;
+            var methodStart = 21 + roleLength;
+            var methodParameterStart = 37 + 2 * roleLength;
+
+            return new[]
+            {
+                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(13, fieldStart, 13, fieldStart + 10),
+                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(15, ctorStart, 15, ctorStart + 5),
+                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(20, propertyStart, 20, propertyStart + 5),
+                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(22, methodStart, 22, methodStart + 10),
+                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(22, methodParameterStart, 22, methodParameterStart + 5),
+                CompilerError(Rules.DomainServicesShouldNotUseApplicationServicesId).WithSpan(24, 17, 24, 22)
+            };
         }
 
     }
