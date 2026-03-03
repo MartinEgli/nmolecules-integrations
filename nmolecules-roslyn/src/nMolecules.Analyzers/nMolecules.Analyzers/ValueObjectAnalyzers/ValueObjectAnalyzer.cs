@@ -15,6 +15,7 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
             ValueObjectMustNotUseRepositoryRule,
             ValueObjectMustNotUseAggregateRootRule,
             ValueObjectShouldBeImmutableRule,
+            ValueObjectMustNotDeclareIdentityRule,
             ValueObjectMustImplementIEquatableRule,
             ValueObjectShouldBeSealedRule);
 
@@ -27,7 +28,18 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
             context.RegisterSymbolAction(propertyAnalyzer.AnalyzeProperty, SymbolKind.Property);
             context.RegisterSymbolAction(ClassSymbolAnalyzer.AnalyzeType, SymbolKind.NamedType);
             context.RegisterSymbolAction(valueObjectFieldAnalyzer.AnalyzeField, SymbolKind.Field);
+            context.RegisterSymbolAction(AnalyzeIdentityMember, SymbolKind.Field);
+            context.RegisterSymbolAction(AnalyzeIdentityMember, SymbolKind.Property);
             context.RegisterSyntaxNodeAction(methodAnalyzer.AnalyzeDeclarations, SyntaxKind.LocalDeclarationStatement);
+        }
+
+        private static void AnalyzeIdentityMember(SymbolAnalysisContext context)
+        {
+            var diagnostic = Diagnostics.AnalyzeIdentityDeclaration(context.Symbol);
+            if (diagnostic is not null)
+            {
+                context.ReportDiagnostic(diagnostic);
+            }
         }
     }
 }

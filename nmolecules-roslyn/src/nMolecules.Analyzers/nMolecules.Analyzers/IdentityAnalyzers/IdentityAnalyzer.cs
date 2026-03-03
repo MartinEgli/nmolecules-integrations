@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using NMolecules.DDD;
 
 namespace NMolecules.Analyzers.IdentityAnalyzers
 {
@@ -28,6 +29,11 @@ namespace NMolecules.Analyzers.IdentityAnalyzers
             }
 
             var containingType = symbol.ContainingType;
+            if (containingType.Is<ValueObjectAttribute>())
+            {
+                return;
+            }
+
             if (containingType.IsEntity() || containingType.IsAggregateRoot())
             {
                 return;

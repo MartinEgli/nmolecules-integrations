@@ -7,3 +7,5 @@ XMoleculesIdentity0001 | DDD | Error | Identity members must belong to entities 
 XMoleculesEntity0005 | DDD | Error | Entity should declare exactly one identity member
 XMoleculesAggregateRoot0004 | DDD | Error | Aggregate root should declare exactly one identity member
 XMoleculesApplicationService0001 | DDD | Error | Application service should not also be a domain building block
+XMoleculesAggregateRoot0005 | DDD | Error | Aggregate root should not reference aggregate roots directly
+XMoleculesValueObject0006 | DDD | Error | Value object should not declare identity members

@@ -9,6 +9,7 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
         public const string NoRepositoriesInValueObjectsId = "XMoleculesValueObject0003";
         public const string NoAggregateRootsInValueObjectsId = "XMoleculesValueObject0004";
         public const string ValueObjectsShouldBeImmutableId = "XMoleculesValueObject0005";
+        public const string ValueObjectsMustNotDeclareIdentityId = "XMoleculesValueObject0006";
         public const string ValueObjectsMustImplementIEquatableId = "XMoleculesValueObject1001";
         public const string ValueObjectsShouldBeSealedId = "XMoleculesValueObject1002";
 
@@ -81,6 +82,14 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
             new LocalizableResourceString(nameof(Resources.ValueObjectShouldBeImmutableDescription),
                 Resources.ResourceManager,
                 typeof(Resources)));
+
+        public static readonly DiagnosticDescriptor ValueObjectMustNotDeclareIdentityRule = new(ValueObjectsMustNotDeclareIdentityId,
+            "Value objects must not declare identities",
+            "Value object should not declare [Identity] members",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "Value objects are defined by value and must not introduce entity-style identities.");
 
         public static readonly DiagnosticDescriptor ValueObjectMustImplementIEquatableRule = new(ValueObjectsMustImplementIEquatableId,
             new LocalizableResourceString(nameof(Resources.ValueObjectMustImplementIEquatableTitle),

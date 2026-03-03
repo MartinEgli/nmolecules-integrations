@@ -11,6 +11,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
     public class AggregateRootAnalyzer : Analyzer<AggregateRootAttribute>
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            Rules.AggregateRootsShouldNotUseAggregateRootsRule,
             Rules.AggregateRootsShouldNotUseRepositoriesRule,
             Rules.AggregateRootsShouldNotUseServicesRule,
             Rules.AggregateRootsShouldHaveIdRule,

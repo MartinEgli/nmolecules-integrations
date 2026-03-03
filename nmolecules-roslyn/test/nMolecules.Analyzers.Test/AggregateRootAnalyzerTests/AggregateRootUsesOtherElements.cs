@@ -57,6 +57,54 @@ namespace NMolecules.Analyzers.Test.AggregateRootAnalyzerTests
                 serviceAsPropertyType,
                 serviceInMethodBody);
         }
+
+        [Fact]
+        public async Task Analyze_WithAggregateRootUsesAggregateRoot_EmitsCompilerError()
+        {
+            var aggregateRoot = @"namespace NMolecules.Analyzers.Test.AggregateRootAnalyzerTests.SampleData
+{
+    using System;
+    using NMolecules.DDD;
+
+    [AggregateRoot]
+    public class SomeAggregateRoot
+    {
+        [Identity]
+        public Guid Id { get; }
+    }
+
+    [AggregateRoot]
+    public sealed class InvalidAggregateRoot
+    {
+        [Identity]
+        public Guid Id { get; }
+
+        private readonly SomeAggregateRoot {|#0:other|};
+
+        public InvalidAggregateRoot(SomeAggregateRoot {|#1:value|})
+        {
+            Value = value;
+        }
+
+        public SomeAggregateRoot {|#2:Value|} { get; set; }
+
+        public SomeAggregateRoot {|#3:SomeMethod|}(SomeAggregateRoot {|#4:input|})
+        {
+            var {|#5:local|} = new SomeAggregateRoot();
+            return local;
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(
+                aggregateRoot,
+                CompilerError(Rules.AggregateRootsShouldNotUseAggregateRootsRuleId).WithLocation(0),
+                CompilerError(Rules.AggregateRootsShouldNotUseAggregateRootsRuleId).WithLocation(1),
+                CompilerError(Rules.AggregateRootsShouldNotUseAggregateRootsRuleId).WithLocation(2),
+                CompilerError(Rules.AggregateRootsShouldNotUseAggregateRootsRuleId).WithLocation(3),
+                CompilerError(Rules.AggregateRootsShouldNotUseAggregateRootsRuleId).WithLocation(4),
+                CompilerError(Rules.AggregateRootsShouldNotUseAggregateRootsRuleId).WithLocation(5));
+        }
         
         [Fact]
         public async Task Analyze_ValidAggregateRoot_DoesNotEmitAnyError()

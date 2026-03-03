@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using NMolecules.DDD;
 using static NMolecules.Analyzers.ValueObjectAnalyzers.Rules;
 
 namespace NMolecules.Analyzers.ValueObjectAnalyzers
@@ -11,6 +12,8 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
         public static Diagnostic DoesNotImplementIEquatable(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustImplementIEquatableRule);
 
         public static Diagnostic IsNotSealed(this ISymbol symbol) => symbol.Diagnostic(ValueObjectShouldBeSealedRule);
+
+        public static Diagnostic DeclaresIdentity(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotDeclareIdentityRule);
 
         public static IEnumerable<Diagnostic> AnalyzeTypeUsageInSymbol(ISymbol symbol, ITypeSymbol type)
         {
@@ -33,6 +36,13 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
             {
                 yield return symbol.ViolatesAggregateRootUsage();
             }
+        }
+
+        public static Diagnostic? AnalyzeIdentityDeclaration(ISymbol symbol)
+        {
+            return symbol.IsIdentity() && symbol.ContainingType.Is<ValueObjectAttribute>()
+                ? symbol.DeclaresIdentity()
+                : null;
         }
 
         private static Diagnostic ViolatesEntityUsage(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotUseEntityRule);

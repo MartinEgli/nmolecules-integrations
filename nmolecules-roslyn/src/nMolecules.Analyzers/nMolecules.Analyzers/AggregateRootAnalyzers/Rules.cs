@@ -8,6 +8,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
         public const string AggregateRootsShouldNotUseServicesRuleId = "XMoleculesAggregateRoot0002";
         public const string AggregateRootsShouldHaveIdRuleId = "XMoleculesAggregateRoot0003";
         public const string AggregateRootsShouldHaveSingleIdRuleId = "XMoleculesAggregateRoot0004";
+        public const string AggregateRootsShouldNotUseAggregateRootsRuleId = "XMoleculesAggregateRoot0005";
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseRepositoriesRule = new(
             AggregateRootsShouldNotUseRepositoriesRuleId,
@@ -62,5 +63,14 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             DiagnosticSeverity.Error,
             true,
             "Aggregate roots should expose a single model identity for their consistency boundary.");
+
+        public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseAggregateRootsRule = new(
+            AggregateRootsShouldNotUseAggregateRootsRuleId,
+            "Aggregate roots should not reference aggregate roots",
+            "Aggregate root should not reference other aggregate roots directly",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "Aggregate boundaries should be crossed through identity, not direct object references.");
     }
 }

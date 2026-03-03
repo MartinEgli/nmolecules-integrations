@@ -7,6 +7,11 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
     {
         public static IEnumerable<Diagnostic> AnalyzeTypeInSymbol(ISymbol symbol, ITypeSymbol type)
         {
+            if (type.IsAggregateRoot())
+            {
+                yield return symbol.ViolatesAggregateRootUsage();
+            }
+
             if (type.IsRepository())
             {
                 yield return symbol.ViolatesRepositoryUsage();
@@ -18,6 +23,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             }
         }
 
+        private static Diagnostic ViolatesAggregateRootUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseAggregateRootsRule);
         private static Diagnostic ViolatesRepositoryUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseRepositoriesRule);
         private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseServicesRule);
         public static Diagnostic ViolatesMandatoryId(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldHaveIdRule);

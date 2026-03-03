@@ -28,7 +28,7 @@ namespace NMolecules.Analyzers.Test.IdentityAnalyzerTests
         }
 
         [Fact]
-        public async Task Analyze_WithIdentityInsideValueObject_EmitsError()
+        public async Task Analyze_WithIdentityInsideValueObject_DoesNotEmitOwnViolation()
         {
             var testCode = @"namespace NMolecules.Analyzers.Test.IdentityAnalyzerTests.SampleData
 {
@@ -42,8 +42,7 @@ namespace NMolecules.Analyzers.Test.IdentityAnalyzerTests
     }
 }";
 
-            var compileError = CompilerError(Rules.IdentityMustBelongToEntityOrAggregateRootId).WithLocation(0);
-            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(compileError));
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
         }
 
         [Fact]
