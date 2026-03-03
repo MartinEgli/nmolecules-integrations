@@ -10,6 +10,10 @@ namespace NMolecules.Analyzers
         private const string DomainServiceAttributeName = "DomainServiceAttribute";
         private const string ApplicationServiceAttributeName = "ApplicationServiceAttribute";
         private const string IdentityAttributeName = "IdentityAttribute";
+        private const string ApplicationLayerAttributeName = "ApplicationLayerAttribute";
+        private const string DomainLayerAttributeName = "DomainLayerAttribute";
+        private const string InfrastructureLayerAttributeName = "InfrastructureLayerAttribute";
+        private const string UserInterfaceLayerAttributeName = "UserInterfaceLayerAttribute";
 
         public static bool Is<TAttribute>(this ITypeSymbol type) where TAttribute : Attribute
         {
@@ -42,6 +46,31 @@ namespace NMolecules.Analyzers
         public static bool IsApplicationService(this ITypeSymbol type)
         {
             return type.HasAttributeNamed(ApplicationServiceAttributeName);
+        }
+
+        public static bool IsApplicationLayer(this ITypeSymbol type)
+        {
+            return type.HasAttributeNamed(ApplicationLayerAttributeName);
+        }
+
+        public static bool IsDomainLayer(this ITypeSymbol type)
+        {
+            return type.HasAttributeNamed(DomainLayerAttributeName);
+        }
+
+        public static bool IsInfrastructureLayer(this ITypeSymbol type)
+        {
+            return type.HasAttributeNamed(InfrastructureLayerAttributeName);
+        }
+
+        public static bool IsUserInterfaceLayer(this ITypeSymbol type)
+        {
+            return type.HasAttributeNamed(UserInterfaceLayerAttributeName);
+        }
+
+        public static bool IsLayer(this ITypeSymbol type)
+        {
+            return type.IsApplicationLayer() || type.IsDomainLayer() || type.IsInfrastructureLayer() || type.IsUserInterfaceLayer();
         }
 
         public static bool IsRepository(this ITypeSymbol type)

@@ -12,3 +12,7 @@ XMoleculesAggregateRoot0005 | DDD | Error | Aggregate root should not reference 
 XMoleculesFactory0001 | DDD | Error | Factory should not use application services
 XMoleculesService0001 | DDD | Warning | Service should use a specific role marker
 XMoleculesValueObject0006 | DDD | Error | Value object should not declare identity members
+XMoleculesDomainLayer0001 | Architecture | Error | Domain layer should not use application layer types
+XMoleculesDomainLayer0002 | Architecture | Error | Domain layer should not use user interface layer types
+XMoleculesDomainLayer0003 | Architecture | Error | Domain layer should not use infrastructure layer types
+XMoleculesApplicationLayer0003 | Architecture | Error | Application layer should not use user interface layer types

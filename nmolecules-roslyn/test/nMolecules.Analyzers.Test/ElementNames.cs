@@ -11,5 +11,9 @@
         public const string DomainService = nameof(DomainService);
         public const string ApplicationService = nameof(ApplicationService);
         public const string Identity = nameof(Identity);
+        public const string ApplicationLayer = nameof(ApplicationLayer);
+        public const string DomainLayer = nameof(DomainLayer);
+        public const string InfrastructureLayer = nameof(InfrastructureLayer);
+        public const string UserInterfaceLayer = nameof(UserInterfaceLayer);
     }
 }

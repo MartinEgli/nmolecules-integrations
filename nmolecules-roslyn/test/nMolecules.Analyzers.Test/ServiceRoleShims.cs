@@ -19,6 +19,10 @@ namespace NMolecules.Analyzers.Test
                 {
                     ElementNames.DomainService when !result.Contains("public class DomainServiceAttribute") => result + DomainServiceShim,
                     ElementNames.ApplicationService when !result.Contains("public class ApplicationServiceAttribute") => result + ApplicationServiceShim,
+                    ElementNames.ApplicationLayer when !result.Contains("public class ApplicationLayerAttribute") => result + ApplicationLayerShim,
+                    ElementNames.DomainLayer when !result.Contains("public class DomainLayerAttribute") => result + DomainLayerShim,
+                    ElementNames.InfrastructureLayer when !result.Contains("public class InfrastructureLayerAttribute") => result + InfrastructureLayerShim,
+                    ElementNames.UserInterfaceLayer when !result.Contains("public class UserInterfaceLayerAttribute") => result + UserInterfaceLayerShim,
                     _ => result
                 };
             }
@@ -44,6 +48,50 @@ namespace NMolecules.DDD
     using System;
 
     public class ApplicationServiceAttribute : Attribute
+    {
+    }
+}";
+
+        private const string ApplicationLayerShim = @"
+
+namespace NMolecules.Architecture.Layered
+{
+    using System;
+
+    public class ApplicationLayerAttribute : Attribute
+    {
+    }
+}";
+
+        private const string DomainLayerShim = @"
+
+namespace NMolecules.Architecture.Layered
+{
+    using System;
+
+    public class DomainLayerAttribute : Attribute
+    {
+    }
+}";
+
+        private const string InfrastructureLayerShim = @"
+
+namespace NMolecules.Architecture.Layered
+{
+    using System;
+
+    public class InfrastructureLayerAttribute : Attribute
+    {
+    }
+}";
+
+        private const string UserInterfaceLayerShim = @"
+
+namespace NMolecules.Architecture.Layered
+{
+    using System;
+
+    public class UserInterfaceLayerAttribute : Attribute
     {
     }
 }";
