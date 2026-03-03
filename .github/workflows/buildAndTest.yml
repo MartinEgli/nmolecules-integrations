@@ -23,3 +23,16 @@ jobs:
       run: dotnet build --no-restore nmolecules-roslyn/nMolecules.Roslyn.sln
     - name: Test
       run: dotnet test --no-build --verbosity normal nmolecules-roslyn/nMolecules.Roslyn.sln
+
+  vscode-extension:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24
+    - name: Test VS Code extension project
+      run: npm test --prefix nmolecules-vscode

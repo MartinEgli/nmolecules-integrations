@@ -1,0 +1,68 @@
+{
+  "name": "nmolecules-vscode",
+  "displayName": "nMolecules",
+  "description": "Workspace inspection and documentation entry points for nMolecules DDD tooling in Visual Studio Code.",
+  "version": "0.1.0",
+  "publisher": "xmolecules",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xmolecules/nmolecules-integrations.git"
+  },
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:nmolecules.inspectWorkspace",
+    "onCommand:nmolecules.openWorkspaceDocs",
+    "onLanguage:csharp"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "nmolecules.inspectWorkspace",
+        "title": "nMolecules: Inspect Workspace",
+        "category": "nMolecules"
+      },
+      {
+        "command": "nmolecules.openWorkspaceDocs",
+        "title": "nMolecules: Open Workspace Docs",
+        "category": "nMolecules"
+      }
+    ],
+    "configuration": {
+      "title": "nMolecules",
+      "properties": {
+        "nmolecules.autoInspectOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run the nMolecules workspace inspection automatically when the extension activates."
+        },
+        "nmolecules.docsRoot": {
+          "type": "string",
+          "default": "docs",
+          "description": "Relative path, below the workspace root, where the extension should look for nMolecules documentation."
+        },
+        "nmolecules.traceLevel": {
+          "type": "string",
+          "enum": [
+            "off",
+            "basic",
+            "verbose"
+          ],
+          "default": "basic",
+          "description": "Controls how much detail the extension writes to the nMolecules output channel."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "test": "node --test ./test/*.test.js",
+    "smoke": "node ./test/package-manifest.test.js"
+  }
+}
