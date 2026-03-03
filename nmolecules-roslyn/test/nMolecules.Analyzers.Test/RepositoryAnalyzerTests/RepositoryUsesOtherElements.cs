@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using NMolecules.Analyzers.RepositoryAnalyzers;
 using NMolecules.Analyzers.Test.RepositoryAnalyzerTests.SampleData;
 using Xunit;
@@ -53,50 +55,14 @@ namespace NMolecules.Analyzers.Test.RepositoryAnalyzerTests
         public async Task Analyze_WithRepositoryUsesDomainService_EmitsCompilerError()
         {
             var testCode = GenerateClass(DomainService);
-            var serviceAsField = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(FieldLineNumber, 38, FieldLineNumber, 51);
-            var serviceAsParameterInCtor = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(CtorLineNumber, 46, CtorLineNumber, 51);
-            var serviceAsProperty = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
-            var serviceAsReturnValue = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
-            var serviceAsParameterInMethod = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
-            var serviceUsedInMethodBody = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 34);
-            await VerifyCS.VerifyAnalyzerAsync(testCode,
-                serviceAsField,
-                serviceAsProperty,
-                serviceAsParameterInCtor,
-                serviceAsParameterInMethod,
-                serviceAsReturnValue,
-                serviceUsedInMethodBody);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ExpectedServiceRoleViolations(testCode, DomainService));
         }
 
         [Fact]
         public async Task Analyze_WithRepositoryUsesApplicationService_EmitsCompilerError()
         {
             var testCode = GenerateClass(ApplicationService);
-            var serviceAsField = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(FieldLineNumber, 38, FieldLineNumber, 56);
-            var serviceAsParameterInCtor = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(CtorLineNumber, 46, CtorLineNumber, 51);
-            var serviceAsProperty = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
-            var serviceAsReturnValue = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
-            var serviceAsParameterInMethod = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
-            var serviceUsedInMethodBody = CompilerError(Rules.RepositoriesShouldNotUseServicesId)
-                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 39);
-            await VerifyCS.VerifyAnalyzerAsync(testCode,
-                serviceAsField,
-                serviceAsProperty,
-                serviceAsParameterInCtor,
-                serviceAsParameterInMethod,
-                serviceAsReturnValue,
-                serviceUsedInMethodBody);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ExpectedServiceRoleViolations(testCode, ApplicationService));
         }
 
         private static string GenerateClass(string type)
@@ -106,6 +72,23 @@ namespace NMolecules.Analyzers.Test.RepositoryAnalyzerTests
                 Session = new Dictionary<string, object> { { "type", type }, { "name", type.ToLowerInvariant() } }
             };
             return ServiceRoleShims.AppendIfNeeded(invalidUsageTemplate.TransformText(), type);
+        }
+
+        private static DiagnosticResult[] ExpectedServiceRoleViolations(string source, string dependencyType)
+        {
+            var roleLength = dependencyType.Length;
+            var fieldStart = 31 + roleLength;
+            var methodParameterStart = 44 + roleLength;
+
+            return new[]
+            {
+                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(FieldLineNumber, fieldStart, FieldLineNumber, fieldStart + roleLength),
+                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33),
+                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(CtorLineNumber, 46, CtorLineNumber, 51),
+                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(MethodLineNumber, methodParameterStart, MethodLineNumber, methodParameterStart + roleLength),
+                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38),
+                CompilerError(Rules.RepositoriesShouldNotUseServicesId).WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 21 + roleLength)
+            };
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using NMolecules.Analyzers.EntityAnalyzers;
 using NMolecules.Analyzers.Test.EntityAnalyzerTests.SampleData;
 using Xunit;
@@ -81,40 +83,14 @@ namespace NMolecules.Analyzers.Test.EntityAnalyzerTests
         public async Task Analyze_WithEntityUsesDomainService_EmitsCompilerError()
         {
             var entity = GenerateClass(DomainService);
-            var serviceAsField = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(FieldLineNumber, 38, FieldLineNumber, 51);
-            var serviceAsParameterInCtor = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(CtorLineNumber, 42, CtorLineNumber, 47);
-            var serviceAsReturnValue = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
-            var serviceAsParameterInMethod = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
-            var serviceAsPropertyType = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
-            var serviceInMethodBody = CompilerError(Rules.EntitiesShouldNotUseServicesId)
-                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 34);
-            await VerifyCS.VerifyAnalyzerAsync(entity,
-                serviceAsField,
-                serviceAsParameterInCtor,
-                serviceAsParameterInMethod,
-                serviceAsReturnValue,
-                serviceAsPropertyType,
-                serviceInMethodBody);
+            await VerifyCS.VerifyAnalyzerAsync(entity, ExpectedServiceRoleViolations(entity, DomainService));
         }
 
         [Fact]
         public async Task Analyze_WithEntityUsesApplicationService_EmitsCompilerError()
         {
             var entity = GenerateClass(ApplicationService);
-            var serviceAsField = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(FieldLineNumber, 38, FieldLineNumber, 56);
-            var serviceAsParameterInCtor = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(CtorLineNumber, 42, CtorLineNumber, 47);
-            var serviceAsReturnValue = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
-            var serviceAsParameterInMethod = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
-            var serviceAsPropertyType = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
-            var serviceInMethodBody = CompilerError(Rules.EntitiesShouldNotUseServicesId)
-                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 39);
-            await VerifyCS.VerifyAnalyzerAsync(entity,
-                serviceAsField,
-                serviceAsParameterInCtor,
-                serviceAsParameterInMethod,
-                serviceAsReturnValue,
-                serviceAsPropertyType,
-                serviceInMethodBody);
+            await VerifyCS.VerifyAnalyzerAsync(entity, ExpectedServiceRoleViolations(entity, ApplicationService));
         }
         
         [Fact]
@@ -131,6 +107,23 @@ namespace NMolecules.Analyzers.Test.EntityAnalyzerTests
                 Session = new Dictionary<string, object> { { "type", type }, { "name", type.ToLowerInvariant() } }
             };
             return ServiceRoleShims.AppendIfNeeded(invalidUsageTemplate.TransformText(), type);
+        }
+
+        private static DiagnosticResult[] ExpectedServiceRoleViolations(string source, string dependencyType)
+        {
+            var roleLength = dependencyType.Length;
+            var fieldStart = 31 + roleLength;
+            var methodParameterStart = 44 + roleLength;
+
+            return new[]
+            {
+                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(FieldLineNumber, fieldStart, FieldLineNumber, fieldStart + roleLength),
+                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(CtorLineNumber, 42, CtorLineNumber, 47),
+                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38),
+                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, methodParameterStart, MethodLineNumber, methodParameterStart + roleLength),
+                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33),
+                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 21 + roleLength)
+            };
         }
     }
 }
