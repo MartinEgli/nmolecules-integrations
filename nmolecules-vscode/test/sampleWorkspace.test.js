@@ -8,6 +8,7 @@ const path = require('node:path');
 const { buildWorkspaceReport } = require('../src/inspectWorkspace');
 
 const sampleRoot = path.join(__dirname, '..', 'sample-workspace');
+const violationsRoot = path.join(__dirname, '..', 'sample-violations');
 
 function enumerateFiles(root) {
   const entries = [];
@@ -51,7 +52,7 @@ test('sample workspace inspection report matches the documented expectation', ()
   assert.equal(report.analyzerProjectReferenceProjects, 4);
   assert.equal(report.coreReferenceProjects, 4);
   assert.deepEqual(report.recommendations, [
-    'The workspace already exposes nMolecules references. The next useful step is wiring diagnostics into the VS Code Problems view.'
+    'The workspace already exposes nMolecules references. Refresh diagnostics to populate the VS Code Problems view.'
   ]);
 });
 
@@ -60,4 +61,22 @@ test('sample workspace projects are all wired to the local analyzer project', ()
 
   const nonAnalyzerProjects = report.projects.filter((project) => !project.usesAnalyzerProject).map((project) => project.projectPath);
   assert.deepEqual(nonAnalyzerProjects, []);
+});
+
+test('violations workspace contains dedicated extension usage documentation', () => {
+  assert.equal(fs.existsSync(path.join(violationsRoot, 'README.md')), true);
+  assert.equal(fs.existsSync(path.join(violationsRoot, 'docs', 'architecture.md')), true);
+  assert.equal(fs.existsSync(path.join(violationsRoot, 'docs', 'expected-diagnostics.md')), true);
+  assert.equal(fs.existsSync(path.join(violationsRoot, 'docs', 'using-the-extension.md')), true);
+  assert.equal(fs.existsSync(path.join(violationsRoot, 'nmolecules-violations.code-workspace')), true);
+});
+
+test('violations workspace uses local analyzer project references in every project', () => {
+  const report = buildWorkspaceReport(enumerateFiles(violationsRoot));
+
+  assert.equal(report.totalSolutions, 1);
+  assert.equal(report.totalProjects, 3);
+  assert.equal(report.analyzerPackageProjects, 0);
+  assert.equal(report.analyzerProjectReferenceProjects, 3);
+  assert.equal(report.coreReferenceProjects, 3);
 });

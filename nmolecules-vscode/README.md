@@ -6,6 +6,7 @@ Current scope:
 
 - inspect the current C# workspace for nMolecules package and project references
 - surface the current state in a dedicated output channel
+- refresh Roslyn analyzer diagnostics into the VS Code Problems view
 - provide a stable command entry point for opening workspace documentation
 
 This is intentionally a thin extension project.
@@ -14,6 +15,7 @@ The long-term direction is to reuse the same analyzer rule set that already exis
 ## Commands
 
 - `nMolecules: Inspect Workspace`
+- `nMolecules: Refresh Diagnostics`
 - `nMolecules: Open Workspace Docs`
 
 ## Sample Workspace
@@ -21,8 +23,9 @@ The long-term direction is to reuse the same analyzer rule set that already exis
 A detailed sample workspace is included in:
 
 - [sample-workspace/README.md](sample-workspace/README.md)
+- [sample-violations/README.md](sample-violations/README.md)
 
-It contains a layered .NET solution and the documentation files that the current extension knows how to open.
+They cover both a healthy layered .NET solution and a deliberately broken workspace that drives analyzer findings into the Problems view.
 
 ## Tests
 
@@ -32,8 +35,14 @@ Run:
 npm test --prefix nmolecules-vscode
 ```
 
+For the VS Code extension host path:
+
+```powershell
+npm install --prefix nmolecules-vscode
+npm run test:host --prefix nmolecules-vscode
+```
+
 ## Next Steps
 
-- connect the extension to Roslyn-based diagnostics for C# workspaces
-- surface rule help and diagnostics in VS Code Problems
+- surface rule help and diagnostics navigation in VS Code Problems
 - add marketplace packaging and publishing automation

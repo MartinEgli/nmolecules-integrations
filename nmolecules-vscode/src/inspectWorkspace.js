@@ -75,7 +75,7 @@ function buildRecommendations(report) {
   }
 
   if (recommendations.length === 0) {
-    recommendations.push('The workspace already exposes nMolecules references. The next useful step is wiring diagnostics into the VS Code Problems view.');
+    recommendations.push('The workspace already exposes nMolecules references. Refresh diagnostics to populate the VS Code Problems view.');
   }
 
   return recommendations;

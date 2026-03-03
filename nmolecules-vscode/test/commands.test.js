@@ -6,19 +6,23 @@ const { Buffer } = require('node:buffer');
 
 const {
   COMMANDS,
+  getDiagnosticsBuildArguments,
+  getDiagnosticsTarget,
   getDocsRoot,
   getTraceLevel,
   shouldAutoInspect,
+  shouldRefreshDiagnosticsOnStartup,
   registerCommands,
   readWorkspaceEntries,
   inspectWorkspace,
   openWorkspaceDocs
 } = require('../src/commands');
 
-test('registerCommands registers both extension commands', () => {
+test('registerCommands registers all extension commands', () => {
   const registered = [];
   const context = { subscriptions: [] };
   const outputChannel = { appendLine() {}, clear() {}, show() {} };
+  const diagnostics = { clear() {}, set() {} };
   const vscode = {
     commands: {
       registerCommand(id, handler) {
@@ -37,20 +41,23 @@ test('registerCommands registers both extension commands', () => {
     }
   };
 
-  registerCommands(vscode, context, outputChannel);
+  registerCommands(vscode, context, outputChannel, diagnostics);
 
   assert.deepEqual(
     registered.map((entry) => entry.id),
-    [COMMANDS.inspectWorkspace, COMMANDS.openWorkspaceDocs]
+    [COMMANDS.inspectWorkspace, COMMANDS.refreshDiagnostics, COMMANDS.openWorkspaceDocs]
   );
-  assert.equal(context.subscriptions.length, 3);
+  assert.equal(context.subscriptions.length, 4);
 });
 
 test('configuration helpers read extension settings with defaults', () => {
   const values = {
     docsRoot: 'workspace-docs',
     traceLevel: 'verbose',
-    autoInspectOnStartup: true
+    autoInspectOnStartup: true,
+    diagnosticsTarget: 'sample-violations/Banking.Sample.Violations.sln',
+    diagnosticsBuildArguments: ['-v', 'normal'],
+    refreshDiagnosticsOnStartup: true
   };
   const vscode = {
     workspace: {
@@ -67,7 +74,10 @@ test('configuration helpers read extension settings with defaults', () => {
 
   assert.equal(getDocsRoot(vscode), 'workspace-docs');
   assert.equal(getTraceLevel(vscode), 'verbose');
+  assert.equal(getDiagnosticsTarget(vscode), 'sample-violations/Banking.Sample.Violations.sln');
+  assert.deepEqual(getDiagnosticsBuildArguments(vscode), ['-v', 'normal']);
   assert.equal(shouldAutoInspect(vscode), true);
+  assert.equal(shouldRefreshDiagnosticsOnStartup(vscode), true);
 });
 
 test('readWorkspaceEntries reads solution and project files from the workspace', async () => {

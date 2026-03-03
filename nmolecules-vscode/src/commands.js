@@ -1,11 +1,13 @@
 'use strict';
 
 const { TextDecoder } = require('util');
+const { refreshDiagnostics } = require('./diagnostics');
 const { buildWorkspaceReport, formatWorkspaceReport } = require('./inspectWorkspace');
 const { getDocumentationCandidates } = require('./docs');
 
 const COMMANDS = {
   inspectWorkspace: 'nmolecules.inspectWorkspace',
+  refreshDiagnostics: 'nmolecules.refreshDiagnostics',
   openWorkspaceDocs: 'nmolecules.openWorkspaceDocs'
 };
 
@@ -70,13 +72,26 @@ function getDocsRoot(vscodeApi) {
   return vscodeApi.workspace.getConfiguration('nmolecules').get('docsRoot', 'docs');
 }
 
+function getDiagnosticsTarget(vscodeApi) {
+  return vscodeApi.workspace.getConfiguration('nmolecules').get('diagnosticsTarget', '');
+}
+
+function getDiagnosticsBuildArguments(vscodeApi) {
+  return vscodeApi.workspace.getConfiguration('nmolecules').get('diagnosticsBuildArguments', ['-v', 'minimal']);
+}
+
 function shouldAutoInspect(vscodeApi) {
   return vscodeApi.workspace.getConfiguration('nmolecules').get('autoInspectOnStartup', false);
 }
 
-function registerCommands(vscodeApi, context, outputChannel) {
+function shouldRefreshDiagnosticsOnStartup(vscodeApi) {
+  return vscodeApi.workspace.getConfiguration('nmolecules').get('refreshDiagnosticsOnStartup', false);
+}
+
+function registerCommands(vscodeApi, context, outputChannel, diagnosticCollection) {
   const subscriptions = [
     vscodeApi.commands.registerCommand(COMMANDS.inspectWorkspace, () => inspectWorkspace(vscodeApi, outputChannel)),
+    vscodeApi.commands.registerCommand(COMMANDS.refreshDiagnostics, () => refreshDiagnostics(vscodeApi, outputChannel, diagnosticCollection)),
     vscodeApi.commands.registerCommand(COMMANDS.openWorkspaceDocs, () => openWorkspaceDocs(vscodeApi, getDocsRoot(vscodeApi)))
   ];
 
@@ -92,5 +107,8 @@ module.exports = {
   registerCommands,
   getTraceLevel,
   getDocsRoot,
-  shouldAutoInspect
+  getDiagnosticsTarget,
+  getDiagnosticsBuildArguments,
+  shouldAutoInspect,
+  shouldRefreshDiagnosticsOnStartup
 };

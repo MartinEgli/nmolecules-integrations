@@ -27,7 +27,8 @@ nmolecules-integrations/nmolecules-vscode/sample-workspace/nmolecules-sample.cod
 Then run:
 
 1. `nMolecules: Inspect Workspace`
-2. `nMolecules: Open Workspace Docs`
+2. `nMolecules: Refresh Diagnostics`
+3. `nMolecules: Open Workspace Docs`
 
 ## What The Extension Should Report
 
@@ -41,7 +42,9 @@ Expected current result:
 
 Because the sample uses a single local-project strategy, the current recommendation should be the positive path:
 
-- `The workspace already exposes nMolecules references. The next useful step is wiring diagnostics into the VS Code Problems view.`
+- `The workspace already exposes nMolecules references. Refresh diagnostics to populate the VS Code Problems view.`
+
+For the healthy sample, `nMolecules: Refresh Diagnostics` should produce no analyzer findings.
 
 ## Build The Sample
 
@@ -54,3 +57,9 @@ dotnet build Banking.Sample.sln -v minimal
 - [Architecture](docs/architecture.md)
 - [Layer Matrix](docs/layer-matrix.md)
 - [Expected Inspection Output](docs/expected-inspection-output.md)
+
+## Broken Companion Workspace
+
+If you want to demonstrate the Problems view with real nMolecules findings, also open:
+
+- [../sample-violations/README.md](../sample-violations/README.md)

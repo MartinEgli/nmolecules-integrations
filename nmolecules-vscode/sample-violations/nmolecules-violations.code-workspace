@@ -8,8 +8,8 @@
     "nmolecules.docsRoot": "docs",
     "nmolecules.traceLevel": "basic",
     "nmolecules.autoInspectOnStartup": false,
-    "nmolecules.refreshDiagnosticsOnStartup": false,
-    "nmolecules.diagnosticsTarget": "Banking.Sample.sln",
+    "nmolecules.refreshDiagnosticsOnStartup": true,
+    "nmolecules.diagnosticsTarget": "Banking.Sample.Violations.sln",
     "nmolecules.diagnosticsBuildArguments": [
       "-v",
       "minimal"

@@ -12,7 +12,7 @@ Projects using analyzer project refs: 4
 Projects using nMolecules core refs: 4
 
 Recommendations:
-- The workspace already exposes nMolecules references. The next useful step is wiring diagnostics into the VS Code Problems view.
+- The workspace already exposes nMolecules references. Refresh diagnostics to populate the VS Code Problems view.
 ```
 
 If the output differs, the most likely causes are:

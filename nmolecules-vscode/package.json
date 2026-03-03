@@ -18,6 +18,7 @@
   ],
   "activationEvents": [
     "onCommand:nmolecules.inspectWorkspace",
+    "onCommand:nmolecules.refreshDiagnostics",
     "onCommand:nmolecules.openWorkspaceDocs",
     "onLanguage:csharp"
   ],
@@ -27,6 +28,11 @@
       {
         "command": "nmolecules.inspectWorkspace",
         "title": "nMolecules: Inspect Workspace",
+        "category": "nMolecules"
+      },
+      {
+        "command": "nmolecules.refreshDiagnostics",
+        "title": "nMolecules: Refresh Diagnostics",
         "category": "nMolecules"
       },
       {
@@ -42,6 +48,27 @@
           "type": "boolean",
           "default": false,
           "description": "Run the nMolecules workspace inspection automatically when the extension activates."
+        },
+        "nmolecules.refreshDiagnosticsOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run a dotnet build for the configured workspace target and publish nMolecules diagnostics into the Problems view when the extension activates."
+        },
+        "nmolecules.diagnosticsTarget": {
+          "type": "string",
+          "default": "",
+          "description": "Optional relative or absolute path to the solution or project that the extension should build when refreshing diagnostics."
+        },
+        "nmolecules.diagnosticsBuildArguments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "-v",
+            "minimal"
+          ],
+          "description": "Extra dotnet build arguments to append when refreshing diagnostics."
         },
         "nmolecules.docsRoot": {
           "type": "string",
@@ -63,6 +90,10 @@
   },
   "scripts": {
     "test": "node --test ./test/*.test.js",
-    "smoke": "node ./test/package-manifest.test.js"
+    "smoke": "node ./test/package-manifest.test.js",
+    "test:host": "node ./test-host/runTest.js"
+  },
+  "devDependencies": {
+    "@vscode/test-electron": "^2.5.2"
   }
 }
