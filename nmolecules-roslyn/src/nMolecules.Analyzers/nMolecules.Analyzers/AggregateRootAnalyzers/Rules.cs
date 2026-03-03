@@ -7,6 +7,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
         public const string AggregateRootsShouldNotUseRepositoriesRuleId = "XMoleculesAggregateRoot0001";
         public const string AggregateRootsShouldNotUseServicesRuleId = "XMoleculesAggregateRoot0002";
         public const string AggregateRootsShouldHaveIdRuleId = "XMoleculesAggregateRoot0003";
+        public const string AggregateRootsShouldHaveSingleIdRuleId = "XMoleculesAggregateRoot0004";
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseRepositoriesRule = new(
             AggregateRootsShouldNotUseRepositoriesRuleId,
@@ -52,5 +53,14 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             new LocalizableResourceString(nameof(Resources.AggregateRootShouldHaveIdDescription),
                 Resources.ResourceManager,
                 typeof(Resources)));
+
+        public static readonly DiagnosticDescriptor AggregateRootsShouldHaveSingleIdRule = new(
+            AggregateRootsShouldHaveSingleIdRuleId,
+            "Aggregate roots should declare a single identity",
+            "Aggregate root should declare exactly one [Identity] member",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "Aggregate roots should expose a single model identity for their consistency boundary.");
     }
 }

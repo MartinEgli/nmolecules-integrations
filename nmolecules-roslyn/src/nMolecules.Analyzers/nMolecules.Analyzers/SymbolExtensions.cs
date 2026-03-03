@@ -9,6 +9,7 @@ namespace NMolecules.Analyzers
     {
         private const string DomainServiceAttributeName = "DomainServiceAttribute";
         private const string ApplicationServiceAttributeName = "ApplicationServiceAttribute";
+        private const string IdentityAttributeName = "IdentityAttribute";
 
         public static bool Is<TAttribute>(this ITypeSymbol type) where TAttribute : Attribute
         {
@@ -48,11 +49,16 @@ namespace NMolecules.Analyzers
             return type.HasAttributeNamed(nameof(AggregateRootAttribute));
         }
 
+        public static bool IsIdentity(this ISymbol symbol)
+        {
+            return symbol.HasAttributeNamed(IdentityAttributeName);
+        }
+
         public static bool IsEnum(this ITypeSymbol symbol) => symbol.TypeKind == TypeKind.Enum;
 
-        private static bool HasAttributeNamed(this ITypeSymbol type, params string[] attributeNames)
+        public static bool HasAttributeNamed(this ISymbol symbol, params string[] attributeNames)
         {
-            var attributes = type.GetAttributes().ToArray();
+            var attributes = symbol.GetAttributes().ToArray();
             return attributes.Any(it => it.AttributeClass is { Name: var name } && attributeNames.Contains(name));
         }
 

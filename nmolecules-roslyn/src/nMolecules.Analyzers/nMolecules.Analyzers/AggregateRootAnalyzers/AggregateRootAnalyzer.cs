@@ -13,7 +13,8 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Rules.AggregateRootsShouldNotUseRepositoriesRule,
             Rules.AggregateRootsShouldNotUseServicesRule,
-            Rules.AggregateRootsShouldHaveIdRule);
+            Rules.AggregateRootsShouldHaveIdRule,
+            Rules.AggregateRootsShouldHaveSingleIdRule);
 
         protected override void Initialize(AnalysisContext<AggregateRootAttribute> context)
         {
@@ -23,7 +24,12 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             context.RegisterSymbolAction(fieldAnalyzer.AnalyzeField, SymbolKind.Field);
             context.RegisterSymbolAction(methodAnalyzer.AnalyzeMethod, SymbolKind.Method);
             context.RegisterSymbolAction(propertyAnalyzer.AnalyzeProperty, SymbolKind.Property);
-            context.RegisterSymbolAction(it => AnalyzeEntityForId(it, typeSymbol => typeSymbol.ViolatesMandatoryId()), SymbolKind.NamedType);
+            context.RegisterSymbolAction(
+                it => AnalyzeEntityForId(
+                    it,
+                    typeSymbol => typeSymbol.ViolatesMandatoryId(),
+                    typeSymbol => typeSymbol.ViolatesMultipleIdentities()),
+                SymbolKind.NamedType);
             context.RegisterSyntaxNodeAction(methodAnalyzer.AnalyzeDeclarations, SyntaxKind.LocalDeclarationStatement);
         }
     }

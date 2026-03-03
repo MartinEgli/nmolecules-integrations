@@ -1,87 +1,63 @@
 using System;
-using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace NMolecules.Analyzers
 {
     public static class IdAnalyzer
     {
-        public static void AnalyzeEntityForId(SymbolAnalysisContext it, Func<INamedTypeSymbol, Diagnostic> onViolation)
+        public static void AnalyzeEntityForId(
+            SymbolAnalysisContext it,
+            Func<INamedTypeSymbol, Diagnostic> onMissingIdentity,
+            Func<INamedTypeSymbol, Diagnostic> onMultipleIdentities)
         {
             var classSymbol = (INamedTypeSymbol)it.Symbol;
-            var hasIdentity = HasIdentity(classSymbol);
+            var identityCount = CountIdentities(classSymbol);
 
-            if (!hasIdentity)
+            if (identityCount == 0)
             {
-                it.ReportDiagnostic(onViolation(classSymbol));
+                it.ReportDiagnostic(onMissingIdentity(classSymbol));
+            }
+            else if (identityCount > 1)
+            {
+                it.ReportDiagnostic(onMultipleIdentities(classSymbol));
             }
         }
 
-        private static bool HasIdentity(INamedTypeSymbol classSymbol)
+        private static int CountIdentities(INamedTypeSymbol classSymbol)
         {
-            var hasIdentity = false;
-            foreach (var syntaxReference in classSymbol.DeclaringSyntaxReferences)
+            var baseCount = 0;
+            var classSymbolBaseType = classSymbol.BaseType;
+            if (classSymbolBaseType is not null && classSymbolBaseType.SpecialType != SpecialType.System_Object)
             {
-                if (syntaxReference.GetSyntax() is ClassDeclarationSyntax classDeclarationSyntax)
-                {
-                    hasIdentity = HasIdentity(classDeclarationSyntax);
-                }
-
-                if (hasIdentity)
-                {
-                    break;
-                }
+                baseCount = CountIdentities(classSymbolBaseType);
             }
 
-            if (!hasIdentity)
-            {
-                var classSymbolBaseType = classSymbol.BaseType;
-                if (!classSymbolBaseType!.Name.Equals("Object"))
-                {
-                    return HasIdentity(classSymbolBaseType);
-                }
-            }
-
-            return hasIdentity;
+            return CountOwnIdentities(classSymbol) + baseCount;
         }
 
-        private static bool HasIdentity(ClassDeclarationSyntax classDeclarationSyntax)
+        private static int CountOwnIdentities(INamedTypeSymbol classSymbol)
         {
-            var hasIdentity = false;
-            foreach (var member in classDeclarationSyntax.Members)
+            var identities = 0;
+            foreach (var member in classSymbol.GetMembers())
             {
-                hasIdentity = member switch
+                if (member.IsImplicitlyDeclared)
                 {
-                    FieldDeclarationSyntax fieldDeclarationSyntax => HasIdentity(fieldDeclarationSyntax.AttributeLists),
-                    PropertyDeclarationSyntax propertyDeclarationSyntax => HasIdentity(propertyDeclarationSyntax.AttributeLists),
-                    _ => false
-                };
+                    continue;
+                }
 
-                if (hasIdentity)
+                if (member is not IFieldSymbol and not IPropertySymbol)
                 {
-                    break;
+                    continue;
+                }
+
+                if (member.IsIdentity())
+                {
+                    identities++;
                 }
             }
 
-            return hasIdentity;
-        }
-
-        private static bool HasIdentity(SyntaxList<AttributeListSyntax> attributeLists)
-        {
-            var hasIdentity = false;
-            foreach (var attributeList in attributeLists)
-            {
-                hasIdentity = attributeList.Attributes.Any(it =>
-                {
-                    var name = it.Name.ToString();
-                    var equals = name.Equals("Identity");
-                    return equals;
-                });
-            }
-
-            return hasIdentity;
+            return identities;
         }
     }
 }

@@ -58,5 +58,27 @@ namespace NMolecules.Analyzers.Test.EntityAnalyzerTests
             var compileError = CompilerError(Rules.EntitiesShouldHaveIdRuleId).WithSpan(6, 18, 6, 33);
             await VerifyCS.VerifyAnalyzerAsync(validEntity, ShouldEmitIssues(compileError));
         }
+
+        [Fact]
+        public async Task EntityShouldHaveId_WithMultipleIdentityMembers_EmitsError()
+        {
+            var testCode = @"namespace NMolecules.Analyzers.Test.EntityAnalyzerTests.SampleData
+{
+    using NMolecules.DDD;
+
+    [Entity]
+    public class {|#0:EntityWithMultipleIds|}
+    {
+        [Identity]
+        private readonly string id;
+
+        [Identity]
+        public string LegacyId => id;
+    }
+}";
+
+            var compileError = CompilerError(Rules.EntitiesShouldHaveSingleIdRuleId).WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(compileError));
+        }
     }
 }

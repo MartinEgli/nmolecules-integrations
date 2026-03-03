@@ -58,5 +58,30 @@ namespace NMolecules.Analyzers.Test.AggregateRootAnalyzerTests
             var compileError = CompilerError(Rules.AggregateRootsShouldHaveIdRuleId).WithSpan(6, 18, 6, 40);
             await VerifyCS.VerifyAnalyzerAsync(validAggregateRoot, ShouldEmitIssues(compileError));
         }
+
+        [Fact]
+        public async Task AggregateRootShouldHaveId_WithIdentityInBaseTypeAndOwnType_EmitsError()
+        {
+            var testCode = @"namespace NMolecules.Analyzers.Test.AggregateRootAnalyzerTests.SampleData
+{
+    using NMolecules.DDD;
+
+    public class AggregateRootBase
+    {
+        [Identity]
+        protected readonly string id;
+    }
+
+    [AggregateRoot]
+    public class {|#0:AggregateRootWithMultipleIds|} : AggregateRootBase
+    {
+        [Identity]
+        public string SecondaryId => id;
+    }
+}";
+
+            var compileError = CompilerError(Rules.AggregateRootsShouldHaveSingleIdRuleId).WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(compileError));
+        }
     }
 }

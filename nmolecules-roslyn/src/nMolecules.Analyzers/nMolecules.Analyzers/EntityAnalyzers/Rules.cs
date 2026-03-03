@@ -8,6 +8,7 @@ namespace NMolecules.Analyzers.EntityAnalyzers
         public const string EntitiesShouldNotUseAggregateRootsId = "XMoleculesEntity0002";
         public const string EntitiesShouldNotUseServicesId = "XMoleculesEntity0003";
         public const string EntitiesShouldHaveIdRuleId = "XMoleculesEntity0004";
+        public const string EntitiesShouldHaveSingleIdRuleId = "XMoleculesEntity0005";
 
         public static readonly DiagnosticDescriptor EntitiesShouldNotUseRepositoriesRule = new(
             EntitiesShouldNotUseRepositoriesId,
@@ -68,5 +69,14 @@ namespace NMolecules.Analyzers.EntityAnalyzers
             new LocalizableResourceString(nameof(Resources.EntityShouldHaveIdDescription),
                 Resources.ResourceManager,
                 typeof(Resources)));
+
+        public static readonly DiagnosticDescriptor EntitiesShouldHaveSingleIdRule = new(
+            EntitiesShouldHaveSingleIdRuleId,
+            "Entities should declare a single identity",
+            "Entity should declare exactly one [Identity] member",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "Entities represent continuity through a single model identity.");
     }
 }

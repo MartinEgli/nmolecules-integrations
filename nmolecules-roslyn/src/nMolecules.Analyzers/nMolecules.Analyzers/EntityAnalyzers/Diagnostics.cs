@@ -27,5 +27,6 @@ namespace NMolecules.Analyzers.EntityAnalyzers
         private static Diagnostic ViolatesAggregateRootUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.EntitiesShouldNotUseAggregateRootsRule);
         private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.EntitiesShouldNotUseServicesRule);
         public static Diagnostic ViolatesMandatoryId(this ISymbol symbol) => symbol.Diagnostic(Rules.EntitiesShouldHaveIdRule);
+        public static Diagnostic ViolatesMultipleIdentities(this ISymbol symbol) => symbol.Diagnostic(Rules.EntitiesShouldHaveSingleIdRule);
     }
 }

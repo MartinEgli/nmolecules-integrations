@@ -21,5 +21,6 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
         private static Diagnostic ViolatesRepositoryUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseRepositoriesRule);
         private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseServicesRule);
         public static Diagnostic ViolatesMandatoryId(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldHaveIdRule);
+        public static Diagnostic ViolatesMultipleIdentities(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldHaveSingleIdRule);
     }
 }
