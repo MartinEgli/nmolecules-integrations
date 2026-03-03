@@ -55,7 +55,11 @@ namespace NMolecules.Analyzers.Test.Verifiers
             var test = new CSharpTest
             {
                 TestCode = source,
-                FixedCode = fixedSource
+                FixedCode = fixedSource,
+                TestState =
+                {
+                    AdditionalReferences = { "nMolecules.DDD.dll" }
+                }
             };
 
             test.ExpectedDiagnostics.AddRange(expected);

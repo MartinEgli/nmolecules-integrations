@@ -24,6 +24,20 @@ namespace NMolecules.Analyzers.Test.DomainServiceAnalyzerTests
             await VerifyCS.VerifyAnalyzerAsync(testCode);
         }
 
+        [Fact]
+        public async Task Analyze_WithApplicationServiceUsesApplicationService_DoesNotEmitCompilerError()
+        {
+            var testCode = GenerateIgnoredHostClass(ApplicationService, ApplicationService);
+            await VerifyCS.VerifyAnalyzerAsync(testCode);
+        }
+
+        [Fact]
+        public async Task Analyze_WithDomainServiceUsesApplicationServiceInMultiVariableDeclaration_DoesNotEmitCompilerError()
+        {
+            var testCode = GenerateMultiVariableLocalDeclarationClass(ApplicationService);
+            await VerifyCS.VerifyAnalyzerAsync(testCode);
+        }
+
         private static string GenerateClass(string dependencyType)
         {
             var code = $@"namespace NMolecules.Analyzers.Test.DomainServiceAnalyzerTests.SampleData
@@ -51,6 +65,64 @@ namespace NMolecules.Analyzers.Test.DomainServiceAnalyzerTests
         {{
             var local = new Some{dependencyType}();
             return local;
+        }}
+    }}
+}}";
+
+            return ServiceRoleShims.AppendIfNeeded(code, DomainService, dependencyType);
+        }
+
+        private static string GenerateIgnoredHostClass(string hostType, string dependencyType)
+        {
+            var code = $@"namespace NMolecules.Analyzers.Test.DomainServiceAnalyzerTests.SampleData
+{{
+    using NMolecules.DDD;
+
+    [{dependencyType}]
+    public class Some{dependencyType}
+    {{
+    }}
+
+    [{hostType}]
+    public sealed class ValidHost
+    {{
+        private readonly Some{dependencyType} dependency;
+
+        public ValidHost(Some{dependencyType} value)
+        {{
+            Value = value;
+        }}
+
+        public Some{dependencyType} Value {{ get; set; }}
+
+        public Some{dependencyType} SomeMethod(Some{dependencyType} input)
+        {{
+            var local = new Some{dependencyType}();
+            return local;
+        }}
+    }}
+}}";
+
+            return ServiceRoleShims.AppendIfNeeded(code, hostType, dependencyType);
+        }
+
+        private static string GenerateMultiVariableLocalDeclarationClass(string dependencyType)
+        {
+            var code = $@"namespace NMolecules.Analyzers.Test.DomainServiceAnalyzerTests.SampleData
+{{
+    using NMolecules.DDD;
+
+    [{dependencyType}]
+    public class Some{dependencyType}
+    {{
+    }}
+
+    [DomainService]
+    public sealed class ValidDomainService
+    {{
+        public void SomeMethod()
+        {{
+            Some{dependencyType} first = null, second = null;
         }}
     }}
 }}";
