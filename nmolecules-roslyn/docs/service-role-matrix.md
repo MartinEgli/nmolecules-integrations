@@ -1,103 +1,102 @@
 # nMolecules Service Role Matrix
 
-Stand: 2026-03-03
+Status: March 3, 2026
 
-Dieses Dokument beschreibt die fachliche Trennung zwischen `Service`, `DomainService` und `ApplicationService`.
-Es ist die Grundlage fuer kuenftige dedizierte Analyzer-Regeln.
+This document describes the functional separation between `Service`, `DomainService`, and `ApplicationService`.
+It is the basis for dedicated analyzer rules.
 
-## Ziel
+## Goal
 
-Aktuell behandelt der Analyzer `DomainService` und `ApplicationService` bewusst wie `Service`, damit die bestehenden Regeln sofort greifen.
-Langfristig reicht das nicht aus, weil die drei Rollen fachlich nicht identisch sind.
+The analyzer currently treats `DomainService` and `ApplicationService` as service-like roles in several shared restrictions so that existing rules remain conservative and immediately useful.
+That is practical in the short term, but not sufficient in the long term because the three roles are not semantically identical.
 
-## Rollen
+## Roles
 
 ### `Service`
 
-Bedeutung:
+Meaning:
 
-- historischer, allgemeiner Marker im aktuellen API-Modell
+- historical, general-purpose marker in the current API
 
-Einordnung:
+Position:
 
-- kurzfristig kompatibler Sammelbegriff
-- sollte fuer neue Regeln nicht die einzige semantische Basis bleiben
+- acceptable as a compatibility umbrella
+- not precise enough as the long-term semantic basis
 
 ### `DomainService`
 
-Bedeutung:
+Meaning:
 
-- Teil des Domain-Modells
-- kapselt Domain-Logik, die nicht natuerlich in Entity, Aggregate oder ValueObject liegt
+- part of the domain model
+- captures domain behavior that does not naturally belong in an entity, aggregate, or value object
 
-Erwartungen:
+Expectations:
 
-- keine Infrastrukturverantwortung
-- keine UI-Verantwortung
-- soll Domain-Logik ausdruecken, nicht nur orchestrieren
+- no infrastructure responsibility
+- no UI responsibility
+- should express domain logic, not workflow orchestration
 
 ### `ApplicationService`
 
-Bedeutung:
+Meaning:
 
-- orchestriert Use Cases
-- koordiniert Domain-Objekte und Infrastrukturzugriffe
-- gehoert zur Application-Schicht, nicht zum Domain-Modell
+- orchestrates use cases
+- coordinates domain objects and supporting abstractions
+- belongs to the application layer, not the domain model
 
-Erwartungen:
+Expectations:
 
-- darf Workflows koordinieren
-- darf Repositories und Infrastruktur-abstraktionen konsumieren
-- soll keine eigentliche Domain-Policy ersetzen
+- may coordinate workflows
+- may consume repositories and domain services
+- should not replace domain policy with application scripting
 
-## Kurzfristige Regelstrategie
+## Short-Term Rule Strategy
 
 Phase 1:
 
-- `DomainService` und `ApplicationService` werden in allgemeinen Service-Verboten mitberuecksichtigt
-- dadurch bleiben bestehende Regeln konservativ und sicher
-- Legacy-`Service` wird mit einer Migrationswarnung markiert
+- `DomainService` and `ApplicationService` are included in the general service restrictions
+- plain legacy `Service` now also emits a migration warning
 
-Beispiele:
+Examples:
 
-- Entity darf `DomainService` nicht referenzieren
-- Entity darf `ApplicationService` nicht referenzieren
-- Repository darf `DomainService` nicht referenzieren
-- Repository darf `ApplicationService` nicht referenzieren
-- ValueObject darf keine der drei Service-Rollen referenzieren
+- entity must not reference `DomainService`
+- entity must not reference `ApplicationService`
+- repository must not reference `DomainService`
+- repository must not reference `ApplicationService`
+- value object must not reference any of the three service roles
 
-## Zielregeln fuer spaetere Phasen
+## Target Rules for Later Phases
 
-### Regeln fuer `DomainService`
+### Rules for `DomainService`
 
-- DomainService darf nicht im Infrastructure Layer liegen
-- DomainService soll keine UI-Typen referenzieren
-- DomainService soll keine technischen Framework-Typen als primäre API tragen
-- DomainService darf keine ApplicationService-Typen referenzieren
+- must not depend on `ApplicationService`
+- should not expose UI types
+- should not expose infrastructure-heavy framework APIs
+- should remain clearly inside the domain layer
 
-### Regeln fuer `ApplicationService`
+### Rules for `ApplicationService`
 
-- ApplicationService darf Domain-Objekte koordinieren
-- ApplicationService darf Repositories konsumieren
-- ApplicationService darf DomainService konsumieren
-- ApplicationService soll nicht selbst als Domain-Baustein verwendet werden
-- ApplicationService soll nicht auf den unscharfen Legacy-Marker `Service` setzen
+- may coordinate domain objects
+- may consume repositories
+- may consume domain services
+- should not also be a domain building block
+- should not depend on the ambiguous legacy `Service` marker
 
-### Regeln fuer historischen `Service`
+### Rules for Legacy `Service`
 
-- bestehende Kompatibilitaet erhalten
-- fuer neue Projekte bevorzugt `DomainService` oder `ApplicationService` statt nur `Service`
-- Migrationswarnung auf praeziseren Marker aktiv
+- compatibility remains available for now
+- new work should prefer `DomainService` or `ApplicationService`
+- the current migration warning is the first enforcement step
 
-## Offene Entscheidungen
+## Open Decisions
 
-- Soll `Service` langfristig deprecated werden oder als Alias fuer `DomainService` bestehen bleiben?
-- Braucht `ApplicationService` eigene Diagnose-IDs oder reicht eine Layer-Regel?
-- Sollen Repositories Application Services wirklich strikt verbieten oder nur Domain Services?
+- should `Service` eventually be deprecated or remain a compatibility alias?
+- does `ApplicationService -> ApplicationService` make sense as a valid dependency?
+- should repositories forbid application services explicitly, or is the shared service restriction sufficient?
 
-## Naechste technische Schritte
+## Next Technical Steps
 
-1. `ApplicationService -> ApplicationService` fachlich entscheiden
-2. `DomainService`-Signaturen gegen UI-/Infrastrukturtypen absichern
-3. `Service`-Migrationspfad dokumentarisch und paketseitig festziehen
-4. Layer-Regeln mit den Service-Rollen verknuepfen
+1. decide `ApplicationService -> ApplicationService`
+2. harden `DomainService` signatures against UI and infrastructure types
+3. document and stabilize the `Service` migration path
+4. connect the service role matrix to layer rules

@@ -1,136 +1,86 @@
 # nMolecules DDD Rule Catalog
 
-Stand: 2026-03-03
+Status: March 3, 2026
 
-Dieses Dokument definiert den ersten gemeinsamen Regelkatalog fuer die DDD-Pruefungen.
-Er ist die fachliche Grundlage fuer:
+This document defines the first shared rule catalog for DDD checks.
+It is the functional foundation for:
 
-- Roslyn Analyzer in Visual Studio
-- VSIX-Integration
-- spaetere Visual-Studio-Code-Integration
+- Roslyn analyzers
+- Visual Studio integration
+- Visual Studio Code integration
+- user and contributor documentation
 
-## Ziel
+All IDE integrations should consume the same rule semantics.
+Only the presentation should differ per host, not the domain meaning of the diagnostics.
 
-Alle IDE-Integrationen sollen dieselben fachlichen Regeln verwenden.
-Unterschiedlich darf nur die Darstellung in der IDE sein, nicht die Domaenenlogik der Diagnosen.
+## Rule Groups
 
-## Regelgruppen
+### Group A: Identity and Structural Rules
 
-### Gruppe A: Strukturregeln
+- entity must declare exactly one identity
+- aggregate root must declare exactly one identity
+- identity is only valid inside entity or aggregate root
+- value object must not declare identity
+- value object should implement `IEquatable<T>`
+- value object should be `sealed` when it is a class
 
-- AggregateRoot muss eine Identity besitzen
-- Entity muss eine Identity besitzen
-- ValueObject muss unveraenderlich sein
-- ValueObject soll `IEquatable<T>` implementieren
-- ValueObject soll `sealed` sein, sofern es eine Klasse ist
+### Group B: Dependency Rules
 
-### Gruppe B: Abhaengigkeitsregeln
+- aggregate root must not use repository
+- aggregate root must not use service roles
+- aggregate root must not directly reference aggregate root
+- entity must not use repository
+- entity must not use aggregate root
+- entity must not use service roles
+- repository must not use service roles
+- value object must not use entity
+- value object must not use aggregate root
+- value object must not use repository
+- value object must not use service roles
+- domain service must not use application service
+- factory must not use application service
+- application service should not depend on plain legacy service
 
-- AggregateRoot darf kein Repository verwenden
-- AggregateRoot darf keinen Service verwenden
-- Entity darf kein Repository verwenden
-- Entity darf keinen AggregateRoot verwenden
-- Entity darf keinen Service verwenden
-- Repository darf keinen Service verwenden
-- ValueObject darf keine Entity verwenden
-- ValueObject darf keinen Service verwenden
-- ValueObject darf kein Repository verwenden
-- ValueObject darf keinen AggregateRoot verwenden
+### Group C: Role Rules
 
-### Gruppe C: Layering- und Architekturregeln
+- application service must not also be a domain building block
+- plain legacy service should migrate to a more specific role
 
-- Domain Layer darf Infrastructure nicht referenzieren
-- Domain Layer darf UI nicht referenzieren
-- Application Layer darf UI nicht referenzieren
-- Infrastrukturregeln fuer Module und Bounded Contexts werden spaeter erganzt
+### Group D: Future Architecture Rules
 
-### Gruppe D: Rollenregeln fuer neue Attribute
+- domain layer must not reference infrastructure
+- domain layer must not reference UI
+- application layer boundaries must be clarified
+- module and bounded context rules will be added later
 
-- DomainService darf keine Infrastrukturdetails kapseln
-- ApplicationService darf keine Domain-Policy direkt ersetzen
-- DomainEventHandler darf nur erlaubte Schichtabhaengigkeiten besitzen
+## Current MVP Focus
 
-## MVP-Scope
+Phase 1 concentrates on rules that are either already present in code or close to being enforceable:
 
-Phase 1 konzentriert sich auf Regeln, die bereits im aktuellen Code oder mit kleinem Ausbau technisch erreichbar sind.
+- keep existing rules stable and documented
+- finish service-role separation
+- harden repository and domain service signatures
+- keep rule IDs, messages, and tests aligned
 
-### Bereits im Analyzer-Repo vorhanden
+## Rule Metadata Requirements
 
-- XMoleculesAggregateRoot0001
-- XMoleculesAggregateRoot0002
-- XMoleculesAggregateRoot0003
-- XMoleculesEntity0001
-- XMoleculesEntity0002
-- XMoleculesEntity0003
-- XMoleculesEntity0004
-- XMoleculesRepository0001
-- XMoleculesValueObject0001
-- XMoleculesValueObject0002
-- XMoleculesValueObject0003
-- XMoleculesValueObject0004
-- XMoleculesValueObject0005
-- XMoleculesValueObject1001
-- XMoleculesValueObject1002
+Each rule should ultimately have:
 
-### MVP-Regeln fuer die erste Ausbauphase
+- stable diagnostic ID
+- category
+- severity
+- short message
+- explanation
+- positive and negative test cases
+- optional code-fix expectation
 
-- bestehende Regeln stabilisieren und voll dokumentieren
-- Regelmetadaten vereinheitlichen
-- Release-Tracking bereinigen
-- Architekturregeln fuer Layer vorbereiten
-- Regeln fuer `DomainService` und `ApplicationService` spezifizieren
+## Definition of Done for New Rules
 
-## Regeldefinition je Diagnose
+A rule is only done when:
 
-Jede Regel soll kuenftig mindestens folgende Informationen haben:
-
-- Diagnose-ID
-- fachlicher Name
-- technische Beschreibung
-- Severity Default
-- positive Beispiele
-- negative Beispiele
-- Quick-Fix-Moeglichkeit ja oder nein
-- Dokumentationslink
-
-## Priorisierte Tasks
-
-### Block 1: Bestehende Regeln absichern
-
-- vorhandene Regel-IDs inventarisieren
-- alle Regeltexte auf Konsistenz pruefen
-- Tests den Regelbeschreibungen zuordnen
-- `AnalyzerReleases.*` mit realer Implementierung abgleichen
-
-### Block 2: Technische Basis verbessern
-
-- gemeinsame Abstraktion fuer Regeldefinitionen bewerten
-- Diagnoseerzeugung vereinheitlichen
-- gemeinsame Testdatenkonventionen definieren
-- `.editorconfig`-Konfiguration vorbereiten
-
-### Block 3: Neue Regeln vorbereiten
-
-- Layer-Regeln fuer `nMolecules.Architecture` spezifizieren
-- `DomainService`-Regeln spezifizieren
-- `ApplicationService`-Regeln spezifizieren
-- Bounded-Context- und Modulregeln priorisieren
-
-## Regeln fuer Visual Studio und VS Code
-
-Die folgende Trennung ist wichtig:
-
-- Fachregel und Diagnose-ID leben im Analyzer-Regelkatalog
-- Visual Studio liefert Roslyn-Diagnosen, Quick Fixes und VSIX-UX
-- VS Code soll dieselben Regeln und IDs anzeigen, unabhaengig vom technischen Adapter
-
-## Definition of Done fuer neue Regeln
-
-Eine neue Regel ist erst fertig, wenn:
-
-- die Fachregel dokumentiert ist
-- eine stabile Diagnose-ID existiert
-- positive und negative Testfaelle vorhanden sind
-- Severity und Message festgelegt sind
-- klar ist, ob ein CodeFix angeboten wird
-- die Regel in Visual Studio und spaeter in VS Code dieselbe Bedeutung hat
+- the functional rule is documented
+- the diagnostic ID is stable
+- positive and negative tests exist
+- severity and message are fixed
+- it is clear whether a code fix exists
+- the same meaning can be surfaced in Visual Studio and later in VS Code

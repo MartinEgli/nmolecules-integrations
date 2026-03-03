@@ -1,72 +1,72 @@
 # Release Tracking Investigation
 
-Stand: 2026-03-03
+Status: March 3, 2026
 
 ## Problem
 
-Das Analyzer-Projekt erzeugt mit aktivem Roslyn Release Tracking Warnungen `RS2002` oder `RS2003`, obwohl die Rule-IDs in den Analyzer-Klassen vorhanden sind.
+The analyzer project produces Roslyn release tracking warnings `RS2002` or `RS2003` even though the rule IDs are present in the analyzer classes.
 
-Beobachteter Effekt:
+Observed effect:
 
-- `AnalyzerReleases.Unshipped.md` fuehrt zu `RS2002`
-- Verschiebung derselben Regeln nach `AnalyzerReleases.Shipped.md` fuehrt zu `RS2003`
+- `AnalyzerReleases.Unshipped.md` can trigger `RS2002`
+- moving the same rules to `AnalyzerReleases.Shipped.md` can trigger `RS2003`
 
-Beide Varianten deuten darauf hin, dass ReleaseTrackingAnalyzers die bestehenden Diagnosen nicht korrekt den Analyzer-Typen zuordnen.
+Both outcomes suggest that `ReleaseTrackingAnalyzers` does not reliably map the existing diagnostics to the current analyzer types.
 
-## Wahrscheinliche Ursache
+## Likely Cause
 
-Die Analyzer implementieren ihre Logik ueber einen generischen Basistyp:
+The analyzers implement most logic through a generic base type:
 
 - `Analyzer<TAttribute> : DiagnosticAnalyzer`
 
-Moegliche Folge:
+Probable consequence:
 
-- ReleaseTrackingAnalyzers erkennen die konkreten `SupportedDiagnostics` der abgeleiteten Klassen nicht stabil
-- dadurch wirken alle Rule-IDs aus Sicht des Trackings wie "nicht mehr unterstuetzt"
+- `ReleaseTrackingAnalyzers` does not consistently recognize the concrete `SupportedDiagnostics` of the derived analyzers
+- as a result, rule IDs can appear unsupported even though they are still active
 
-Das passt zum aktuellen Symptom:
+This matches the current symptom:
 
-- nicht einzelne Rules sind betroffen
-- sondern saemtliche bestehenden Diagnose-IDs
+- not just a single rule is affected
+- the issue can apply to the whole analyzer set
 
-## Aktueller Umgang
+## Current Handling
 
-Im Projekt wird `RS2002` und `RS2003` temporaer unterdrueckt, damit:
+`RS2002` and `RS2003` are currently suppressed so that:
 
-- Builds lesbar bleiben
-- neue fachliche Regeln weiter entwickelt werden koennen
-- die Release-Dateien trotzdem als inhaltliche Basis gepflegt werden
+- builds remain readable
+- functional rule work can continue
+- the release tracking files can still be maintained as the semantic inventory
 
-## Saubere Langfrist-Loesungen
+## Long-Term Options
 
-### Option 1: Analyzer-Struktur refaktorieren
+### Option 1: Refactor Analyzer Structure
 
-- konkrete Analyzer direkt von `DiagnosticAnalyzer` ableiten lassen
-- generische Basisklasse entfernen oder auf Hilfsklassen reduzieren
+- derive analyzers directly from `DiagnosticAnalyzer`
+- reduce or remove the generic base class
 
-Vorteil:
+Advantage:
 
-- beste Chance auf native Kompatibilitaet mit ReleaseTrackingAnalyzers
+- best chance of native compatibility with `ReleaseTrackingAnalyzers`
 
-Nachteil:
+Disadvantage:
 
-- groessere Umstellung der Analyzer-Struktur
+- larger structural refactoring
 
-### Option 2: Release-Tracking-Ansatz anpassen
+### Option 2: Adjust the Tracking Strategy
 
-- ReleaseTrackingAnalyzers nicht als harte Build-Warnung verwenden
-- Rule-Inventar ueber eigene Dokumentation und Tests absichern
+- stop treating release tracking analyzers as hard build warnings
+- maintain rule inventory through docs and tests
 
-Vorteil:
+Advantage:
 
-- wenig struktureller Umbau
+- much less structural change
 
-Nachteil:
+Disadvantage:
 
-- weniger automatische Sicherung der Release-Historie
+- weaker automatic protection of release history
 
-## Empfohlener naechster Schritt
+## Recommended Next Step
 
-1. fachliche Arbeit an neuen Regeln fortsetzen
-2. parallel einen kleinen Spike planen:
-   einen Analyzer probeweise ohne generischen Basistyp implementieren und pruefen, ob `RS2002/RS2003` verschwindet
+1. continue functional rule work
+2. run a small spike with one analyzer implemented without the generic base type
+3. verify whether `RS2002/RS2003` disappears in that reduced scenario
