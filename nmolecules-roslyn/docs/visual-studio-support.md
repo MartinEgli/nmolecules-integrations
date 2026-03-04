@@ -1,6 +1,6 @@
 # Visual Studio Support
 
-Status: March 3, 2026
+Status: March 4, 2026
 
 ## Supported Host Matrix
 
@@ -41,6 +41,16 @@ devenv.exe src\nMolecules.Analyzers\nMolecules.Analyzers.Vsix\nMolecules.Analyze
 
 `dotnet build` is still useful for the analyzer libraries and tests, but not a reliable verification path for the VSIX packaging project because the classic VSSDK tasks require the Visual Studio build environment.
 
+## Static Validation Gate
+
+Before host smoke tests, run:
+
+```powershell
+pwsh .\tools\validate-vsix-metadata.ps1
+```
+
+This validates the VSIX manifest target matrix and analyzer/code-fix payload mapping without requiring a local Visual Studio instance.
+
 ## Smoke Test Checklist
 
 Run the following checklist once for Visual Studio 2022 and once for Visual Studio 2026.
@@ -59,7 +69,11 @@ devenv.exe /rootsuffix Exp /log
 7. Confirm that at least one code fix is offered for a known fixable rule.
 8. Close Visual Studio and inspect `%APPDATA%\Microsoft\VisualStudio\<instance>\ActivityLog.xml` if the extension did not load cleanly.
 
-## Current Local Limitation
+The full release process is documented in [visual-studio-release-checklist.md](visual-studio-release-checklist.md).
 
-On the current workstation used for this workspace update, `msbuild`, `devenv`, and `vswhere` were not available on the `PATH`.
-That means the manifest and project were modernized, but the VSIX packaging build itself was not yet locally validated against an installed Visual Studio instance.
+## Product Decision (4.x)
+
+Visual Studio support stays analyzer-first:
+
+- in scope: diagnostics and safe code-fixes
+- out of scope: custom tool windows and non-analyzer UX surfaces
