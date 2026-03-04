@@ -17,6 +17,12 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
             {
                 yield return symbol.Diagnostic(Rules.FactoriesShouldNotUseRepositoriesRule, symbol.DiagnosticTargetName(), type.DisplayName());
             }
+
+            if (type.IsFactory() &&
+                !SymbolEqualityComparer.Default.Equals(symbol.ContainingType, type))
+            {
+                yield return symbol.Diagnostic(Rules.FactoriesShouldNotUseFactoriesRule, symbol.DiagnosticTargetName(), type.DisplayName());
+            }
         }
 
         public static IEnumerable<Diagnostic> AnalyzeType(INamedTypeSymbol type)

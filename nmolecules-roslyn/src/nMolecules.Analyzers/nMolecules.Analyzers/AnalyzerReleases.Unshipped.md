@@ -17,6 +17,7 @@ XMoleculesAggregateRoot0007 | DDD | Error | Aggregate root should not depend on 
 XMoleculesFactory0001 | DDD | Error | Factory should not use application services
 XMoleculesFactory0002 | DDD | Error | Factory should not use repositories
 XMoleculesFactory0003 | DDD | Error | Factory must not also be a domain building block
+XMoleculesFactory0004 | DDD | Error | Factory should not use other factories
 XMoleculesService0001 | DDD | Warning | Service should use a specific role marker
 XMoleculesBoundedContext0001 | DDD | Warning | BoundedContext should define stable Id metadata
 XMoleculesBoundedContext0002 | DDD | Warning | BoundedContext should define readable Name metadata
@@ -41,6 +42,10 @@ XMoleculesLayered0001 | Architecture | Error | Domain layers must not depend on 
 XMoleculesLayered0002 | Architecture | Error | Domain layers must not depend on infrastructure layers
 XMoleculesLayered0003 | Architecture | Error | Domain layers must not depend on interface layers
 XMoleculesLayered0004 | Architecture | Error | Interface layers must not depend on domain layers directly
+XMoleculesOnion0001 | Architecture | Error | Onion dependencies must point inward only
+XMoleculesOnion0005 | Architecture | Error | Classic and simplified onion styles must not be mixed in one compilation
+XMoleculesHexagonal0002 | Architecture | Error | Primary ports must not depend on adapters
+XMoleculesHexagonal0003 | Architecture | Error | Secondary ports must not depend on adapters
 XMoleculesCQRS0001 | Architecture | Error | CQRS support requires both query and query handler markers
 XMoleculesCQRS0002 | Architecture | Error | Command handlers must not depend on query models directly
 XMoleculesCQRS0003 | Architecture | Error | Query handlers must stay on the read side
