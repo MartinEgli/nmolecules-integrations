@@ -10,6 +10,7 @@
         public const string Service = nameof(Service);
         public const string DomainService = nameof(DomainService);
         public const string ApplicationService = nameof(ApplicationService);
+        public const string AllowRepositoryComposition = nameof(AllowRepositoryComposition);
         public const string DomainEvent = nameof(DomainEvent);
         public const string DomainEventPublisher = nameof(DomainEventPublisher);
         public const string DomainEventHandler = nameof(DomainEventHandler);

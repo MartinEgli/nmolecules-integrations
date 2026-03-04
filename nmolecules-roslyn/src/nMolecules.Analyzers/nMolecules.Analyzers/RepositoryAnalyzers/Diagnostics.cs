@@ -12,7 +12,7 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
                 yield return symbol.ViolatesServiceUsage();
             }
 
-            if (type.IsRepository())
+            if (type.IsRepository() && !symbol.AllowsRepositoryComposition())
             {
                 yield return symbol.ViolatesRepositoryUsage(type);
             }

@@ -102,5 +102,51 @@ namespace NMolecules.Analyzers.Test.RepositoryAnalyzerTests
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
         }
+
+        [Fact]
+        public async Task Analyze_WithApprovedRepositoryCompositionOnType_DoesNotEmitViolations()
+        {
+            var testCode = ServiceRoleShims.AppendIfNeeded(@"namespace NMolecules.Analyzers.Test.RepositoryAnalyzerTests.SampleData
+{
+    using NMolecules.DDD;
+
+    [Repository]
+    public interface Accounts
+    {
+    }
+
+    [Repository]
+    [AllowRepositoryComposition]
+    public interface Payments
+    {
+        void Store(Accounts accounts);
+    }
+}", ElementNames.AllowRepositoryComposition);
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
+        }
+
+        [Fact]
+        public async Task Analyze_WithApprovedRepositoryCompositionOnMethod_DoesNotEmitViolations()
+        {
+            var testCode = ServiceRoleShims.AppendIfNeeded(@"namespace NMolecules.Analyzers.Test.RepositoryAnalyzerTests.SampleData
+{
+    using NMolecules.DDD;
+
+    [Repository]
+    public interface Accounts
+    {
+    }
+
+    [Repository]
+    public interface Payments
+    {
+        [AllowRepositoryComposition]
+        void Store(Accounts accounts);
+    }
+}", ElementNames.AllowRepositoryComposition);
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
+        }
     }
 }

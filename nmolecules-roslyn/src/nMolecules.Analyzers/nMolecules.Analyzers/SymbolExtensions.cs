@@ -9,6 +9,7 @@ namespace NMolecules.Analyzers
     {
         private const string DomainServiceAttributeName = "DomainServiceAttribute";
         private const string ApplicationServiceAttributeName = "ApplicationServiceAttribute";
+        private const string AllowRepositoryCompositionAttributeName = "AllowRepositoryCompositionAttribute";
         private const string CommandHandlerAttributeName = "CommandHandlerAttribute";
         private const string CommandDispatcherAttributeName = "CommandDispatcherAttribute";
         private const string IdentityAttributeName = "IdentityAttribute";
@@ -131,6 +132,19 @@ namespace NMolecules.Analyzers
         public static bool IsRepository(this ITypeSymbol type)
         {
             return type.HasAttributeNamed(nameof(RepositoryAttribute));
+        }
+
+        public static bool AllowsRepositoryComposition(this ISymbol symbol)
+        {
+            for (var current = symbol; current is not null; current = current.ContainingSymbol)
+            {
+                if (current.HasAttributeNamed(AllowRepositoryCompositionAttributeName))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static bool IsFactory(this ITypeSymbol type)

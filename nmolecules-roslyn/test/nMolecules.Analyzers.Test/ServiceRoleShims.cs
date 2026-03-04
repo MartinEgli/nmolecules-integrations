@@ -19,6 +19,7 @@ namespace NMolecules.Analyzers.Test
                 {
                     ElementNames.DomainService when !result.Contains("public class DomainServiceAttribute") => result + DomainServiceShim,
                     ElementNames.ApplicationService when !result.Contains("public class ApplicationServiceAttribute") => result + ApplicationServiceShim,
+                    ElementNames.AllowRepositoryComposition when !result.Contains("public class AllowRepositoryCompositionAttribute") => result + AllowRepositoryCompositionShim,
                     ElementNames.DomainEvent when !result.Contains("public class DomainEventAttribute") => result + DomainEventShim,
                     ElementNames.DomainEventPublisher when !result.Contains("public class DomainEventPublisherAttribute") => result + DomainEventPublisherShim,
                     ElementNames.DomainEventHandler when !result.Contains("public class DomainEventHandlerAttribute") => result + DomainEventHandlerShim,
@@ -58,6 +59,17 @@ namespace NMolecules.DDD
     using System;
 
     public class ApplicationServiceAttribute : Attribute
+    {
+    }
+}";
+
+        private const string AllowRepositoryCompositionShim = @"
+
+namespace NMolecules.DDD
+{
+    using System;
+
+    public class AllowRepositoryCompositionAttribute : Attribute
     {
     }
 }";
