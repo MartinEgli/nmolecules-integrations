@@ -10,6 +10,7 @@ namespace NMolecules.Analyzers
         private const string DomainServiceAttributeName = "DomainServiceAttribute";
         private const string ApplicationServiceAttributeName = "ApplicationServiceAttribute";
         private const string CommandHandlerAttributeName = "CommandHandlerAttribute";
+        private const string CommandDispatcherAttributeName = "CommandDispatcherAttribute";
         private const string IdentityAttributeName = "IdentityAttribute";
         private const string ApplicationLayerAttributeName = "ApplicationLayerAttribute";
         private const string DomainLayerAttributeName = "DomainLayerAttribute";
@@ -54,6 +55,11 @@ namespace NMolecules.Analyzers
         public static bool IsCommandHandler(this ISymbol symbol)
         {
             return symbol.HasAttributeNamed(CommandHandlerAttributeName);
+        }
+
+        public static bool IsCommandDispatcher(this ISymbol symbol)
+        {
+            return symbol.HasAttributeNamed(CommandDispatcherAttributeName);
         }
 
         public static bool IsApplicationLayer(this ITypeSymbol type)

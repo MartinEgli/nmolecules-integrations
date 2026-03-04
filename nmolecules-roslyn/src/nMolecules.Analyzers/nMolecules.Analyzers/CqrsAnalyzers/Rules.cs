@@ -6,6 +6,7 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
     {
         public const string CommandHandlersMustNotDependOnQueryModelsId = "XMoleculesCQRS0002";
         public const string QueryModelsMustBeReadOnlyId = "XMoleculesCQRS0004";
+        public const string CommandDispatchersMustNotContainDomainRulesId = "XMoleculesCQRS0006";
 
         public static readonly DiagnosticDescriptor CommandHandlersMustNotDependOnQueryModelsRule = new(
             CommandHandlersMustNotDependOnQueryModelsId,
@@ -24,5 +25,14 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
             DiagnosticSeverity.Error,
             true,
             "Query models belong to the read side and should not expose writable state for ad-hoc mutation.");
+
+        public static readonly DiagnosticDescriptor CommandDispatchersMustNotContainDomainRulesRule = new(
+            CommandDispatchersMustNotContainDomainRulesId,
+            "Command dispatchers must route and must not contain domain rules",
+            "Command dispatcher symbol '{0}' must not depend on {1} '{2}' directly",
+            Category.Architecture,
+            DiagnosticSeverity.Error,
+            true,
+            "Command dispatchers should only route commands and must not couple directly to domain building blocks or orchestration roles.");
     }
 }
