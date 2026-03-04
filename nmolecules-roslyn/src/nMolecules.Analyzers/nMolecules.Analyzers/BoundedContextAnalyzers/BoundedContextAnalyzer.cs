@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -12,7 +13,8 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
                 BoundedContextShouldDefineIdRule,
-                BoundedContextShouldDefineNameRule);
+                BoundedContextShouldDefineNameRule,
+                BoundedContextShouldUseSingleIdPerCompilationRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -23,16 +25,20 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
 
         private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
-            AnalyzeScope(context, context.Compilation.Assembly);
-            AnalyzeScope(context, context.Compilation.SourceModule);
+            var declarations = new List<BoundedContextDeclaration>();
+            declarations.AddRange(AnalyzeScope(context, context.Compilation.Assembly));
+            declarations.AddRange(AnalyzeScope(context, context.Compilation.SourceModule));
+            AnalyzeIdConsistency(context, declarations);
         }
 
-        private static void AnalyzeScope(CompilationAnalysisContext context, ISymbol symbol)
+        private static IEnumerable<BoundedContextDeclaration> AnalyzeScope(CompilationAnalysisContext context, ISymbol symbol)
         {
             foreach (var attribute in symbol.GetAttributes().Where(IsBoundedContextAttribute))
             {
+                var id = attribute.GetNamedString("Id");
+
                 if (attribute.SupportsMember("Id") &&
-                    IsBlank(attribute.GetNamedString("Id")))
+                    IsBlank(id))
                 {
                     context.Report(attribute, symbol, BoundedContextShouldDefineIdRule, symbol.MetadataScopeLabel());
                 }
@@ -44,6 +50,37 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
                 {
                     context.Report(attribute, symbol, BoundedContextShouldDefineNameRule, symbol.MetadataScopeLabel());
                 }
+
+                yield return new BoundedContextDeclaration(symbol, attribute, id);
+            }
+        }
+
+        private static void AnalyzeIdConsistency(
+            CompilationAnalysisContext context,
+            IEnumerable<BoundedContextDeclaration> declarations)
+        {
+            var declaredIds = declarations
+                .Select(it => it.Id)
+                .Where(it => !IsBlank(it))
+                .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                .OrderBy(it => it)
+                .ToArray();
+
+            if (declaredIds.Length <= 1)
+            {
+                return;
+            }
+
+            var declaredList = string.Join(", ", declaredIds);
+            foreach (var declaration in declarations.Where(it => !IsBlank(it.Id)))
+            {
+                context.Report(
+                    declaration.Attribute,
+                    declaration.Symbol,
+                    BoundedContextShouldUseSingleIdPerCompilationRule,
+                    declaration.Symbol.MetadataScopeLabel(),
+                    declaration.Id!,
+                    declaredList);
             }
         }
 
@@ -51,6 +88,20 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             attribute.AttributeClass?.Name == "BoundedContextAttribute";
 
         private static bool IsBlank(string? value) => string.IsNullOrWhiteSpace(value);
+
+        private sealed class BoundedContextDeclaration
+        {
+            public BoundedContextDeclaration(ISymbol symbol, AttributeData attribute, string? id)
+            {
+                Symbol = symbol;
+                Attribute = attribute;
+                Id = id;
+            }
+
+            public ISymbol Symbol { get; }
+            public AttributeData Attribute { get; }
+            public string? Id { get; }
+        }
     }
 
     internal static class BoundedContextAnalyzerExtensions
