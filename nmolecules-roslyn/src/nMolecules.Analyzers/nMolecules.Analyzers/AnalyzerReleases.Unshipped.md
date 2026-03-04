@@ -11,6 +11,7 @@ XMoleculesApplicationService0002 | DDD | Warning | Application service should de
 XMoleculesAggregateRoot0005 | DDD | Error | Aggregate root should not reference aggregate roots directly
 XMoleculesFactory0001 | DDD | Error | Factory should not use application services
 XMoleculesFactory0002 | DDD | Error | Factory should not use repositories
+XMoleculesFactory0003 | DDD | Error | Factory must not also be a domain building block
 XMoleculesService0001 | DDD | Warning | Service should use a specific role marker
 XMoleculesValueObject0006 | DDD | Error | Value object should not declare identity members
 XMoleculesDomainEvent0001 | Events | Error | Domain events must not reference entities

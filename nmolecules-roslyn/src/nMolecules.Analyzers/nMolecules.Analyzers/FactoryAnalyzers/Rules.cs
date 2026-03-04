@@ -6,6 +6,7 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
     {
         public const string FactoriesShouldNotUseApplicationServicesId = "XMoleculesFactory0001";
         public const string FactoriesShouldNotUseRepositoriesId = "XMoleculesFactory0002";
+        public const string FactoriesShouldNotAlsoBeDomainBuildingBlocksId = "XMoleculesFactory0003";
 
         public static readonly DiagnosticDescriptor FactoriesShouldNotUseApplicationServicesRule = new(
             FactoriesShouldNotUseApplicationServicesId,
@@ -24,5 +25,14 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
             DiagnosticSeverity.Error,
             true,
             "Factories should construct model objects and must not take on repository-style loading responsibilities.");
+
+        public static readonly DiagnosticDescriptor FactoriesShouldNotAlsoBeDomainBuildingBlocksRule = new(
+            FactoriesShouldNotAlsoBeDomainBuildingBlocksId,
+            "Factories must not also be domain building blocks",
+            "Factory '{0}' must not also be marked as '{1}'",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "A factory should stay a creation abstraction and must not also be modeled as an entity, aggregate root, value object, repository, or service role.");
     }
 }
