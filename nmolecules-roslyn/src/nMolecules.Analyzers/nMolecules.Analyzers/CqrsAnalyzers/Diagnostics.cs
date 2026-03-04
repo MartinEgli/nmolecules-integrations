@@ -13,6 +13,9 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
         public static Diagnostic ViolatesQueryHandlerReadSideDependency(this ISymbol symbol, string role, ITypeSymbol type) =>
             symbol.Diagnostic(Rules.QueryHandlersMustStayOnReadSideRule, symbol.DiagnosticTargetName(), role, type.DisplayName());
 
+        public static Diagnostic ViolatesProjectionWriteSideDependency(this ISymbol symbol, string role, ITypeSymbol type) =>
+            symbol.Diagnostic(Rules.ProjectionsMustNotDependOnWriteSideRolesRule, symbol.DiagnosticTargetName(), role, type.DisplayName());
+
         public static Diagnostic ViolatesCommandDispatcherDomainDependency(this ISymbol symbol, string role, ITypeSymbol type) =>
             symbol.Diagnostic(Rules.CommandDispatchersMustNotContainDomainRulesRule, symbol.DiagnosticTargetName(), role, type.DisplayName());
 

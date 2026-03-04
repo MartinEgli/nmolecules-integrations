@@ -20,4 +20,5 @@ XMoleculesCQRS0001 | Architecture | Error | CQRS support requires both query and
 XMoleculesCQRS0002 | Architecture | Error | Command handlers must not depend on query models directly
 XMoleculesCQRS0003 | Architecture | Error | Query handlers must stay on the read side
 XMoleculesCQRS0004 | Architecture | Error | Query models must be read-only
+XMoleculesCQRS0005 | Architecture | Error | Projections may update query models but must not depend on write-side roles directly
 XMoleculesCQRS0006 | Architecture | Error | Command dispatchers must route and must not contain domain rules

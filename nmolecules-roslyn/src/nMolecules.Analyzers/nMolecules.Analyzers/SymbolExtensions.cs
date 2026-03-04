@@ -20,6 +20,7 @@ namespace NMolecules.Analyzers
         private const string QueryModelAttributeName = "QueryModelAttribute";
         private const string QueryAttributeName = "QueryAttribute";
         private const string QueryHandlerAttributeName = "QueryHandlerAttribute";
+        private const string ProjectionAttributeName = "ProjectionAttribute";
 
         public static bool Is<TAttribute>(this ITypeSymbol type) where TAttribute : Attribute
         {
@@ -82,6 +83,11 @@ namespace NMolecules.Analyzers
         public static bool IsQuery(this ITypeSymbol type)
         {
             return type.HasAttributeNamed(QueryAttributeName);
+        }
+
+        public static bool IsProjection(this ITypeSymbol type)
+        {
+            return type.HasAttributeNamed(ProjectionAttributeName);
         }
 
         public static bool IsDomainLayer(this ITypeSymbol type)

@@ -8,6 +8,7 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
         public const string CommandHandlersMustNotDependOnQueryModelsId = "XMoleculesCQRS0002";
         public const string QueryHandlersMustStayOnReadSideId = "XMoleculesCQRS0003";
         public const string QueryModelsMustBeReadOnlyId = "XMoleculesCQRS0004";
+        public const string ProjectionsMustNotDependOnWriteSideRolesId = "XMoleculesCQRS0005";
         public const string CommandDispatchersMustNotContainDomainRulesId = "XMoleculesCQRS0006";
 
         public static readonly DiagnosticDescriptor CqrsSupportRequiresQueryAndQueryHandlerRule = new(
@@ -45,6 +46,15 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
             DiagnosticSeverity.Error,
             true,
             "Query models belong to the read side and should not expose writable state for ad-hoc mutation.");
+
+        public static readonly DiagnosticDescriptor ProjectionsMustNotDependOnWriteSideRolesRule = new(
+            ProjectionsMustNotDependOnWriteSideRolesId,
+            "Projections may update query models but must not depend on write-side roles directly",
+            "Projection symbol '{0}' must not depend on {1} '{2}' directly",
+            Category.Architecture,
+            DiagnosticSeverity.Error,
+            true,
+            "Projections belong to the read-model update path and should operate on query models instead of directly coupling to write-side domain roles.");
 
         public static readonly DiagnosticDescriptor CommandDispatchersMustNotContainDomainRulesRule = new(
             CommandDispatchersMustNotContainDomainRulesId,
