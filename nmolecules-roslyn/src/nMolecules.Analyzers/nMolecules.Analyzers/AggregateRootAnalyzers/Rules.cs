@@ -9,6 +9,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
         public const string AggregateRootsShouldHaveIdRuleId = "XMoleculesAggregateRoot0003";
         public const string AggregateRootsShouldHaveSingleIdRuleId = "XMoleculesAggregateRoot0004";
         public const string AggregateRootsShouldNotUseAggregateRootsRuleId = "XMoleculesAggregateRoot0005";
+        public const string AggregateRootsShouldNotUseApplicationServicesRuleId = "XMoleculesAggregateRoot0006";
         public const string AggregateRootsShouldNotUseFactoriesRuleId = "XMoleculesAggregateRoot0007";
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseRepositoriesRule = new(
@@ -73,6 +74,15 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             DiagnosticSeverity.Error,
             true,
             "Aggregate boundaries should be crossed through identity, not direct object references.");
+
+        public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseApplicationServicesRule = new(
+            AggregateRootsShouldNotUseApplicationServicesRuleId,
+            "Aggregate roots should not depend on application services",
+            "Aggregate root '{0}' must not depend on application service '{1}' in member '{2}'",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "Aggregate roots belong to the domain model and must not depend on application-service orchestration.");
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseFactoriesRule = new(
             AggregateRootsShouldNotUseFactoriesRuleId,

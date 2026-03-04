@@ -12,6 +12,7 @@ XMoleculesApplicationService0002 | DDD | Warning | Application service should de
 XMoleculesApplicationService0003 | DDD | Warning | Application service should not depend on other application services
 XMoleculesApplicationService0004 | DDD | Warning | Application service should not expose infrastructure-layer types in public signatures
 XMoleculesAggregateRoot0005 | DDD | Error | Aggregate root should not reference aggregate roots directly
+XMoleculesAggregateRoot0006 | DDD | Error | Aggregate root should not depend on application services
 XMoleculesAggregateRoot0007 | DDD | Error | Aggregate root should not depend on external factories by default
 XMoleculesFactory0001 | DDD | Error | Factory should not use application services
 XMoleculesFactory0002 | DDD | Error | Factory should not use repositories

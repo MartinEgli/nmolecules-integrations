@@ -19,9 +19,14 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
                 yield return symbol.ViolatesRepositoryUsage();
             }
 
-            if (type.IsService())
+            if (type.IsService() && !type.IsApplicationService())
             {
                 yield return symbol.ViolatesServiceUsage();
+            }
+
+            if (type.IsApplicationService())
+            {
+                yield return symbol.ViolatesApplicationServiceUsage(type);
             }
 
             if (type.IsFactory())
@@ -33,6 +38,12 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
         private static Diagnostic ViolatesAggregateRootUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseAggregateRootsRule);
         private static Diagnostic ViolatesRepositoryUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseRepositoriesRule);
         private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseServicesRule);
+        private static Diagnostic ViolatesApplicationServiceUsage(this ISymbol symbol, ITypeSymbol type) =>
+            symbol.Diagnostic(
+                Rules.AggregateRootsShouldNotUseApplicationServicesRule,
+                symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(),
+                type.DisplayName(),
+                symbol.Name);
         private static Diagnostic ViolatesFactoryUsage(this ISymbol symbol, ITypeSymbol type) =>
             symbol.Diagnostic(
                 Rules.AggregateRootsShouldNotUseFactoriesRule,

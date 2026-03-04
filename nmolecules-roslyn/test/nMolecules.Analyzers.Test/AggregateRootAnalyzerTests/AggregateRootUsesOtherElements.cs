@@ -125,6 +125,26 @@ namespace NMolecules.Analyzers.Test.AggregateRootAnalyzerTests
                 factoryAsPropertyType,
                 factoryInMethodBody);
         }
+
+        [Fact]
+        public async Task Analyze_WithAggregateRootUsesApplicationService_EmitsCompilerError()
+        {
+            var aggregateRoot = ServiceRoleShims.AppendIfNeeded(GenerateClass(ApplicationService), ApplicationService);
+            var applicationServiceAsField = CompilerError(Rules.AggregateRootsShouldNotUseApplicationServicesRuleId).WithSpan(FieldLineNumber, 49, FieldLineNumber, 67);
+            var applicationServiceAsParameterInCtor = CompilerError(Rules.AggregateRootsShouldNotUseApplicationServicesRuleId).WithSpan(CtorLineNumber, 60, CtorLineNumber, 65);
+            var applicationServiceAsReturnValue = CompilerError(Rules.AggregateRootsShouldNotUseApplicationServicesRuleId).WithSpan(MethodLineNumber, 39, MethodLineNumber, 49);
+            var applicationServiceAsParameterInMethod = CompilerError(Rules.AggregateRootsShouldNotUseApplicationServicesRuleId).WithSpan(MethodLineNumber, 73, MethodLineNumber, 91);
+            var applicationServiceAsPropertyType = CompilerError(Rules.AggregateRootsShouldNotUseApplicationServicesRuleId).WithSpan(PropertyLineNumber, 39, PropertyLineNumber, 44);
+            var applicationServiceInMethodBody = CompilerError(Rules.AggregateRootsShouldNotUseApplicationServicesRuleId)
+                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 39);
+            await VerifyCS.VerifyAnalyzerAsync(aggregateRoot,
+                applicationServiceAsField,
+                applicationServiceAsParameterInCtor,
+                applicationServiceAsParameterInMethod,
+                applicationServiceAsReturnValue,
+                applicationServiceAsPropertyType,
+                applicationServiceInMethodBody);
+        }
         
         [Fact]
         public async Task Analyze_ValidAggregateRoot_DoesNotEmitAnyError()
