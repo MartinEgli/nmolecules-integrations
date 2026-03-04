@@ -11,6 +11,7 @@ namespace NMolecules.Analyzers.EventAnalyzers
         public const string DomainEventPublishersShouldPreferAggregateRootsOrApplicationServicesId = "XMoleculesDomainEvent0005";
         public const string RepositoriesAndFactoriesMustNotPublishDomainEventsId = "XMoleculesDomainEvent0006";
         public const string DomainEventHandlersMustConsumeDomainEventsId = "XMoleculesDomainEvent0007";
+        public const string DomainEventPublishersShouldExposeDomainEventPayloadsId = "XMoleculesDomainEvent0008";
 
         public static readonly DiagnosticDescriptor DomainEventsMustNotReferenceEntitiesRule = new(
             DomainEventsMustNotReferenceEntitiesId,
@@ -74,5 +75,14 @@ namespace NMolecules.Analyzers.EventAnalyzers
             DiagnosticSeverity.Error,
             true,
             "A domain event handler should explicitly consume a domain event payload instead of being marked without any event input.");
+
+        public static readonly DiagnosticDescriptor DomainEventPublishersShouldExposeDomainEventPayloadsRule = new(
+            DomainEventPublishersShouldExposeDomainEventPayloadsId,
+            "Domain event publishers should expose domain event payloads explicitly",
+            "Domain event publisher '{0}' should declare a [DomainEvent] parameter or return type",
+            Category.Events,
+            DiagnosticSeverity.Warning,
+            true,
+            "Method-level domain event publishers should expose their domain event payload explicitly through a parameter or return type.");
     }
 }

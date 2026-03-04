@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -11,7 +12,8 @@ namespace NMolecules.Analyzers.EventAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
                 Rules.DomainEventPublishersShouldPreferAggregateRootsOrApplicationServicesRule,
-                Rules.RepositoriesAndFactoriesMustNotPublishDomainEventsRule);
+                Rules.RepositoriesAndFactoriesMustNotPublishDomainEventsRule,
+                Rules.DomainEventPublishersShouldExposeDomainEventPayloadsRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -41,7 +43,17 @@ namespace NMolecules.Analyzers.EventAnalyzers
                 return;
             }
 
-            ReportIfForbiddenHost(context, method, method.ContainingType);
+            var host = method.ContainingType;
+            ReportIfForbiddenHost(context, method, host);
+
+            if ((host.IsAggregateRoot() || host.IsApplicationService())
+                && !method.ReturnType.IsDomainEvent()
+                && !method.Parameters.Any(parameter => parameter.Type.IsDomainEvent()))
+            {
+                context.ReportDiagnostic(method.Diagnostic(
+                    Rules.DomainEventPublishersShouldExposeDomainEventPayloadsRule,
+                    method.DiagnosticTargetName()));
+            }
         }
 
         private static void ReportIfForbiddenHost(SymbolAnalysisContext context, ISymbol publisher, ITypeSymbol host)
