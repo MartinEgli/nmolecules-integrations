@@ -18,6 +18,7 @@ XMoleculesDomainEvent0003 | Events | Error | Domain events must not reference re
 XMoleculesDomainEvent0004 | Events | Error | Domain events must not reference services
 XMoleculesDomainEvent0006 | Events | Error | Repositories and factories must not publish domain events directly
 XMoleculesDomainEvent0007 | Events | Error | Domain event handlers must consume domain events
+XMoleculesRepository0002 | DDD | Warning | Repositories must not expose infrastructure-layer types in public signatures
 XMoleculesLayered0001 | Architecture | Error | Domain layers must not depend on application layers
 XMoleculesLayered0002 | Architecture | Error | Domain layers must not depend on infrastructure layers
 XMoleculesLayered0003 | Architecture | Error | Domain layers must not depend on interface layers

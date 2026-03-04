@@ -14,5 +14,15 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
         }
 
         private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.RepositoriesShouldNotUseServicesRule);
+
+        public static Diagnostic ViolatesInfrastructureSignature(this ISymbol symbol, ITypeSymbol type)
+        {
+            var repository = symbol.ContainingType?.DisplayName() ?? symbol.DisplayName();
+            return symbol.Diagnostic(
+                Rules.RepositoriesShouldNotExposeInfrastructureSignaturesRule,
+                repository,
+                type.DisplayName(),
+                symbol.Name);
+        }
     }
 }
