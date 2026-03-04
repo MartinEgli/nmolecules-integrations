@@ -6,6 +6,7 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
     {
         public const string CqrsSupportRequiresQueryAndQueryHandlerId = "XMoleculesCQRS0001";
         public const string CommandHandlersMustNotDependOnQueryModelsId = "XMoleculesCQRS0002";
+        public const string QueryHandlersMustStayOnReadSideId = "XMoleculesCQRS0003";
         public const string QueryModelsMustBeReadOnlyId = "XMoleculesCQRS0004";
         public const string CommandDispatchersMustNotContainDomainRulesId = "XMoleculesCQRS0006";
 
@@ -26,6 +27,15 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
             DiagnosticSeverity.Error,
             true,
             "Command handlers belong to the write side and should not couple directly to read-model types.");
+
+        public static readonly DiagnosticDescriptor QueryHandlersMustStayOnReadSideRule = new(
+            QueryHandlersMustStayOnReadSideId,
+            "Query handlers must stay on the read side",
+            "Query handler symbol '{0}' must not depend on {1} '{2}' directly",
+            Category.Architecture,
+            DiagnosticSeverity.Error,
+            true,
+            "Query handlers belong to the read side and should not couple directly to write-side domain roles.");
 
         public static readonly DiagnosticDescriptor QueryModelsMustBeReadOnlyRule = new(
             QueryModelsMustBeReadOnlyId,

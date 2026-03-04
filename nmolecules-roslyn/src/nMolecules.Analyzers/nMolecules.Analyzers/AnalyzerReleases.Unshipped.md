@@ -18,5 +18,6 @@ XMoleculesLayered0003 | Architecture | Error | Domain layers must not depend on 
 XMoleculesLayered0004 | Architecture | Error | Interface layers must not depend on domain layers directly
 XMoleculesCQRS0001 | Architecture | Error | CQRS support requires both query and query handler markers
 XMoleculesCQRS0002 | Architecture | Error | Command handlers must not depend on query models directly
+XMoleculesCQRS0003 | Architecture | Error | Query handlers must stay on the read side
 XMoleculesCQRS0004 | Architecture | Error | Query models must be read-only
 XMoleculesCQRS0006 | Architecture | Error | Command dispatchers must route and must not contain domain rules
