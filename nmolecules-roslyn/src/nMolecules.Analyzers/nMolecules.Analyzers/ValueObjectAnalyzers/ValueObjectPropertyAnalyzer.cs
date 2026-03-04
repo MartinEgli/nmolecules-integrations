@@ -17,7 +17,8 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
 
         private static IEnumerable<Diagnostic> EnsureThatPropertyIsReadonly(IPropertySymbol propertySymbol)
         {
-            if (!propertySymbol.IsReadOnly)
+            var isInitOnly = propertySymbol.SetMethod?.IsInitOnly == true;
+            if (!propertySymbol.IsReadOnly && !isInitOnly)
             {
                 yield return propertySymbol.ViolatesImmutability();
             }
