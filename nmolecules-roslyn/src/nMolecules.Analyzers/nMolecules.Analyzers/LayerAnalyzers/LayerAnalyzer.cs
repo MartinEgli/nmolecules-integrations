@@ -12,7 +12,7 @@ namespace NMolecules.Analyzers.LayerAnalyzers
             Rules.DomainLayersShouldNotUseApplicationLayersRule,
             Rules.DomainLayersShouldNotUseUserInterfaceLayersRule,
             Rules.DomainLayersShouldNotUseInfrastructureLayersRule,
-            Rules.ApplicationLayersShouldNotUseUserInterfaceLayersRule);
+            Rules.InterfaceLayersShouldNotUseDomainLayersRule);
 
         public override void Initialize(AnalysisContext context)
         {
