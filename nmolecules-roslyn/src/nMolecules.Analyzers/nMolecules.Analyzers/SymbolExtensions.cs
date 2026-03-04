@@ -15,6 +15,7 @@ namespace NMolecules.Analyzers
         private const string InterfaceLayerAttributeName = "InterfaceLayerAttribute";
         private const string InfrastructureLayerAttributeName = "InfrastructureLayerAttribute";
         private const string UserInterfaceLayerAttributeName = "UserInterfaceLayerAttribute";
+        private const string QueryModelAttributeName = "QueryModelAttribute";
 
         public static bool Is<TAttribute>(this ITypeSymbol type) where TAttribute : Attribute
         {
@@ -52,6 +53,11 @@ namespace NMolecules.Analyzers
         public static bool IsApplicationLayer(this ITypeSymbol type)
         {
             return type.HasAttributeNamed(ApplicationLayerAttributeName);
+        }
+
+        public static bool IsQueryModel(this ITypeSymbol type)
+        {
+            return type.HasAttributeNamed(QueryModelAttributeName);
         }
 
         public static bool IsDomainLayer(this ITypeSymbol type)

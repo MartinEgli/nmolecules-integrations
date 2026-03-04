@@ -16,3 +16,4 @@ XMoleculesLayered0001 | Architecture | Error | Domain layers must not depend on 
 XMoleculesLayered0002 | Architecture | Error | Domain layers must not depend on infrastructure layers
 XMoleculesLayered0003 | Architecture | Error | Domain layers must not depend on interface layers
 XMoleculesLayered0004 | Architecture | Error | Interface layers must not depend on domain layers directly
+XMoleculesCQRS0004 | Architecture | Error | Query models must be read-only

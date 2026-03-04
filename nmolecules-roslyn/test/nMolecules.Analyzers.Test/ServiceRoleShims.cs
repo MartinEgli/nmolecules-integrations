@@ -23,6 +23,7 @@ namespace NMolecules.Analyzers.Test
                     ElementNames.DomainLayer when !result.Contains("public class DomainLayerAttribute") => result + DomainLayerShim,
                     ElementNames.InterfaceLayer when !result.Contains("public class InterfaceLayerAttribute") => result + InterfaceLayerShim,
                     ElementNames.InfrastructureLayer when !result.Contains("public class InfrastructureLayerAttribute") => result + InfrastructureLayerShim,
+                    ElementNames.QueryModel when !result.Contains("public class QueryModelAttribute") => result + QueryModelShim,
                     ElementNames.UserInterfaceLayer when !result.Contains("public class UserInterfaceLayerAttribute") => result + UserInterfaceLayerShim,
                     _ => result
                 };
@@ -104,6 +105,17 @@ namespace NMolecules.Architecture.Layered
     using System;
 
     public class UserInterfaceLayerAttribute : Attribute
+    {
+    }
+}";
+
+        private const string QueryModelShim = @"
+
+namespace NMolecules.Architecture.Cqrs
+{
+    using System;
+
+    public class QueryModelAttribute : Attribute
     {
     }
 }";

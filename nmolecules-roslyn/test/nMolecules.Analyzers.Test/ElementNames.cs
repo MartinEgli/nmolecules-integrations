@@ -15,6 +15,7 @@
         public const string DomainLayer = nameof(DomainLayer);
         public const string InterfaceLayer = nameof(InterfaceLayer);
         public const string InfrastructureLayer = nameof(InfrastructureLayer);
+        public const string QueryModel = nameof(QueryModel);
         public const string UserInterfaceLayer = nameof(UserInterfaceLayer);
     }
 }
