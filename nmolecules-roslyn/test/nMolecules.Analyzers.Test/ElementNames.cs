@@ -10,6 +10,7 @@
         public const string Service = nameof(Service);
         public const string DomainService = nameof(DomainService);
         public const string ApplicationService = nameof(ApplicationService);
+        public const string DomainEvent = nameof(DomainEvent);
         public const string CommandHandler = nameof(CommandHandler);
         public const string CommandDispatcher = nameof(CommandDispatcher);
         public const string Identity = nameof(Identity);
