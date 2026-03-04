@@ -13,6 +13,7 @@
         public const string Identity = nameof(Identity);
         public const string ApplicationLayer = nameof(ApplicationLayer);
         public const string DomainLayer = nameof(DomainLayer);
+        public const string InterfaceLayer = nameof(InterfaceLayer);
         public const string InfrastructureLayer = nameof(InfrastructureLayer);
         public const string UserInterfaceLayer = nameof(UserInterfaceLayer);
     }

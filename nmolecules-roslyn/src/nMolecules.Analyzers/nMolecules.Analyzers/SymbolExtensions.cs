@@ -12,6 +12,7 @@ namespace NMolecules.Analyzers
         private const string IdentityAttributeName = "IdentityAttribute";
         private const string ApplicationLayerAttributeName = "ApplicationLayerAttribute";
         private const string DomainLayerAttributeName = "DomainLayerAttribute";
+        private const string InterfaceLayerAttributeName = "InterfaceLayerAttribute";
         private const string InfrastructureLayerAttributeName = "InfrastructureLayerAttribute";
         private const string UserInterfaceLayerAttributeName = "UserInterfaceLayerAttribute";
 
@@ -65,7 +66,7 @@ namespace NMolecules.Analyzers
 
         public static bool IsUserInterfaceLayer(this ITypeSymbol type)
         {
-            return type.HasAttributeNamed(UserInterfaceLayerAttributeName);
+            return type.HasAttributeNamed(UserInterfaceLayerAttributeName, InterfaceLayerAttributeName);
         }
 
         public static bool IsLayer(this ITypeSymbol type)

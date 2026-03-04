@@ -57,6 +57,29 @@ namespace NMolecules.Analyzers.Test.LayerAnalyzerTests
         }
 
         [Fact]
+        public async Task Analyze_WithDomainLayerUsingInterfaceLayer_EmitsError()
+        {
+            var testCode = ServiceRoleShims.AppendIfNeeded(@"namespace NMolecules.Analyzers.Test.LayerAnalyzerTests.SampleData
+{
+    using NMolecules.Architecture.Layered;
+
+    [InterfaceLayer]
+    public class AccountsEndpoint
+    {
+    }
+
+    [DomainLayer]
+    public class BankAccount
+    {
+        public AccountsEndpoint {|#0:endpoint|} { get; set; }
+    }
+}", ElementNames.InterfaceLayer, ElementNames.DomainLayer);
+
+            var expected = new DiagnosticResult(Rules.DomainLayersShouldNotUseUserInterfaceLayersId, DiagnosticSeverity.Error).WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
+
+        [Fact]
         public async Task Analyze_WithDomainLayerUsingInfrastructureLayer_EmitsError()
         {
             var testCode = ServiceRoleShims.AppendIfNeeded(@"namespace NMolecules.Analyzers.Test.LayerAnalyzerTests.SampleData
@@ -99,6 +122,29 @@ namespace NMolecules.Analyzers.Test.LayerAnalyzerTests
         private readonly AccountsController {|#0:controller|};
     }
 }", ElementNames.UserInterfaceLayer, ElementNames.ApplicationLayer);
+
+            var expected = new DiagnosticResult(Rules.ApplicationLayersShouldNotUseUserInterfaceLayersId, DiagnosticSeverity.Error).WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithApplicationLayerUsingInterfaceLayer_EmitsError()
+        {
+            var testCode = ServiceRoleShims.AppendIfNeeded(@"namespace NMolecules.Analyzers.Test.LayerAnalyzerTests.SampleData
+{
+    using NMolecules.Architecture.Layered;
+
+    [InterfaceLayer]
+    public class AccountsEndpoint
+    {
+    }
+
+    [ApplicationLayer]
+    public class TransferMoney
+    {
+        private readonly AccountsEndpoint {|#0:endpoint|};
+    }
+}", ElementNames.InterfaceLayer, ElementNames.ApplicationLayer);
 
             var expected = new DiagnosticResult(Rules.ApplicationLayersShouldNotUseUserInterfaceLayersId, DiagnosticSeverity.Error).WithLocation(0);
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
