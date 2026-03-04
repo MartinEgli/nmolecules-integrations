@@ -11,9 +11,19 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
             {
                 yield return symbol.ViolatesServiceUsage();
             }
+
+            if (type.IsRepository())
+            {
+                yield return symbol.ViolatesRepositoryUsage(type);
+            }
         }
 
         private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.RepositoriesShouldNotUseServicesRule);
+        private static Diagnostic ViolatesRepositoryUsage(this ISymbol symbol, ITypeSymbol type)
+        {
+            var repository = symbol.ContainingType?.DisplayName() ?? symbol.DisplayName();
+            return symbol.Diagnostic(Rules.RepositoriesShouldNotDependOnRepositoriesRule, repository, type.DisplayName(), symbol.Name);
+        }
 
         public static Diagnostic ViolatesInfrastructureSignature(this ISymbol symbol, ITypeSymbol type)
         {
