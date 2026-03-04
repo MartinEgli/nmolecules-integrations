@@ -12,6 +12,7 @@
         public const string ApplicationService = nameof(ApplicationService);
         public const string DomainEvent = nameof(DomainEvent);
         public const string DomainEventPublisher = nameof(DomainEventPublisher);
+        public const string DomainEventHandler = nameof(DomainEventHandler);
         public const string CommandHandler = nameof(CommandHandler);
         public const string CommandDispatcher = nameof(CommandDispatcher);
         public const string Identity = nameof(Identity);

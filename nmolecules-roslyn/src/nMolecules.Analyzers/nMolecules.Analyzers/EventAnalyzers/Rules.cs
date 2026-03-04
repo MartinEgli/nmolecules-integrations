@@ -9,6 +9,7 @@ namespace NMolecules.Analyzers.EventAnalyzers
         public const string DomainEventsMustNotReferenceRepositoriesId = "XMoleculesDomainEvent0003";
         public const string DomainEventsMustNotReferenceServicesId = "XMoleculesDomainEvent0004";
         public const string RepositoriesAndFactoriesMustNotPublishDomainEventsId = "XMoleculesDomainEvent0006";
+        public const string DomainEventHandlersMustConsumeDomainEventsId = "XMoleculesDomainEvent0007";
 
         public static readonly DiagnosticDescriptor DomainEventsMustNotReferenceEntitiesRule = new(
             DomainEventsMustNotReferenceEntitiesId,
@@ -54,5 +55,14 @@ namespace NMolecules.Analyzers.EventAnalyzers
             DiagnosticSeverity.Error,
             true,
             "Repository and factory components are forbidden default sources for domain event publication.");
+
+        public static readonly DiagnosticDescriptor DomainEventHandlersMustConsumeDomainEventsRule = new(
+            DomainEventHandlersMustConsumeDomainEventsId,
+            "Domain event handlers must consume domain events",
+            "Domain event handler '{0}' must declare at least one parameter of a [DomainEvent] type",
+            Category.Events,
+            DiagnosticSeverity.Error,
+            true,
+            "A domain event handler should explicitly consume a domain event payload instead of being marked without any event input.");
     }
 }
