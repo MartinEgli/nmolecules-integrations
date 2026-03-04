@@ -5,6 +5,7 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
     public static class Rules
     {
         public const string DomainServicesShouldNotUseApplicationServicesId = "XMoleculesDomainService0001";
+        public const string DomainServicesShouldOnlyUseRepositoryContractsId = "XMoleculesDomainService0002";
         public const string DomainServicesShouldNotExposeInfrastructureSignaturesId = "XMoleculesDomainService0003";
 
         public static readonly DiagnosticDescriptor DomainServicesShouldNotUseApplicationServicesRule = new(
@@ -15,6 +16,15 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
             DiagnosticSeverity.Error,
             true,
             "Domain services belong to the domain model and should not depend on application service orchestration.");
+
+        public static readonly DiagnosticDescriptor DomainServicesShouldOnlyUseRepositoryContractsRule = new(
+            DomainServicesShouldOnlyUseRepositoryContractsId,
+            "Domain services should only use repository contracts",
+            "Domain service '{0}' must not depend on concrete repository '{1}'",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "Domain services may depend on repository contracts, but should not depend on concrete repository implementations.");
 
         public static readonly DiagnosticDescriptor DomainServicesShouldNotExposeInfrastructureSignaturesRule = new(
             DomainServicesShouldNotExposeInfrastructureSignaturesId,

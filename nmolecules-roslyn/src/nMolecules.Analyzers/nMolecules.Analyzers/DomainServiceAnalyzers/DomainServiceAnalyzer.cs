@@ -12,6 +12,7 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
                 Rules.DomainServicesShouldNotUseApplicationServicesRule,
+                Rules.DomainServicesShouldOnlyUseRepositoryContractsRule,
                 Rules.DomainServicesShouldNotExposeInfrastructureSignaturesRule);
 
         public override void Initialize(AnalysisContext context)
