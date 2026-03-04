@@ -12,5 +12,15 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
                 yield return symbol.Diagnostic(Rules.DomainServicesShouldNotUseApplicationServicesRule, symbol.DiagnosticTargetName(), type.DisplayName());
             }
         }
+
+        public static Diagnostic ViolatesInfrastructureSignature(this ISymbol symbol, ITypeSymbol type)
+        {
+            var domainService = symbol.ContainingType?.DisplayName() ?? symbol.DisplayName();
+            return symbol.Diagnostic(
+                Rules.DomainServicesShouldNotExposeInfrastructureSignaturesRule,
+                domainService,
+                type.DisplayName(),
+                symbol.Name);
+        }
     }
 }

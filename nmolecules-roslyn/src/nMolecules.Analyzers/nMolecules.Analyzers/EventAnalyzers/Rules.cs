@@ -8,6 +8,7 @@ namespace NMolecules.Analyzers.EventAnalyzers
         public const string DomainEventsMustNotReferenceAggregateRootsId = "XMoleculesDomainEvent0002";
         public const string DomainEventsMustNotReferenceRepositoriesId = "XMoleculesDomainEvent0003";
         public const string DomainEventsMustNotReferenceServicesId = "XMoleculesDomainEvent0004";
+        public const string RepositoriesAndFactoriesMustNotPublishDomainEventsId = "XMoleculesDomainEvent0006";
 
         public static readonly DiagnosticDescriptor DomainEventsMustNotReferenceEntitiesRule = new(
             DomainEventsMustNotReferenceEntitiesId,
@@ -44,5 +45,14 @@ namespace NMolecules.Analyzers.EventAnalyzers
             DiagnosticSeverity.Error,
             true,
             "Domain event payloads must not carry service abstractions or orchestration roles.");
+
+        public static readonly DiagnosticDescriptor RepositoriesAndFactoriesMustNotPublishDomainEventsRule = new(
+            RepositoriesAndFactoriesMustNotPublishDomainEventsId,
+            "Repositories and factories must not publish domain events directly",
+            "{0} '{1}' must not be marked as a domain event publisher",
+            Category.Events,
+            DiagnosticSeverity.Error,
+            true,
+            "Repository and factory components are forbidden default sources for domain event publication.");
     }
 }

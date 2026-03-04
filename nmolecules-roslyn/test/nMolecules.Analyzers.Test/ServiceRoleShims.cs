@@ -20,6 +20,7 @@ namespace NMolecules.Analyzers.Test
                     ElementNames.DomainService when !result.Contains("public class DomainServiceAttribute") => result + DomainServiceShim,
                     ElementNames.ApplicationService when !result.Contains("public class ApplicationServiceAttribute") => result + ApplicationServiceShim,
                     ElementNames.DomainEvent when !result.Contains("public class DomainEventAttribute") => result + DomainEventShim,
+                    ElementNames.DomainEventPublisher when !result.Contains("public class DomainEventPublisherAttribute") => result + DomainEventPublisherShim,
                     ElementNames.CommandHandler when !result.Contains("public class CommandHandlerAttribute") => result + CommandHandlerShim,
                     ElementNames.CommandDispatcher when !result.Contains("public class CommandDispatcherAttribute") => result + CommandDispatcherShim,
                     ElementNames.Query when !result.Contains("public class QueryAttribute") => result + QueryShim,
@@ -67,6 +68,17 @@ namespace NMolecules.Events
     using System;
 
     public class DomainEventAttribute : Attribute
+    {
+    }
+}";
+
+        private const string DomainEventPublisherShim = @"
+
+namespace NMolecules.Events
+{
+    using System;
+
+    public class DomainEventPublisherAttribute : Attribute
     {
     }
 }";

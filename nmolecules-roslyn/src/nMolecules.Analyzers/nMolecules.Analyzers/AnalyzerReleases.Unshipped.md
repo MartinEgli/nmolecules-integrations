@@ -16,6 +16,7 @@ XMoleculesDomainEvent0001 | Events | Error | Domain events must not reference en
 XMoleculesDomainEvent0002 | Events | Error | Domain events must not reference aggregate roots
 XMoleculesDomainEvent0003 | Events | Error | Domain events must not reference repositories
 XMoleculesDomainEvent0004 | Events | Error | Domain events must not reference services
+XMoleculesDomainEvent0006 | Events | Error | Repositories and factories must not publish domain events directly
 XMoleculesLayered0001 | Architecture | Error | Domain layers must not depend on application layers
 XMoleculesLayered0002 | Architecture | Error | Domain layers must not depend on infrastructure layers
 XMoleculesLayered0003 | Architecture | Error | Domain layers must not depend on interface layers

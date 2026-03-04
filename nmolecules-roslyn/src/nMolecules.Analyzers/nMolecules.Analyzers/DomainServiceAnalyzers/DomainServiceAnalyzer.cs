@@ -10,7 +10,9 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
     public class DomainServiceAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Rules.DomainServicesShouldNotUseApplicationServicesRule);
+            ImmutableArray.Create(
+                Rules.DomainServicesShouldNotUseApplicationServicesRule,
+                Rules.DomainServicesShouldNotExposeInfrastructureSignaturesRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -32,6 +34,11 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
             }
 
             context.ReportDiagnostics(Diagnostics.AnalyzeTypeInSymbol(field, field.Type));
+
+            if (field.DeclaredAccessibility == Accessibility.Public && field.Type.IsInfrastructureLayer())
+            {
+                context.ReportDiagnostic(field.ViolatesInfrastructureSignature(field.Type));
+            }
         }
 
         private static void AnalyzeMethod(SymbolAnalysisContext context)
@@ -50,6 +57,16 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
             foreach (var parameter in method.Parameters)
             {
                 context.ReportDiagnostics(Diagnostics.AnalyzeTypeInSymbol(parameter, parameter.Type));
+
+                if (method.DeclaredAccessibility == Accessibility.Public && parameter.Type.IsInfrastructureLayer())
+                {
+                    context.ReportDiagnostic(parameter.ViolatesInfrastructureSignature(parameter.Type));
+                }
+            }
+
+            if (method.DeclaredAccessibility == Accessibility.Public && !method.ReturnsVoid && method.ReturnType.IsInfrastructureLayer())
+            {
+                context.ReportDiagnostic(method.ViolatesInfrastructureSignature(method.ReturnType));
             }
         }
 
@@ -62,6 +79,11 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
             }
 
             context.ReportDiagnostics(Diagnostics.AnalyzeTypeInSymbol(property, property.Type));
+
+            if (property.DeclaredAccessibility == Accessibility.Public && property.Type.IsInfrastructureLayer())
+            {
+                context.ReportDiagnostic(property.ViolatesInfrastructureSignature(property.Type));
+            }
         }
 
         private static void AnalyzeLocalDeclaration(SyntaxNodeAnalysisContext context)

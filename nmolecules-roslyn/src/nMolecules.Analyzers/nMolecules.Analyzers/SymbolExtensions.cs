@@ -13,6 +13,7 @@ namespace NMolecules.Analyzers
         private const string CommandDispatcherAttributeName = "CommandDispatcherAttribute";
         private const string IdentityAttributeName = "IdentityAttribute";
         private const string DomainEventAttributeName = "DomainEventAttribute";
+        private const string DomainEventPublisherAttributeName = "DomainEventPublisherAttribute";
         private const string ApplicationLayerAttributeName = "ApplicationLayerAttribute";
         private const string DomainLayerAttributeName = "DomainLayerAttribute";
         private const string InterfaceLayerAttributeName = "InterfaceLayerAttribute";
@@ -79,6 +80,11 @@ namespace NMolecules.Analyzers
         public static bool IsDomainEvent(this ITypeSymbol type)
         {
             return type.HasAttributeNamed(DomainEventAttributeName);
+        }
+
+        public static bool IsDomainEventPublisher(this ISymbol symbol)
+        {
+            return symbol.HasAttributeNamed(DomainEventPublisherAttributeName);
         }
 
         public static bool IsQueryModel(this ITypeSymbol type)
