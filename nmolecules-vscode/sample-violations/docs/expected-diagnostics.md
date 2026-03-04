@@ -14,11 +14,12 @@ The broken sample is designed to populate the VS Code Problems view with both is
 - `XMoleculesDomainService0001`
 - `XMoleculesApplicationService0001`
 - `XMoleculesApplicationService0002`
+- `XMoleculesApplicationService0003`
 - `XMoleculesFactory0001`
-- `XMoleculesDomainLayer0001`
-- `XMoleculesDomainLayer0002`
-- `XMoleculesDomainLayer0003`
-- `XMoleculesApplicationLayer0003`
+- `XMoleculesLayered0001`
+- `XMoleculesLayered0002`
+- `XMoleculesLayered0003`
+- `XMoleculesValueObject0002`
 
 ## Combined Rule Examples
 

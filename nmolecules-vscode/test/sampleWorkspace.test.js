@@ -74,6 +74,19 @@ test('violations workspace contains dedicated extension usage documentation', ()
   assert.equal(fs.existsSync(path.join(violationsRoot, 'nmolecules-violations.code-workspace')), true);
 });
 
+test('violations diagnostics catalog uses current layered rule IDs', () => {
+  const expectedDiagnosticsPath = path.join(violationsRoot, 'docs', 'expected-diagnostics.md');
+  const content = fs.readFileSync(expectedDiagnosticsPath, 'utf8');
+
+  assert.match(content, /XMoleculesLayered0001/);
+  assert.match(content, /XMoleculesLayered0002/);
+  assert.match(content, /XMoleculesLayered0003/);
+  assert.doesNotMatch(content, /XMoleculesDomainLayer0001/);
+  assert.doesNotMatch(content, /XMoleculesDomainLayer0002/);
+  assert.doesNotMatch(content, /XMoleculesDomainLayer0003/);
+  assert.doesNotMatch(content, /XMoleculesApplicationLayer0003/);
+});
+
 test('violations workspace uses local analyzer project references in every project', () => {
   const report = buildWorkspaceReport(enumerateFiles(violationsRoot));
 

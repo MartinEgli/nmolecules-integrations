@@ -8,9 +8,17 @@ const manifest = require('../package.json');
 test('package manifest exposes the expected commands and activation events', () => {
   const commands = manifest.contributes.commands.map((command) => command.command);
 
-  assert.deepEqual(commands, ['nmolecules.inspectWorkspace', 'nmolecules.refreshDiagnostics', 'nmolecules.openWorkspaceDocs']);
+  assert.deepEqual(commands, [
+    'nmolecules.inspectWorkspace',
+    'nmolecules.refreshDiagnostics',
+    'nmolecules.openWorkspaceDocs',
+    'nmolecules.openRuleCatalog',
+    'nmolecules.showDiagnosticsSummary'
+  ]);
   assert.ok(manifest.activationEvents.includes('onLanguage:csharp'));
   assert.ok(manifest.activationEvents.includes('onCommand:nmolecules.refreshDiagnostics'));
+  assert.ok(manifest.activationEvents.includes('onCommand:nmolecules.openRuleCatalog'));
+  assert.ok(manifest.activationEvents.includes('onCommand:nmolecules.showDiagnosticsSummary'));
   assert.equal(manifest.main, './src/extension.js');
 });
 

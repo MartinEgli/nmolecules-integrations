@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const { inspectProjectFile, buildWorkspaceReport, formatWorkspaceReport } = require('../src/inspectWorkspace');
-const { getDocumentationCandidates } = require('../src/docs');
+const { getDocumentationCandidates, getRuleCatalogCandidates } = require('../src/docs');
 
 test('inspectProjectFile detects package and project references', () => {
   const content = `
@@ -168,4 +168,13 @@ test('getDocumentationCandidates normalizes the docs root', () => {
 
 test('getDocumentationCandidates falls back to docs for blank roots', () => {
   assert.deepEqual(getDocumentationCandidates('   '), ['docs/architecture.md', 'docs/layer-matrix.md', 'README.md']);
+});
+
+test('getRuleCatalogCandidates normalizes docs root and orders architecture docs', () => {
+  assert.deepEqual(getRuleCatalogCandidates('docs/'), [
+    'docs/architecture/analyzer-rule-map.md',
+    'docs/architecture/code-fix-policy.md',
+    'docs/architecture/diagnostic-writing-guideline.md',
+    'docs/architecture/dependency-rules.md'
+  ]);
 });

@@ -15,8 +15,11 @@ const {
   registerCommands,
   readWorkspaceEntries,
   inspectWorkspace,
-  openWorkspaceDocs
+  openWorkspaceDocs,
+  openRuleCatalog,
+  showDiagnosticsSummary
 } = require('../src/commands');
+const { refreshDiagnostics } = require('../src/diagnostics');
 
 test('registerCommands registers all extension commands', () => {
   const registered = [];
@@ -45,9 +48,9 @@ test('registerCommands registers all extension commands', () => {
 
   assert.deepEqual(
     registered.map((entry) => entry.id),
-    [COMMANDS.inspectWorkspace, COMMANDS.refreshDiagnostics, COMMANDS.openWorkspaceDocs]
+    [COMMANDS.inspectWorkspace, COMMANDS.refreshDiagnostics, COMMANDS.openWorkspaceDocs, COMMANDS.openRuleCatalog, COMMANDS.showDiagnosticsSummary]
   );
-  assert.equal(context.subscriptions.length, 4);
+  assert.equal(context.subscriptions.length, 6);
 });
 
 test('configuration helpers read extension settings with defaults', () => {
@@ -240,4 +243,133 @@ test('openWorkspaceDocs warns when no documentation exists', async () => {
 
   assert.equal(result, undefined);
   assert.deepEqual(warnings, ['No nMolecules documentation file was found in the current workspace.']);
+});
+
+test('openRuleCatalog opens analyzer rule map when available', async () => {
+  const opened = [];
+  const knownFiles = new Set(['c:\\repo\\docs\\architecture\\analyzer-rule-map.md']);
+  const vscode = {
+    workspace: {
+      workspaceFolders: [{ uri: { fsPath: 'c:\\repo' } }],
+      fs: {
+        stat(uri) {
+          if (!knownFiles.has(uri.fsPath)) {
+            return Promise.reject(new Error('not found'));
+          }
+
+          return Promise.resolve({});
+        }
+      },
+      openTextDocument(uri) {
+        opened.push(uri.fsPath);
+        return Promise.resolve({ uri });
+      }
+    },
+    window: {
+      showTextDocument(document, options) {
+        opened.push(options.preview === false ? 'preview:false' : 'preview:true');
+        return Promise.resolve(document);
+      },
+      showWarningMessage() {
+        throw new Error('warning should not be shown');
+      }
+    },
+    Uri: {
+      joinPath(base, ...parts) {
+        return {
+          fsPath: [base.fsPath, ...parts].join('\\')
+        };
+      }
+    }
+  };
+
+  const openedUri = await openRuleCatalog(vscode, 'docs');
+
+  assert.equal(openedUri.fsPath, 'c:\\repo\\docs\\architecture\\analyzer-rule-map.md');
+  assert.deepEqual(opened, ['c:\\repo\\docs\\architecture\\analyzer-rule-map.md', 'preview:false']);
+});
+
+test('showDiagnosticsSummary prints last diagnostics report', async () => {
+  const output = [];
+  const diagnosticCollection = { clear() {}, set() {} };
+  const vscode = {
+    DiagnosticSeverity: {
+      Error: 'error',
+      Warning: 'warning'
+    },
+    Range: class Range {
+      constructor(startLine, startCharacter, endLine, endCharacter) {
+        this.start = { line: startLine, character: startCharacter };
+        this.end = { line: endLine, character: endCharacter };
+      }
+    },
+    Diagnostic: class Diagnostic {
+      constructor(range, message, severity) {
+        this.range = range;
+        this.message = message;
+        this.severity = severity;
+      }
+    },
+    Uri: {
+      file(fsPath) {
+        return { fsPath };
+      },
+      joinPath(base, ...parts) {
+        return {
+          fsPath: [base.fsPath, ...parts].join('\\')
+        };
+      }
+    },
+    workspace: {
+      workspaceFolders: [{ uri: { fsPath: 'c:\\repo' } }],
+      getConfiguration() {
+        return {
+          get(name, fallback) {
+            if (name === 'diagnosticsTarget') {
+              return 'sample-violations\\Banking.Sample.Violations.sln';
+            }
+
+            return fallback;
+          }
+        };
+      },
+      fs: {
+        stat() {
+          return Promise.resolve({});
+        }
+      },
+      findFiles() {
+        return Promise.resolve([]);
+      }
+    },
+    window: {
+      showInformationMessage() {
+        return Promise.resolve();
+      },
+      showWarningMessage() {
+        return Promise.resolve();
+      }
+    }
+  };
+  const outputChannel = {
+    appendLine(line) {
+      output.push(line);
+    },
+    show() {
+      output.push('[show]');
+    }
+  };
+
+  await refreshDiagnostics(vscode, outputChannel, diagnosticCollection, {
+    runBuild: async () => ({
+      exitCode: 1,
+      output: 'c:\\repo\\src\\BrokenDomainModel.cs(9,6): error XMoleculesValueObject0006: Value object should not declare identity members [c:\\repo\\src\\Banking.Domain\\Banking.Domain.csproj]'
+    })
+  });
+
+  const summary = await showDiagnosticsSummary(vscode, outputChannel);
+
+  assert.equal(summary.totalDiagnostics, 1);
+  assert.match(output.join('\n'), /nMolecules last diagnostics summary/);
+  assert.match(output.join('\n'), /XMoleculesValueObject0006: 1/);
 });

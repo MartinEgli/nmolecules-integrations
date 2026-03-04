@@ -1,14 +1,16 @@
 'use strict';
 
 const { TextDecoder } = require('util');
-const { refreshDiagnostics } = require('./diagnostics');
+const { refreshDiagnostics, getLastDiagnosticsReport } = require('./diagnostics');
 const { buildWorkspaceReport, formatWorkspaceReport } = require('./inspectWorkspace');
-const { getDocumentationCandidates } = require('./docs');
+const { getDocumentationCandidates, getRuleCatalogCandidates } = require('./docs');
 
 const COMMANDS = {
   inspectWorkspace: 'nmolecules.inspectWorkspace',
   refreshDiagnostics: 'nmolecules.refreshDiagnostics',
-  openWorkspaceDocs: 'nmolecules.openWorkspaceDocs'
+  openWorkspaceDocs: 'nmolecules.openWorkspaceDocs',
+  openRuleCatalog: 'nmolecules.openRuleCatalog',
+  showDiagnosticsSummary: 'nmolecules.showDiagnosticsSummary'
 };
 
 async function readWorkspaceEntries(vscodeApi) {
@@ -42,11 +44,11 @@ async function inspectWorkspace(vscodeApi, outputChannel) {
   return report;
 }
 
-async function openWorkspaceDocs(vscodeApi, docsRoot) {
+async function openFirstDocument(vscodeApi, candidates, warningMessage) {
   const folders = vscodeApi.workspace.workspaceFolders ?? [];
 
   for (const folder of folders) {
-    for (const relativePath of getDocumentationCandidates(docsRoot)) {
+    for (const relativePath of candidates) {
       const candidate = vscodeApi.Uri.joinPath(folder.uri, ...relativePath.split('/'));
 
       try {
@@ -60,8 +62,46 @@ async function openWorkspaceDocs(vscodeApi, docsRoot) {
     }
   }
 
-  await vscodeApi.window.showWarningMessage('No nMolecules documentation file was found in the current workspace.');
+  await vscodeApi.window.showWarningMessage(warningMessage);
   return undefined;
+}
+
+async function openWorkspaceDocs(vscodeApi, docsRoot) {
+  return openFirstDocument(
+    vscodeApi,
+    getDocumentationCandidates(docsRoot),
+    'No nMolecules documentation file was found in the current workspace.'
+  );
+}
+
+async function openRuleCatalog(vscodeApi, docsRoot) {
+  return openFirstDocument(
+    vscodeApi,
+    getRuleCatalogCandidates(docsRoot),
+    'No nMolecules rule catalog document was found in the current workspace.'
+  );
+}
+
+async function showDiagnosticsSummary(vscodeApi, outputChannel) {
+  const report = getLastDiagnosticsReport();
+  if (!report) {
+    await vscodeApi.window.showWarningMessage('No nMolecules diagnostics report is available yet. Run "nMolecules: Refresh Diagnostics" first.');
+    return undefined;
+  }
+
+  outputChannel.appendLine('nMolecules last diagnostics summary');
+  outputChannel.appendLine(`- Target: ${report.buildTarget}`);
+  outputChannel.appendLine(`- Total: ${report.totalDiagnostics}, Errors: ${report.errors}, Warnings: ${report.warnings}`);
+
+  if (report.diagnosticsByRule?.length > 0) {
+    outputChannel.appendLine('- Rules:');
+    for (const entry of report.diagnosticsByRule) {
+      outputChannel.appendLine(`  - ${entry.code}: ${entry.count}`);
+    }
+  }
+
+  outputChannel.show(true);
+  return report;
 }
 
 function getTraceLevel(vscodeApi) {
@@ -92,7 +132,9 @@ function registerCommands(vscodeApi, context, outputChannel, diagnosticCollectio
   const subscriptions = [
     vscodeApi.commands.registerCommand(COMMANDS.inspectWorkspace, () => inspectWorkspace(vscodeApi, outputChannel)),
     vscodeApi.commands.registerCommand(COMMANDS.refreshDiagnostics, () => refreshDiagnostics(vscodeApi, outputChannel, diagnosticCollection)),
-    vscodeApi.commands.registerCommand(COMMANDS.openWorkspaceDocs, () => openWorkspaceDocs(vscodeApi, getDocsRoot(vscodeApi)))
+    vscodeApi.commands.registerCommand(COMMANDS.openWorkspaceDocs, () => openWorkspaceDocs(vscodeApi, getDocsRoot(vscodeApi))),
+    vscodeApi.commands.registerCommand(COMMANDS.openRuleCatalog, () => openRuleCatalog(vscodeApi, getDocsRoot(vscodeApi))),
+    vscodeApi.commands.registerCommand(COMMANDS.showDiagnosticsSummary, () => showDiagnosticsSummary(vscodeApi, outputChannel))
   ];
 
   context.subscriptions.push(...subscriptions, outputChannel);
@@ -103,7 +145,10 @@ module.exports = {
   COMMANDS,
   readWorkspaceEntries,
   inspectWorkspace,
+  openFirstDocument,
   openWorkspaceDocs,
+  openRuleCatalog,
+  showDiagnosticsSummary,
   registerCommands,
   getTraceLevel,
   getDocsRoot,

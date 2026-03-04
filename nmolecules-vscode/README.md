@@ -17,6 +17,8 @@ The long-term direction is to reuse the same analyzer rule set that already exis
 - `nMolecules: Inspect Workspace`
 - `nMolecules: Refresh Diagnostics`
 - `nMolecules: Open Workspace Docs`
+- `nMolecules: Open Rule Catalog`
+- `nMolecules: Show Diagnostics Summary`
 
 ## Sample Workspace
 
@@ -43,7 +45,8 @@ npm install --prefix nmolecules-vscode
 npm run test:host --prefix nmolecules-vscode
 ```
 
-## Next Steps
+## Current Guidance Surface
 
-- surface rule help and diagnostics navigation in VS Code Problems
-- add marketplace packaging and publishing automation
+- workspace docs and architecture docs can be opened directly from the command palette
+- rule catalog docs are directly discoverable through `Open Rule Catalog`
+- diagnostics summary includes per-rule counts after each refresh

@@ -6,7 +6,9 @@ const assert = require('node:assert/strict');
 const {
   parseDiagnosticLine,
   parseDiagnosticsFromBuildOutput,
-  refreshDiagnostics
+  refreshDiagnostics,
+  summarizeDiagnosticsByRule,
+  getLastDiagnosticsReport
 } = require('../src/diagnostics');
 
 test('parseDiagnosticLine reads nMolecules analyzer output', () => {
@@ -31,6 +33,19 @@ test('parseDiagnosticsFromBuildOutput keeps warnings and errors', () => {
     diagnostics.map((entry) => entry.code),
     ['XMoleculesService0001', 'XMoleculesApplicationService0001']
   );
+});
+
+test('summarizeDiagnosticsByRule groups diagnostics per rule ID', () => {
+  const summary = summarizeDiagnosticsByRule([
+    { code: 'XMoleculesValueObject0006' },
+    { code: 'XMoleculesValueObject0006' },
+    { code: 'XMoleculesService0001' }
+  ]);
+
+  assert.deepEqual(summary, [
+    { code: 'XMoleculesValueObject0006', count: 2 },
+    { code: 'XMoleculesService0001', count: 1 }
+  ]);
 });
 
 test('refreshDiagnostics publishes diagnostics into the collection', async () => {
@@ -133,4 +148,9 @@ test('refreshDiagnostics publishes diagnostics into the collection', async () =>
   assert.equal(sets[0].type, 'clear');
   assert.equal(sets.filter((entry) => entry.type === 'set').length, 2);
   assert.match(output.join('\n'), /Refreshing nMolecules diagnostics/);
+  assert.match(output.join('\n'), /nMolecules diagnostics by rule/);
+  assert.deepEqual(getLastDiagnosticsReport().diagnosticsByRule, [
+    { code: 'XMoleculesService0001', count: 1 },
+    { code: 'XMoleculesValueObject0006', count: 1 }
+  ]);
 });

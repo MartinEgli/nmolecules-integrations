@@ -42,7 +42,4 @@ These are the intended example messages for the isolated samples. They are writt
   `Domain layer symbol 'infrastructureGateway' must not depend on infrastructure layer type 'ImportedInfrastructureGateway'`
 
 - `DomainLayerUsingOtherLayers.viewModel`
-  `Domain layer symbol 'viewModel' must not depend on user interface layer type 'ImportedViewModel'`
-
-- `ApplicationLayerUsingUi.uiWizard`
-  `Application layer symbol 'uiWizard' must not depend on user interface layer type 'UiWizard'`
+  `Domain layer symbol 'viewModel' must not depend on interface layer type 'ImportedViewModel'`

@@ -10,6 +10,18 @@ function getDocumentationCandidates(docsRoot) {
   ];
 }
 
+function getRuleCatalogCandidates(docsRoot) {
+  const normalizedRoot = docsRoot && docsRoot.trim() ? docsRoot.trim().replace(/[\\/]+$/, '') : 'docs';
+
+  return [
+    `${normalizedRoot}/architecture/analyzer-rule-map.md`,
+    `${normalizedRoot}/architecture/code-fix-policy.md`,
+    `${normalizedRoot}/architecture/diagnostic-writing-guideline.md`,
+    `${normalizedRoot}/architecture/dependency-rules.md`
+  ];
+}
+
 module.exports = {
-  getDocumentationCandidates
+  getDocumentationCandidates,
+  getRuleCatalogCandidates
 };

@@ -4,6 +4,7 @@ const path = require('node:path');
 const { spawn } = require('node:child_process');
 
 const NMOLECULES_DIAGNOSTIC_PATTERN = /^(.+?)\((\d+),(\d+)(?:,\d+,\d+)?\):\s(error|warning|fehler|warnung)\s(XMolecules[A-Za-z0-9]+):\s(.+?)(?:\s\[(.+)\])?$/i;
+let lastDiagnosticsReport;
 
 function getDiagnosticsTarget(vscodeApi) {
   return vscodeApi.workspace.getConfiguration('nmolecules').get('diagnosticsTarget', '');
@@ -147,6 +148,28 @@ function summarizeDiagnostics(buildTarget, diagnostics, exitCode) {
   };
 }
 
+function summarizeDiagnosticsByRule(diagnostics) {
+  const counts = new Map();
+
+  for (const diagnostic of diagnostics) {
+    counts.set(diagnostic.code, (counts.get(diagnostic.code) ?? 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .map(([code, count]) => ({ code, count }))
+    .sort((left, right) => {
+      if (left.count !== right.count) {
+        return right.count - left.count;
+      }
+
+      return left.code.localeCompare(right.code);
+    });
+}
+
+function getLastDiagnosticsReport() {
+  return lastDiagnosticsReport;
+}
+
 async function refreshDiagnostics(vscodeApi, outputChannel, diagnosticCollection, options = {}) {
   const buildTarget = await resolveBuildTarget(vscodeApi, options.buildTarget ?? getDiagnosticsTarget(vscodeApi));
 
@@ -155,6 +178,7 @@ async function refreshDiagnostics(vscodeApi, outputChannel, diagnosticCollection
     diagnosticCollection.clear();
     await vscodeApi.window.showWarningMessage(message);
     outputChannel.appendLine(message);
+    lastDiagnosticsReport = undefined;
     return {
       buildTarget: undefined,
       totalDiagnostics: 0,
@@ -174,7 +198,19 @@ async function refreshDiagnostics(vscodeApi, outputChannel, diagnosticCollection
   applyDiagnostics(vscodeApi, diagnosticCollection, diagnostics);
 
   const summary = summarizeDiagnostics(buildTarget, diagnostics, buildResult.exitCode);
+  const diagnosticsByRule = summarizeDiagnosticsByRule(diagnostics);
   outputChannel.appendLine(`nMolecules diagnostics: ${summary.totalDiagnostics} issue(s), ${summary.errors} error(s), ${summary.warnings} warning(s).`);
+  if (diagnosticsByRule.length > 0) {
+    outputChannel.appendLine('nMolecules diagnostics by rule:');
+    for (const entry of diagnosticsByRule.slice(0, 10)) {
+      outputChannel.appendLine(`- ${entry.code}: ${entry.count}`);
+    }
+  }
+
+  lastDiagnosticsReport = {
+    ...summary,
+    diagnosticsByRule
+  };
 
   if (summary.totalDiagnostics === 0) {
     await vscodeApi.window.showInformationMessage(`nMolecules found no analyzer diagnostics in ${path.basename(buildTarget)}.`);
@@ -197,5 +233,7 @@ module.exports = {
   parseDiagnosticsFromBuildOutput,
   applyDiagnostics,
   summarizeDiagnostics,
+  summarizeDiagnosticsByRule,
+  getLastDiagnosticsReport,
   refreshDiagnostics
 };

@@ -32,8 +32,14 @@ async function run() {
   const diagnosticsSummary = await vscode.commands.executeCommand('nmolecules.refreshDiagnostics');
   assert.ok(diagnosticsSummary.totalDiagnostics >= 4, 'The violations sample should emit multiple analyzer diagnostics.');
 
+  const byRuleSummary = await vscode.commands.executeCommand('nmolecules.showDiagnosticsSummary');
+  assert.ok(byRuleSummary.totalDiagnostics >= 4, 'The diagnostics summary command should reflect the latest refresh run.');
+
   const docsUri = await vscode.commands.executeCommand('nmolecules.openWorkspaceDocs');
   assert.ok(docsUri.fsPath.endsWith('docs\\architecture.md') || docsUri.fsPath.endsWith('docs/architecture.md'));
+
+  const ruleCatalogUri = await vscode.commands.executeCommand('nmolecules.openRuleCatalog');
+  assert.ok(ruleCatalogUri.fsPath.endsWith('docs\\architecture\\analyzer-rule-map.md') || ruleCatalogUri.fsPath.endsWith('docs/architecture/analyzer-rule-map.md'));
 }
 
 module.exports = {

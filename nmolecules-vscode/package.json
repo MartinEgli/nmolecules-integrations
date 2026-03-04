@@ -20,6 +20,8 @@
     "onCommand:nmolecules.inspectWorkspace",
     "onCommand:nmolecules.refreshDiagnostics",
     "onCommand:nmolecules.openWorkspaceDocs",
+    "onCommand:nmolecules.openRuleCatalog",
+    "onCommand:nmolecules.showDiagnosticsSummary",
     "onLanguage:csharp"
   ],
   "main": "./src/extension.js",
@@ -38,6 +40,16 @@
       {
         "command": "nmolecules.openWorkspaceDocs",
         "title": "nMolecules: Open Workspace Docs",
+        "category": "nMolecules"
+      },
+      {
+        "command": "nmolecules.openRuleCatalog",
+        "title": "nMolecules: Open Rule Catalog",
+        "category": "nMolecules"
+      },
+      {
+        "command": "nmolecules.showDiagnosticsSummary",
+        "title": "nMolecules: Show Diagnostics Summary",
         "category": "nMolecules"
       }
     ],
