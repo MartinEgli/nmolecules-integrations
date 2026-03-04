@@ -79,5 +79,19 @@ namespace NMolecules.Analyzers.Test.ValueObjectAnalyzerTests
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, EmptyDiagnosticResults);
         }
+
+        [Fact]
+        public async Task AnalyzeImmutability_WithSealedRecordValueObject_IsValid()
+        {
+            var testCode = @"namespace NMolecules.Analyzers.Test.ValueObjectAnalyzerTests.SampleData
+{
+    using NMolecules.DDD;
+
+    [ValueObject]
+    public sealed record Money(string Currency);
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, EmptyDiagnosticResults);
+        }
     }
 }

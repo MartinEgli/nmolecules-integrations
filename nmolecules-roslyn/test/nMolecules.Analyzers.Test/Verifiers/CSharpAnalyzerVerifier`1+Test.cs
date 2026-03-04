@@ -1,4 +1,5 @@
 using System.IO;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -20,6 +21,9 @@ namespace NMolecules.Analyzers.Test.Verifiers
 
                 SolutionTransforms.Add((solution, projectId) =>
                 {
+                    var parseOptions = (CSharpParseOptions)solution.GetProject(projectId)!.ParseOptions!;
+                    solution = solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(LanguageVersion.Latest));
+
                     var compilationOptions = solution.GetProject(projectId)!.CompilationOptions;
                     compilationOptions = compilationOptions!.WithSpecificDiagnosticOptions(
                         compilationOptions.SpecificDiagnosticOptions.SetItems(CSharpVerifierHelper.NullableWarnings));
