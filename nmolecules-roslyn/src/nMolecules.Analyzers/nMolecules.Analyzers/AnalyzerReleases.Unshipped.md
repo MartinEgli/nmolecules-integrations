@@ -18,6 +18,11 @@ XMoleculesFactory0001 | DDD | Error | Factory should not use application service
 XMoleculesFactory0002 | DDD | Error | Factory should not use repositories
 XMoleculesFactory0003 | DDD | Error | Factory must not also be a domain building block
 XMoleculesService0001 | DDD | Warning | Service should use a specific role marker
+XMoleculesBoundedContext0001 | DDD | Warning | BoundedContext should define stable Id metadata
+XMoleculesBoundedContext0002 | DDD | Warning | BoundedContext should define readable Name metadata
+XMoleculesModule0001 | DDD | Warning | Module should define stable Id metadata
+XMoleculesModule0002 | DDD | Warning | Module should define readable Name metadata
+XMoleculesModule0003 | DDD | Warning | Module should define BoundedContextId metadata
 XMoleculesValueObject0006 | DDD | Error | Value object should not declare identity members
 XMoleculesValueObject0007 | DDD | Error | Value object should not depend on factories
 XMoleculesDomainEvent0001 | Events | Error | Domain events must not reference entities
