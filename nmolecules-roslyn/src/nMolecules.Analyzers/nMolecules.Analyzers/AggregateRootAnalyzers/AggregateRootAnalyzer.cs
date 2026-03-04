@@ -12,6 +12,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Rules.AggregateRootsShouldNotUseAggregateRootsRule,
+            Rules.AggregateRootsShouldNotUseFactoriesRule,
             Rules.AggregateRootsShouldNotUseRepositoriesRule,
             Rules.AggregateRootsShouldNotUseServicesRule,
             Rules.AggregateRootsShouldHaveIdRule,

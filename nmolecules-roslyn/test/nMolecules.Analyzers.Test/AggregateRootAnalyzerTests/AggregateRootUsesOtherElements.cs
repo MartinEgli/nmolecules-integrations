@@ -105,6 +105,26 @@ namespace NMolecules.Analyzers.Test.AggregateRootAnalyzerTests
                 CompilerError(Rules.AggregateRootsShouldNotUseAggregateRootsRuleId).WithLocation(4),
                 CompilerError(Rules.AggregateRootsShouldNotUseAggregateRootsRuleId).WithLocation(5));
         }
+
+        [Fact]
+        public async Task Analyze_WithAggregateRootUsesFactory_EmitsCompilerError()
+        {
+            var aggregateRoot = GenerateClass(Factory);
+            var factoryAsField = CompilerError(Rules.AggregateRootsShouldNotUseFactoriesRuleId).WithSpan(FieldLineNumber, 38, FieldLineNumber, 45);
+            var factoryAsParameterInCtor = CompilerError(Rules.AggregateRootsShouldNotUseFactoriesRuleId).WithSpan(CtorLineNumber, 49, CtorLineNumber, 54);
+            var factoryAsReturnValue = CompilerError(Rules.AggregateRootsShouldNotUseFactoriesRuleId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
+            var factoryAsParameterInMethod = CompilerError(Rules.AggregateRootsShouldNotUseFactoriesRuleId).WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
+            var factoryAsPropertyType = CompilerError(Rules.AggregateRootsShouldNotUseFactoriesRuleId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
+            var factoryInMethodBody = CompilerError(Rules.AggregateRootsShouldNotUseFactoriesRuleId)
+                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 28);
+            await VerifyCS.VerifyAnalyzerAsync(aggregateRoot,
+                factoryAsField,
+                factoryAsParameterInCtor,
+                factoryAsParameterInMethod,
+                factoryAsReturnValue,
+                factoryAsPropertyType,
+                factoryInMethodBody);
+        }
         
         [Fact]
         public async Task Analyze_ValidAggregateRoot_DoesNotEmitAnyError()
