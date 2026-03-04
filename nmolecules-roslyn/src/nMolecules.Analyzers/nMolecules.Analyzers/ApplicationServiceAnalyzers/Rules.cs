@@ -7,6 +7,7 @@ namespace NMolecules.Analyzers.ApplicationServiceAnalyzers
         public const string ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksId = "XMoleculesApplicationService0001";
         public const string ApplicationServicesShouldNotUseLegacyServicesId = "XMoleculesApplicationService0002";
         public const string ApplicationServicesShouldNotUseApplicationServicesId = "XMoleculesApplicationService0003";
+        public const string ApplicationServicesShouldNotExposeInfrastructureSignaturesId = "XMoleculesApplicationService0004";
 
         public static readonly DiagnosticDescriptor ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule = new(
             ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksId,
@@ -34,5 +35,14 @@ namespace NMolecules.Analyzers.ApplicationServiceAnalyzers
             DiagnosticSeverity.Warning,
             true,
             "Application services should orchestrate a use case boundary directly instead of chaining through other application services.");
+
+        public static readonly DiagnosticDescriptor ApplicationServicesShouldNotExposeInfrastructureSignaturesRule = new(
+            ApplicationServicesShouldNotExposeInfrastructureSignaturesId,
+            "Application services should not expose infrastructure-layer types in public signatures",
+            "Application service '{0}' must not expose infrastructure-layer type '{1}' in public member '{2}'",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "Application services should keep their public API independent from infrastructure-layer types.");
     }
 }

@@ -30,5 +30,14 @@ namespace NMolecules.Analyzers.ApplicationServiceAnalyzers
                 yield return type.Diagnostic(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), DomainServiceRoleName);
             }
         }
+
+        public static Diagnostic ViolatesInfrastructureSignature(this ISymbol symbol, ITypeSymbol type)
+        {
+            return symbol.Diagnostic(
+                Rules.ApplicationServicesShouldNotExposeInfrastructureSignaturesRule,
+                symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(),
+                type.DisplayName(),
+                symbol.DiagnosticTargetName());
+        }
     }
 }
