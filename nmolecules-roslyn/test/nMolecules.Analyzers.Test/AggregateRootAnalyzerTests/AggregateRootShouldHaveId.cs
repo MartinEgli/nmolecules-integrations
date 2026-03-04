@@ -80,7 +80,9 @@ namespace NMolecules.Analyzers.Test.AggregateRootAnalyzerTests
     }
 }";
 
-            var compileError = CompilerError(Rules.AggregateRootsShouldHaveSingleIdRuleId).WithLocation(0);
+            var compileError = CompilerError(Rules.AggregateRootsShouldHaveSingleIdRuleId)
+                .WithArguments("AggregateRootWithMultipleIds", 2, "id, SecondaryId")
+                .WithLocation(0);
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(compileError));
         }
     }

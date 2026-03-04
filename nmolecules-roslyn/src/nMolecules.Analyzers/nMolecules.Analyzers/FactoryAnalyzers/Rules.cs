@@ -9,7 +9,7 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
         public static readonly DiagnosticDescriptor FactoriesShouldNotUseApplicationServicesRule = new(
             FactoriesShouldNotUseApplicationServicesId,
             "Factories should not use application services",
-            "Factory should not use application services",
+            "Factory '{0}' must not depend on application service '{1}'",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,

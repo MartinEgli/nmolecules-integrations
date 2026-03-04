@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
+using static NMolecules.Analyzers.IdAnalyzer;
 
 namespace NMolecules.Analyzers.AggregateRootAnalyzers
 {
@@ -16,7 +18,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             {
                 yield return symbol.ViolatesRepositoryUsage();
             }
-            
+
             if (type.IsService())
             {
                 yield return symbol.ViolatesServiceUsage();
@@ -27,6 +29,15 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
         private static Diagnostic ViolatesRepositoryUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseRepositoriesRule);
         private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseServicesRule);
         public static Diagnostic ViolatesMandatoryId(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldHaveIdRule);
-        public static Diagnostic ViolatesMultipleIdentities(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldHaveSingleIdRule);
+
+        public static Diagnostic ViolatesMultipleIdentities(this INamedTypeSymbol symbol)
+        {
+            var identities = GetIdentityMembers(symbol);
+            return symbol.Diagnostic(
+                Rules.AggregateRootsShouldHaveSingleIdRule,
+                symbol.DisplayName(),
+                identities.Count,
+                string.Join(", ", identities.Select(it => it.Name)));
+        }
     }
 }

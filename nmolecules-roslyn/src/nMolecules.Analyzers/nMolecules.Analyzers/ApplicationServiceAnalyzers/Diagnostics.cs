@@ -12,22 +12,22 @@ namespace NMolecules.Analyzers.ApplicationServiceAnalyzers
         {
             if (type.IsEntity())
             {
-                yield return type.Diagnostic(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule, nameof(EntityAttribute).Replace("Attribute", ""));
+                yield return type.Diagnostic(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), nameof(EntityAttribute).Replace("Attribute", ""));
             }
 
             if (type.IsAggregateRoot())
             {
-                yield return type.Diagnostic(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule, nameof(AggregateRootAttribute).Replace("Attribute", ""));
+                yield return type.Diagnostic(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), nameof(AggregateRootAttribute).Replace("Attribute", ""));
             }
 
             if (type.Is<ValueObjectAttribute>())
             {
-                yield return type.Diagnostic(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule, nameof(ValueObjectAttribute).Replace("Attribute", ""));
+                yield return type.Diagnostic(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), nameof(ValueObjectAttribute).Replace("Attribute", ""));
             }
 
             if (type.IsDomainService())
             {
-                yield return type.Diagnostic(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule, DomainServiceRoleName);
+                yield return type.Diagnostic(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), DomainServiceRoleName);
             }
         }
     }

@@ -9,7 +9,7 @@ namespace NMolecules.Analyzers.IdentityAnalyzers
         public static readonly DiagnosticDescriptor IdentityMustBelongToEntityOrAggregateRootRule = new(
             IdentityMustBelongToEntityOrAggregateRootId,
             "Identity members must belong to entities or aggregate roots",
-            "[Identity] may only be declared inside an [Entity] or [AggregateRoot]",
+            "[Identity] member '{0}' is declared in '{1}', but only [Entity] or [AggregateRoot] may own identities",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,

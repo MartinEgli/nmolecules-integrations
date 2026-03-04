@@ -18,23 +18,23 @@ namespace NMolecules.Analyzers.LayerAnalyzers
             {
                 if (type.IsApplicationLayer())
                 {
-                    yield return symbol.Diagnostic(Rules.DomainLayersShouldNotUseApplicationLayersRule);
+                    yield return symbol.Diagnostic(Rules.DomainLayersShouldNotUseApplicationLayersRule, symbol.DiagnosticTargetName(), type.DisplayName());
                 }
 
                 if (type.IsUserInterfaceLayer())
                 {
-                    yield return symbol.Diagnostic(Rules.DomainLayersShouldNotUseUserInterfaceLayersRule);
+                    yield return symbol.Diagnostic(Rules.DomainLayersShouldNotUseUserInterfaceLayersRule, symbol.DiagnosticTargetName(), type.DisplayName());
                 }
 
                 if (type.IsInfrastructureLayer())
                 {
-                    yield return symbol.Diagnostic(Rules.DomainLayersShouldNotUseInfrastructureLayersRule);
+                    yield return symbol.Diagnostic(Rules.DomainLayersShouldNotUseInfrastructureLayersRule, symbol.DiagnosticTargetName(), type.DisplayName());
                 }
             }
 
             if (owner.IsApplicationLayer() && type.IsUserInterfaceLayer())
             {
-                yield return symbol.Diagnostic(Rules.ApplicationLayersShouldNotUseUserInterfaceLayersRule);
+                yield return symbol.Diagnostic(Rules.ApplicationLayersShouldNotUseUserInterfaceLayersRule, symbol.DiagnosticTargetName(), type.DisplayName());
             }
         }
     }

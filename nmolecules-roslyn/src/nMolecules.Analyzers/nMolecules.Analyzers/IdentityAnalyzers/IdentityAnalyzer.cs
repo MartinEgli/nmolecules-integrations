@@ -39,7 +39,7 @@ namespace NMolecules.Analyzers.IdentityAnalyzers
                 return;
             }
 
-            context.ReportDiagnostic(symbol.Diagnostic(Rules.IdentityMustBelongToEntityOrAggregateRootRule));
+            context.ReportDiagnostic(symbol.Diagnostic(Rules.IdentityMustBelongToEntityOrAggregateRootRule, symbol.Name, containingType.DisplayName()));
         }
     }
 }

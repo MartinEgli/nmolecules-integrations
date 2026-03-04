@@ -70,53 +70,35 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
                 typeof(Resources)));
 
         public static readonly DiagnosticDescriptor ValueObjectShouldBeImmutableRule = new(ValueObjectsShouldBeImmutableId,
-            new LocalizableResourceString(nameof(Resources.ValueObjectShouldBeImmutableTitle),
-                Resources.ResourceManager,
-                typeof(Resources)),
-            new LocalizableResourceString(nameof(Resources.ValueObjectShouldBeImmutableMessageFormat),
-                Resources.ResourceManager,
-                typeof(Resources)),
+            "Value objects must be immutable",
+            "Value object '{0}' must be immutable; member '{1}' is writable",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            new LocalizableResourceString(nameof(Resources.ValueObjectShouldBeImmutableDescription),
-                Resources.ResourceManager,
-                typeof(Resources)));
+            "Value objects must not expose writable fields or properties.");
 
         public static readonly DiagnosticDescriptor ValueObjectMustNotDeclareIdentityRule = new(ValueObjectsMustNotDeclareIdentityId,
             "Value objects must not declare identities",
-            "Value object should not declare [Identity] members",
+            "Value object '{0}' must not declare [Identity] member '{1}'",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
             "Value objects are defined by value and must not introduce entity-style identities.");
 
         public static readonly DiagnosticDescriptor ValueObjectMustImplementIEquatableRule = new(ValueObjectsMustImplementIEquatableId,
-            new LocalizableResourceString(nameof(Resources.ValueObjectMustImplementIEquatableTitle),
-                Resources.ResourceManager,
-                typeof(Resources)),
-            new LocalizableResourceString(nameof(Resources.ValueObjectMustImplementIEquatableMessageFormat),
-                Resources.ResourceManager,
-                typeof(Resources)),
+            "Value objects must implement IEquatable<T>",
+            "Value object '{0}' must implement IEquatable<{0}>",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            new LocalizableResourceString(nameof(Resources.ValueObjectMustImplementIEquatableDescription),
-                Resources.ResourceManager,
-                typeof(Resources)));
+            "Value objects should implement type-specific equality semantics.");
 
         public static readonly DiagnosticDescriptor ValueObjectShouldBeSealedRule = new(ValueObjectsShouldBeSealedId,
-            new LocalizableResourceString(nameof(Resources.ValueObjectShouldBeSealedTitle),
-                Resources.ResourceManager,
-                typeof(Resources)),
-            new LocalizableResourceString(nameof(Resources.ValueObjectShouldBeSealedMessageFormat),
-                Resources.ResourceManager,
-                typeof(Resources)),
+            "Value objects should be sealed",
+            "Value object '{0}' should be sealed or declared as a value type",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            new LocalizableResourceString(nameof(Resources.ValueObjectShouldBeSealedDescription),
-                Resources.ResourceManager,
-                typeof(Resources)));
+            "Reference-type value objects should be sealed to protect value-based semantics.");
     }
 }

@@ -23,7 +23,9 @@ namespace NMolecules.Analyzers.Test.ServiceAnalyzerTests
     }
 }";
 
-            var expected = new DiagnosticResult(Rules.LegacyServicesShouldUseSpecificRoleId, DiagnosticSeverity.Warning).WithLocation(0);
+            var expected = new DiagnosticResult(Rules.LegacyServicesShouldUseSpecificRoleId, DiagnosticSeverity.Warning)
+                .WithArguments("LegacyPolicyService")
+                .WithLocation(0);
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
         }
 

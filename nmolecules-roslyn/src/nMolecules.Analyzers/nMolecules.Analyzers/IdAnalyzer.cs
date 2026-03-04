@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -12,7 +14,8 @@ namespace NMolecules.Analyzers
             Func<INamedTypeSymbol, Diagnostic> onMultipleIdentities)
         {
             var classSymbol = (INamedTypeSymbol)it.Symbol;
-            var identityCount = CountIdentities(classSymbol);
+            var identityMembers = GetIdentityMembers(classSymbol).ToArray();
+            var identityCount = identityMembers.Length;
 
             if (identityCount == 0)
             {
@@ -24,21 +27,20 @@ namespace NMolecules.Analyzers
             }
         }
 
-        private static int CountIdentities(INamedTypeSymbol classSymbol)
+        public static IReadOnlyList<ISymbol> GetIdentityMembers(INamedTypeSymbol classSymbol)
         {
-            var baseCount = 0;
+            var baseMembers = Array.Empty<ISymbol>();
             var classSymbolBaseType = classSymbol.BaseType;
             if (classSymbolBaseType is not null && classSymbolBaseType.SpecialType != SpecialType.System_Object)
             {
-                baseCount = CountIdentities(classSymbolBaseType);
+                baseMembers = GetIdentityMembers(classSymbolBaseType).ToArray();
             }
 
-            return CountOwnIdentities(classSymbol) + baseCount;
+            return baseMembers.Concat(GetOwnIdentityMembers(classSymbol)).ToArray();
         }
 
-        private static int CountOwnIdentities(INamedTypeSymbol classSymbol)
+        private static IEnumerable<ISymbol> GetOwnIdentityMembers(INamedTypeSymbol classSymbol)
         {
-            var identities = 0;
             foreach (var member in classSymbol.GetMembers())
             {
                 if (member.IsImplicitlyDeclared)
@@ -53,11 +55,9 @@ namespace NMolecules.Analyzers
 
                 if (member.IsIdentity())
                 {
-                    identities++;
+                    yield return member;
                 }
             }
-
-            return identities;
         }
     }
 }

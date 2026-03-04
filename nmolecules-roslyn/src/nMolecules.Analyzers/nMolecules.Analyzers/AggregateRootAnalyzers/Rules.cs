@@ -58,7 +58,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
         public static readonly DiagnosticDescriptor AggregateRootsShouldHaveSingleIdRule = new(
             AggregateRootsShouldHaveSingleIdRuleId,
             "Aggregate roots should declare a single identity",
-            "Aggregate root should declare exactly one [Identity] member",
+            "Aggregate root '{0}' declares {1} [Identity] members: {2}. Exactly one is allowed",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,

@@ -106,5 +106,11 @@ namespace NMolecules.Analyzers
             DiagnosticDescriptor descriptor,
             params object[] parameters) =>
             Microsoft.CodeAnalysis.Diagnostic.Create(descriptor, symbol.Locations[0], parameters);
+
+        public static string DisplayName(this ISymbol symbol) =>
+            symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+
+        public static string DiagnosticTargetName(this ISymbol symbol) =>
+            symbol is ITypeSymbol ? symbol.DisplayName() : symbol.Name;
     }
 }

@@ -27,7 +27,7 @@ namespace NMolecules.Analyzers.Test.ValueObjectAnalyzerTests
     }
 }";
 
-            var compileError = CompilerError(Rules.ValueObjectsMustNotDeclareIdentityId).WithLocation(0);
+            var compileError = CompilerError(Rules.ValueObjectsMustNotDeclareIdentityId).WithArguments("Money", "Currency").WithLocation(0);
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(compileError));
         }
 
@@ -49,7 +49,7 @@ namespace NMolecules.Analyzers.Test.ValueObjectAnalyzerTests
     }
 }";
 
-            var compileError = CompilerError(Rules.ValueObjectsMustNotDeclareIdentityId).WithLocation(0);
+            var compileError = CompilerError(Rules.ValueObjectsMustNotDeclareIdentityId).WithArguments("Currency", "code").WithLocation(0);
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(compileError));
         }
 

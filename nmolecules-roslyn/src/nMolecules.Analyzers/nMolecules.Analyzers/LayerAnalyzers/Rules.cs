@@ -12,7 +12,7 @@ namespace NMolecules.Analyzers.LayerAnalyzers
         public static readonly DiagnosticDescriptor DomainLayersShouldNotUseApplicationLayersRule = new(
             DomainLayersShouldNotUseApplicationLayersId,
             "Domain layer should not use application layer types",
-            "Domain layer should not use application layer types",
+            "Domain layer symbol '{0}' must not depend on application layer type '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -21,7 +21,7 @@ namespace NMolecules.Analyzers.LayerAnalyzers
         public static readonly DiagnosticDescriptor DomainLayersShouldNotUseUserInterfaceLayersRule = new(
             DomainLayersShouldNotUseUserInterfaceLayersId,
             "Domain layer should not use user interface layer types",
-            "Domain layer should not use user interface layer types",
+            "Domain layer symbol '{0}' must not depend on user interface layer type '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -30,7 +30,7 @@ namespace NMolecules.Analyzers.LayerAnalyzers
         public static readonly DiagnosticDescriptor DomainLayersShouldNotUseInfrastructureLayersRule = new(
             DomainLayersShouldNotUseInfrastructureLayersId,
             "Domain layer should not use infrastructure layer types",
-            "Domain layer should not use infrastructure layer types",
+            "Domain layer symbol '{0}' must not depend on infrastructure layer type '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -39,7 +39,7 @@ namespace NMolecules.Analyzers.LayerAnalyzers
         public static readonly DiagnosticDescriptor ApplicationLayersShouldNotUseUserInterfaceLayersRule = new(
             ApplicationLayersShouldNotUseUserInterfaceLayersId,
             "Application layer should not use user interface layer types",
-            "Application layer should not use user interface layer types",
+            "Application layer symbol '{0}' must not depend on user interface layer type '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,

@@ -9,7 +9,7 @@ namespace NMolecules.Analyzers.ServiceAnalyzers
         public static readonly DiagnosticDescriptor LegacyServicesShouldUseSpecificRoleRule = new(
             LegacyServicesShouldUseSpecificRoleId,
             "Legacy services should use a specific role",
-            "Service should use [DomainService] or [ApplicationService] instead of legacy [Service]",
+            "Type '{0}' uses legacy [Service]; replace it with [DomainService] or [ApplicationService]",
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,

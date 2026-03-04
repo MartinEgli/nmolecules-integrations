@@ -9,7 +9,7 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
         public static readonly DiagnosticDescriptor DomainServicesShouldNotUseApplicationServicesRule = new(
             DomainServicesShouldNotUseApplicationServicesId,
             "Domain service should not use application services",
-            "Domain service should not use application services",
+            "Domain service '{0}' must not depend on application service '{1}'",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,

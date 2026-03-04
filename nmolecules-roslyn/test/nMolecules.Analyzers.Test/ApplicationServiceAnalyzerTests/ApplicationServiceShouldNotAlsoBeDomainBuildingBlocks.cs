@@ -27,7 +27,7 @@ namespace NMolecules.Analyzers.Test.ApplicationServiceAnalyzerTests
 }", ApplicationService);
 
             var expected = CompilerError(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksId)
-                .WithArguments(Entity)
+                .WithArguments("InvalidApplicationService", Entity)
                 .WithLocation(0);
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
@@ -50,7 +50,7 @@ namespace NMolecules.Analyzers.Test.ApplicationServiceAnalyzerTests
 }", ApplicationService);
 
             var expected = CompilerError(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksId)
-                .WithArguments(AggregateRoot)
+                .WithArguments("InvalidApplicationService", AggregateRoot)
                 .WithLocation(0);
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
@@ -71,7 +71,7 @@ namespace NMolecules.Analyzers.Test.ApplicationServiceAnalyzerTests
 }", ApplicationService);
 
             var expected = CompilerError(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksId)
-                .WithArguments(ValueObject)
+                .WithArguments("InvalidApplicationService", ValueObject)
                 .WithLocation(0);
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
@@ -92,7 +92,7 @@ namespace NMolecules.Analyzers.Test.ApplicationServiceAnalyzerTests
 }", ApplicationService, DomainService);
 
             var expected = CompilerError(Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksId)
-                .WithArguments(DomainService)
+                .WithArguments("InvalidApplicationService", DomainService)
                 .WithLocation(0);
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));

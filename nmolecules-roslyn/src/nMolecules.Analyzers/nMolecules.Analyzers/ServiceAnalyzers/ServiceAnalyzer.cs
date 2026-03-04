@@ -25,7 +25,7 @@ namespace NMolecules.Analyzers.ServiceAnalyzers
                 return;
             }
 
-            context.ReportDiagnostic(type.Diagnostic(Rules.LegacyServicesShouldUseSpecificRoleRule));
+            context.ReportDiagnostic(type.Diagnostic(Rules.LegacyServicesShouldUseSpecificRoleRule, type.DisplayName()));
         }
     }
 }

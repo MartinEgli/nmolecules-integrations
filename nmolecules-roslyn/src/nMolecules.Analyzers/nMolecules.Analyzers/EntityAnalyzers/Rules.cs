@@ -73,7 +73,7 @@ namespace NMolecules.Analyzers.EntityAnalyzers
         public static readonly DiagnosticDescriptor EntitiesShouldHaveSingleIdRule = new(
             EntitiesShouldHaveSingleIdRuleId,
             "Entities should declare a single identity",
-            "Entity should declare exactly one [Identity] member",
+            "Entity '{0}' declares {1} [Identity] members: {2}. Exactly one is allowed",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,

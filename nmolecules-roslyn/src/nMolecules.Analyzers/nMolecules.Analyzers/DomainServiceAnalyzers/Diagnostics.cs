@@ -9,7 +9,7 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
         {
             if (type.IsApplicationService())
             {
-                yield return symbol.Diagnostic(Rules.DomainServicesShouldNotUseApplicationServicesRule);
+                yield return symbol.Diagnostic(Rules.DomainServicesShouldNotUseApplicationServicesRule, symbol.DiagnosticTargetName(), type.DisplayName());
             }
         }
     }

@@ -9,7 +9,7 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
         {
             if (type.IsApplicationService())
             {
-                yield return symbol.Diagnostic(Rules.FactoriesShouldNotUseApplicationServicesRule);
+                yield return symbol.Diagnostic(Rules.FactoriesShouldNotUseApplicationServicesRule, symbol.DiagnosticTargetName(), type.DisplayName());
             }
         }
     }

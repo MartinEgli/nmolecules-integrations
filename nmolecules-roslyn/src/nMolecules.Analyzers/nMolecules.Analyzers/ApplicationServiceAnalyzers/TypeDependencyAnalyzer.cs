@@ -9,7 +9,7 @@ namespace NMolecules.Analyzers.ApplicationServiceAnalyzers
         {
             if (type.IsLegacyService() && !type.IsDomainService() && !type.IsApplicationService())
             {
-                yield return symbol.Diagnostic(Rules.ApplicationServicesShouldNotUseLegacyServicesRule);
+                yield return symbol.Diagnostic(Rules.ApplicationServicesShouldNotUseLegacyServicesRule, symbol.DiagnosticTargetName(), type.DisplayName());
             }
         }
     }
