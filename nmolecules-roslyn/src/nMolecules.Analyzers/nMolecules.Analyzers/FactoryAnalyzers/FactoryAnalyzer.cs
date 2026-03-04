@@ -9,7 +9,9 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
     public class FactoryAnalyzer : Analyzer<FactoryAttribute>
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Rules.FactoriesShouldNotUseApplicationServicesRule);
+            ImmutableArray.Create(
+                Rules.FactoriesShouldNotUseApplicationServicesRule,
+                Rules.FactoriesShouldNotUseRepositoriesRule);
 
         protected override void Initialize(AnalysisContext<FactoryAttribute> context)
         {

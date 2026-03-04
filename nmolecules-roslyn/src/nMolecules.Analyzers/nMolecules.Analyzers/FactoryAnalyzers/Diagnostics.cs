@@ -11,6 +11,11 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
             {
                 yield return symbol.Diagnostic(Rules.FactoriesShouldNotUseApplicationServicesRule, symbol.DiagnosticTargetName(), type.DisplayName());
             }
+
+            if (type.IsRepository())
+            {
+                yield return symbol.Diagnostic(Rules.FactoriesShouldNotUseRepositoriesRule, symbol.DiagnosticTargetName(), type.DisplayName());
+            }
         }
     }
 }
