@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -10,8 +11,11 @@ namespace NMolecules.Analyzers.HexagonalAnalyzers
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
+                Rules.ApplicationCoreShouldNotDependOnPortsOrAdaptersRule,
                 Rules.PrimaryPortsShouldNotDependOnAdaptersRule,
-                Rules.SecondaryPortsShouldNotDependOnAdaptersRule);
+                Rules.SecondaryPortsShouldNotDependOnAdaptersRule,
+                Rules.PrimaryAdaptersShouldDependOnPrimaryPortsRule,
+                Rules.SecondaryAdaptersShouldDependOnSecondaryPortsRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -32,7 +36,7 @@ namespace NMolecules.Analyzers.HexagonalAnalyzers
         private static void AnalyzeNamedType(SymbolAnalysisContext context)
         {
             var type = (INamedTypeSymbol)context.Symbol;
-            if (!type.IsHexagonalPort())
+            if (!type.IsHexagonalType())
             {
                 return;
             }
@@ -46,6 +50,64 @@ namespace NMolecules.Analyzers.HexagonalAnalyzers
             {
                 context.ReportDiagnostics(Diagnostics.AnalyzeTypeInSymbol(type, implementedInterface));
             }
+
+            if (type.IsPrimaryAdapter() && !DependsOnPort(type, isPrimary: true))
+            {
+                context.ReportDiagnostic(type.Diagnostic(
+                    Rules.PrimaryAdaptersShouldDependOnPrimaryPortsRule,
+                    type.DisplayName()));
+            }
+
+            if (type.IsSecondaryAdapter() && !DependsOnPort(type, isPrimary: false))
+            {
+                context.ReportDiagnostic(type.Diagnostic(
+                    Rules.SecondaryAdaptersShouldDependOnSecondaryPortsRule,
+                    type.DisplayName()));
+            }
         }
+
+        private static bool DependsOnPort(INamedTypeSymbol type, bool isPrimary)
+        {
+            if (MatchesRequiredPort(type.BaseType, isPrimary))
+            {
+                return true;
+            }
+
+            if (type.Interfaces.Any(it => MatchesRequiredPort(it, isPrimary)))
+            {
+                return true;
+            }
+
+            foreach (var member in type.GetMembers())
+            {
+                switch (member)
+                {
+                    case IFieldSymbol field when MatchesRequiredPort(field.Type, isPrimary):
+                        return true;
+                    case IPropertySymbol property when MatchesRequiredPort(property.Type, isPrimary):
+                        return true;
+                    case IMethodSymbol method when method.MethodKind is not MethodKind.PropertyGet and not MethodKind.PropertySet:
+                    {
+                        if (MatchesRequiredPort(method.ReturnType, isPrimary))
+                        {
+                            return true;
+                        }
+
+                        if (method.Parameters.Any(parameter => MatchesRequiredPort(parameter.Type, isPrimary)))
+                        {
+                            return true;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool MatchesRequiredPort(ITypeSymbol? type, bool isPrimary) =>
+            type is not null &&
+            ((isPrimary && type.IsPrimaryPort()) || (!isPrimary && type.IsSecondaryPort()));
     }
 }

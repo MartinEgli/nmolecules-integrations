@@ -12,6 +12,7 @@ namespace NMolecules.Analyzers.EventAnalyzers
         public const string RepositoriesAndFactoriesMustNotPublishDomainEventsId = "XMoleculesDomainEvent0006";
         public const string DomainEventHandlersMustConsumeDomainEventsId = "XMoleculesDomainEvent0007";
         public const string DomainEventPublishersShouldExposeDomainEventPayloadsId = "XMoleculesDomainEvent0008";
+        public const string DomainEventHandlersShouldHandleSingleDomainEventPayloadId = "XMoleculesDomainEvent0009";
 
         public static readonly DiagnosticDescriptor DomainEventsMustNotReferenceEntitiesRule = new(
             DomainEventsMustNotReferenceEntitiesId,
@@ -84,5 +85,14 @@ namespace NMolecules.Analyzers.EventAnalyzers
             DiagnosticSeverity.Warning,
             true,
             "Method-level domain event publishers should expose their domain event payload explicitly through a parameter or return type.");
+
+        public static readonly DiagnosticDescriptor DomainEventHandlersShouldHandleSingleDomainEventPayloadRule = new(
+            DomainEventHandlersShouldHandleSingleDomainEventPayloadId,
+            "Domain event handlers should handle exactly one domain event payload",
+            "Domain event handler '{0}' declares multiple [DomainEvent] parameters",
+            Category.Events,
+            DiagnosticSeverity.Warning,
+            true,
+            "Event handlers should focus on one event payload per handler method or delegate to keep event-flow contracts explicit.");
     }
 }

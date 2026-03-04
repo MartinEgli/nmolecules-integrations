@@ -7,6 +7,7 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
         public const string DomainServicesShouldNotUseApplicationServicesId = "XMoleculesDomainService0001";
         public const string DomainServicesShouldOnlyUseRepositoryContractsId = "XMoleculesDomainService0002";
         public const string DomainServicesShouldNotExposeInfrastructureSignaturesId = "XMoleculesDomainService0003";
+        public const string DomainServicesShouldNotUseLegacyServicesId = "XMoleculesDomainService0004";
 
         public static readonly DiagnosticDescriptor DomainServicesShouldNotUseApplicationServicesRule = new(
             DomainServicesShouldNotUseApplicationServicesId,
@@ -34,5 +35,14 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
             DiagnosticSeverity.Warning,
             true,
             "Domain services should keep their public API independent from infrastructure-layer types.");
+
+        public static readonly DiagnosticDescriptor DomainServicesShouldNotUseLegacyServicesRule = new(
+            DomainServicesShouldNotUseLegacyServicesId,
+            "Domain services should not depend on legacy Service roles",
+            "Domain service symbol '{0}' should not depend on legacy service '{1}'",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "Domain services should use explicit domain roles instead of the generic legacy Service marker.");
     }
 }

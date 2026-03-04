@@ -16,6 +16,11 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
             {
                 yield return symbol.ViolatesRepositoryUsage(type);
             }
+
+            if (type.IsRepository() && symbol.AllowsRepositoryComposition() && type is INamedTypeSymbol { TypeKind: not TypeKind.Interface })
+            {
+                yield return symbol.ViolatesRepositoryCompositionContract(type);
+            }
         }
 
         private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.RepositoriesShouldNotUseServicesRule);
@@ -23,6 +28,16 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
         {
             var repository = symbol.ContainingType?.DisplayName() ?? symbol.DisplayName();
             return symbol.Diagnostic(Rules.RepositoriesShouldNotDependOnRepositoriesRule, repository, type.DisplayName(), symbol.Name);
+        }
+
+        private static Diagnostic ViolatesRepositoryCompositionContract(this ISymbol symbol, ITypeSymbol type)
+        {
+            var repository = symbol.ContainingType?.DisplayName() ?? symbol.DisplayName();
+            return symbol.Diagnostic(
+                Rules.ApprovedRepositoryCompositionShouldUseContractsRule,
+                repository,
+                symbol.Name,
+                type.DisplayName());
         }
 
         public static Diagnostic ViolatesInfrastructureSignature(this ISymbol symbol, ITypeSymbol type)

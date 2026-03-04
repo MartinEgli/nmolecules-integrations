@@ -59,6 +59,36 @@ namespace NMolecules.Analyzers.Test.EventAnalyzerTests
         }
 
         [Fact]
+        public async Task Analyze_WithHandlerMethodUsingMultipleDomainEventParameters_EmitsWarning()
+        {
+            var testCode = ServiceRoleShims.AppendIfNeeded(@"namespace NMolecules.Analyzers.Test.EventAnalyzerTests.SampleData
+{
+    using NMolecules.Events;
+
+    [DomainEvent]
+    public class AccountImported
+    {
+    }
+
+    [DomainEvent]
+    public class AccountClosed
+    {
+    }
+
+    public class Handlers
+    {
+        [DomainEventHandler]
+        public void {|#0:Handle|}(AccountImported imported, AccountClosed closed)
+        {
+        }
+    }
+}", ElementNames.DomainEvent, ElementNames.DomainEventHandler);
+
+            var expected = new DiagnosticResult(Rules.DomainEventHandlersShouldHandleSingleDomainEventPayloadId, DiagnosticSeverity.Warning).WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
+
+        [Fact]
         public async Task Analyze_WithDelegateWithoutDomainEventParameter_EmitsError()
         {
             var testCode = ServiceRoleShims.AppendIfNeeded(@"namespace NMolecules.Analyzers.Test.EventAnalyzerTests.SampleData
@@ -90,6 +120,31 @@ namespace NMolecules.Analyzers.Test.EventAnalyzerTests
 }", ElementNames.DomainEvent, ElementNames.DomainEventHandler);
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
+        }
+
+        [Fact]
+        public async Task Analyze_WithDelegateUsingMultipleDomainEventParameters_EmitsWarning()
+        {
+            var testCode = ServiceRoleShims.AppendIfNeeded(@"namespace NMolecules.Analyzers.Test.EventAnalyzerTests.SampleData
+{
+    using NMolecules.Events;
+
+    [DomainEvent]
+    public class AccountImported
+    {
+    }
+
+    [DomainEvent]
+    public class AccountClosed
+    {
+    }
+
+    [DomainEventHandler]
+    public delegate void {|#0:AccountImportedHandler|}(AccountImported imported, AccountClosed closed);
+}", ElementNames.DomainEvent, ElementNames.DomainEventHandler);
+
+            var expected = new DiagnosticResult(Rules.DomainEventHandlersShouldHandleSingleDomainEventPayloadId, DiagnosticSeverity.Warning).WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
         }
     }
 }

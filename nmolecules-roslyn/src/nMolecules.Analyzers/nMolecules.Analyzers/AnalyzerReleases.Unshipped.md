@@ -4,6 +4,7 @@ Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 XMoleculesDomainService0001 | DDD | Error | DomainService should not use application services
 XMoleculesDomainService0002 | DDD | Error | DomainService should only use repository contracts
+XMoleculesDomainService0004 | DDD | Warning | DomainService should not depend on legacy services
 XMoleculesIdentity0001 | DDD | Error | Identity members must belong to entities or aggregate roots
 XMoleculesEntity0005 | DDD | Error | Entity should declare exactly one identity member
 XMoleculesAggregateRoot0004 | DDD | Error | Aggregate root should declare exactly one identity member
@@ -36,16 +37,24 @@ XMoleculesDomainEvent0005 | Events | Warning | Domain event publishers should pr
 XMoleculesDomainEvent0006 | Events | Error | Repositories and factories must not publish domain events directly
 XMoleculesDomainEvent0007 | Events | Error | Domain event handlers must consume domain events
 XMoleculesDomainEvent0008 | Events | Warning | Domain event publishers should expose domain event payloads explicitly
+XMoleculesDomainEvent0009 | Events | Warning | Domain event handlers should consume exactly one domain event payload
 XMoleculesRepository0002 | DDD | Warning | Repositories must not expose infrastructure-layer types in public signatures
 XMoleculesRepository0003 | DDD | Warning | Repositories should not depend on other repositories directly
+XMoleculesRepository0004 | DDD | Warning | Approved repository composition should depend on repository contracts only
 XMoleculesLayered0001 | Architecture | Error | Domain layers must not depend on application layers
 XMoleculesLayered0002 | Architecture | Error | Domain layers must not depend on infrastructure layers
 XMoleculesLayered0003 | Architecture | Error | Domain layers must not depend on interface layers
 XMoleculesLayered0004 | Architecture | Error | Interface layers must not depend on domain layers directly
 XMoleculesOnion0001 | Architecture | Error | Onion dependencies must point inward only
+XMoleculesOnion0002 | Architecture | Error | Domain model rings must not depend on outer rings
+XMoleculesOnion0003 | Architecture | Error | Domain service rings must not depend on outer rings
+XMoleculesOnion0004 | Architecture | Error | Application service rings must not depend on infrastructure rings
 XMoleculesOnion0005 | Architecture | Error | Classic and simplified onion styles must not be mixed in one compilation
+XMoleculesHexagonal0001 | Architecture | Error | Hexagonal application core must not depend on ports or adapters
 XMoleculesHexagonal0002 | Architecture | Error | Primary ports must not depend on adapters
 XMoleculesHexagonal0003 | Architecture | Error | Secondary ports must not depend on adapters
+XMoleculesHexagonal0004 | Architecture | Warning | Primary adapters should depend on primary ports
+XMoleculesHexagonal0005 | Architecture | Warning | Secondary adapters should depend on secondary ports
 XMoleculesCQRS0001 | Architecture | Error | CQRS support requires both query and query handler markers
 XMoleculesCQRS0002 | Architecture | Error | Command handlers must not depend on query models directly
 XMoleculesCQRS0003 | Architecture | Error | Query handlers must stay on the read side

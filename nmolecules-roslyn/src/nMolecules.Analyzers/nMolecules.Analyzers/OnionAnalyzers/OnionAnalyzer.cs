@@ -13,6 +13,9 @@ namespace NMolecules.Analyzers.OnionAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
                 Rules.OnionDependenciesMustPointInwardRule,
+                Rules.DomainModelRingMustNotDependOnOuterRingsRule,
+                Rules.DomainServiceRingMustNotDependOnOuterRingsRule,
+                Rules.ApplicationServiceRingMustNotDependOnInfrastructureRingRule,
                 Rules.ClassicAndSimplifiedOnionStylesShouldNotMixRule);
 
         public override void Initialize(AnalysisContext context)

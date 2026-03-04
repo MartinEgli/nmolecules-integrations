@@ -42,7 +42,79 @@ namespace NMolecules.Architecture.Onion.Classic
     public class InfrastructureRingAttribute : Attribute { }
 }";
 
-            var expected = new DiagnosticResult(Rules.OnionDependenciesMustPointInwardId, DiagnosticSeverity.Error).WithLocation(0);
+            var expected = new DiagnosticResult(Rules.DomainModelRingMustNotDependOnOuterRingsId, DiagnosticSeverity.Error).WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithClassicDomainServiceUsingApplicationServiceRing_EmitsError()
+        {
+            var testCode = @"using System;
+namespace SampleData
+{
+    using NMolecules.Architecture.Onion.Classic;
+
+    [ApplicationServiceRing]
+    public class TransferMoney
+    {
+    }
+
+    [DomainServiceRing]
+    public class AccountingDomainService
+    {
+        private readonly TransferMoney {|#0:useCase|};
+    }
+}
+
+namespace NMolecules.Architecture.Onion.Classic
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct)]
+    public class DomainModelRingAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct)]
+    public class DomainServiceRingAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct)]
+    public class ApplicationServiceRingAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct)]
+    public class InfrastructureRingAttribute : Attribute { }
+}";
+
+            var expected = new DiagnosticResult(Rules.DomainServiceRingMustNotDependOnOuterRingsId, DiagnosticSeverity.Error).WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithClassicApplicationServiceUsingInfrastructureRing_EmitsError()
+        {
+            var testCode = @"using System;
+namespace SampleData
+{
+    using NMolecules.Architecture.Onion.Classic;
+
+    [InfrastructureRing]
+    public class SqlOutbox
+    {
+    }
+
+    [ApplicationServiceRing]
+    public class TransferMoney
+    {
+        private readonly SqlOutbox {|#0:outbox|};
+    }
+}
+
+namespace NMolecules.Architecture.Onion.Classic
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct)]
+    public class DomainModelRingAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct)]
+    public class DomainServiceRingAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct)]
+    public class ApplicationServiceRingAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct)]
+    public class InfrastructureRingAttribute : Attribute { }
+}";
+
+            var expected = new DiagnosticResult(Rules.ApplicationServiceRingMustNotDependOnInfrastructureRingId, DiagnosticSeverity.Error).WithLocation(0);
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
         }
 

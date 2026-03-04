@@ -10,7 +10,9 @@ namespace NMolecules.Analyzers.EventAnalyzers
     public class DomainEventHandlerAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Rules.DomainEventHandlersMustConsumeDomainEventsRule);
+            ImmutableArray.Create(
+                Rules.DomainEventHandlersMustConsumeDomainEventsRule,
+                Rules.DomainEventHandlersShouldHandleSingleDomainEventPayloadRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -35,6 +37,13 @@ namespace NMolecules.Analyzers.EventAnalyzers
                     Rules.DomainEventHandlersMustConsumeDomainEventsRule,
                     method.DiagnosticTargetName()));
             }
+
+            if (method.Parameters.Count(parameter => parameter.Type.IsDomainEvent()) > 1)
+            {
+                context.ReportDiagnostic(method.Diagnostic(
+                    Rules.DomainEventHandlersShouldHandleSingleDomainEventPayloadRule,
+                    method.DiagnosticTargetName()));
+            }
         }
 
         private static void AnalyzeNamedType(SymbolAnalysisContext context)
@@ -50,6 +59,13 @@ namespace NMolecules.Analyzers.EventAnalyzers
             {
                 context.ReportDiagnostic(type.Diagnostic(
                     Rules.DomainEventHandlersMustConsumeDomainEventsRule,
+                    type.DiagnosticTargetName()));
+            }
+
+            if (invokeMethod is not null && invokeMethod.Parameters.Count(parameter => parameter.Type.IsDomainEvent()) > 1)
+            {
+                context.ReportDiagnostic(type.Diagnostic(
+                    Rules.DomainEventHandlersShouldHandleSingleDomainEventPayloadRule,
                     type.DiagnosticTargetName()));
             }
         }

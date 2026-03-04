@@ -13,7 +13,8 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
             ImmutableArray.Create(
                 Rules.RepositoriesShouldNotUseServicesRule,
                 Rules.RepositoriesShouldNotExposeInfrastructureSignaturesRule,
-                Rules.RepositoriesShouldNotDependOnRepositoriesRule);
+                Rules.RepositoriesShouldNotDependOnRepositoriesRule,
+                Rules.ApprovedRepositoryCompositionShouldUseContractsRule);
 
         protected override void Initialize(AnalysisContext<RepositoryAttribute> context)
         {

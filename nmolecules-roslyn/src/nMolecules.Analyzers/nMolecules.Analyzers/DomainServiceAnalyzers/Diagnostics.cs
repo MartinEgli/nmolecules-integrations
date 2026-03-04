@@ -12,6 +12,11 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
                 yield return symbol.Diagnostic(Rules.DomainServicesShouldNotUseApplicationServicesRule, symbol.DiagnosticTargetName(), type.DisplayName());
             }
 
+            if (type.IsLegacyService())
+            {
+                yield return symbol.Diagnostic(Rules.DomainServicesShouldNotUseLegacyServicesRule, symbol.DiagnosticTargetName(), type.DisplayName());
+            }
+
             if (type.IsRepository() && type is INamedTypeSymbol { TypeKind: not TypeKind.Interface })
             {
                 yield return symbol.Diagnostic(

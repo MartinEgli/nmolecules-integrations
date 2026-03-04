@@ -7,6 +7,7 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
         public const string RepositoriesShouldNotUseServicesId = "XMoleculesRepository0001";
         public const string RepositoriesShouldNotExposeInfrastructureSignaturesId = "XMoleculesRepository0002";
         public const string RepositoriesShouldNotDependOnRepositoriesId = "XMoleculesRepository0003";
+        public const string ApprovedRepositoryCompositionShouldUseContractsId = "XMoleculesRepository0004";
         
         public static readonly DiagnosticDescriptor RepositoriesShouldNotUseServicesRule = new(
             RepositoriesShouldNotUseServicesId,
@@ -40,5 +41,14 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
             DiagnosticSeverity.Warning,
             true,
             "Repository-to-repository dependencies are only acceptable for explicitly approved technical composition patterns.");
+
+        public static readonly DiagnosticDescriptor ApprovedRepositoryCompositionShouldUseContractsRule = new(
+            ApprovedRepositoryCompositionShouldUseContractsId,
+            "Approved repository composition should depend on repository contracts only",
+            "Repository '{0}' uses approved composition in member '{1}' but depends on concrete repository '{2}' instead of a contract",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "When repository composition is explicitly approved, dependencies should still target repository contracts (interfaces), not concrete repository implementations.");
     }
 }

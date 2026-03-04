@@ -148,5 +148,29 @@ namespace NMolecules.Analyzers.Test.RepositoryAnalyzerTests
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
         }
+
+        [Fact]
+        public async Task Analyze_WithApprovedRepositoryCompositionUsingConcreteRepository_EmitsWarning()
+        {
+            var testCode = ServiceRoleShims.AppendIfNeeded(@"namespace NMolecules.Analyzers.Test.RepositoryAnalyzerTests.SampleData
+{
+    using NMolecules.DDD;
+
+    [Repository]
+    public class Accounts
+    {
+    }
+
+    [Repository]
+    [AllowRepositoryComposition]
+    public interface Payments
+    {
+        void Store(Accounts {|#0:accounts|});
+    }
+}", ElementNames.AllowRepositoryComposition);
+
+            var expected = new DiagnosticResult(Rules.ApprovedRepositoryCompositionShouldUseContractsId, DiagnosticSeverity.Warning).WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
     }
 }

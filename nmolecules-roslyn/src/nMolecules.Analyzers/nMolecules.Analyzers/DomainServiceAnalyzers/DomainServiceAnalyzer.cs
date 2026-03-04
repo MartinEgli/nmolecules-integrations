@@ -13,7 +13,8 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
             ImmutableArray.Create(
                 Rules.DomainServicesShouldNotUseApplicationServicesRule,
                 Rules.DomainServicesShouldOnlyUseRepositoryContractsRule,
-                Rules.DomainServicesShouldNotExposeInfrastructureSignaturesRule);
+                Rules.DomainServicesShouldNotExposeInfrastructureSignaturesRule,
+                Rules.DomainServicesShouldNotUseLegacyServicesRule);
 
         public override void Initialize(AnalysisContext context)
         {

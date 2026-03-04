@@ -16,36 +16,36 @@ namespace NMolecules.Analyzers.OnionAnalyzers
             if (owner.IsClassicDomainModelRing() &&
                 (type.IsClassicDomainServiceRing() || type.IsClassicApplicationServiceRing() || type.IsOnionInfrastructureRing()))
             {
-                yield return symbol.ViolatesInwardDependency(type);
+                yield return symbol.ViolatesInwardDependency(type, Rules.DomainModelRingMustNotDependOnOuterRingsRule);
             }
 
             if (owner.IsClassicDomainServiceRing() &&
                 (type.IsClassicApplicationServiceRing() || type.IsOnionInfrastructureRing()))
             {
-                yield return symbol.ViolatesInwardDependency(type);
+                yield return symbol.ViolatesInwardDependency(type, Rules.DomainServiceRingMustNotDependOnOuterRingsRule);
             }
 
             if (owner.IsClassicApplicationServiceRing() &&
                 type.IsOnionInfrastructureRing())
             {
-                yield return symbol.ViolatesInwardDependency(type);
+                yield return symbol.ViolatesInwardDependency(type, Rules.ApplicationServiceRingMustNotDependOnInfrastructureRingRule);
             }
 
             if (owner.IsSimplifiedDomainRing() &&
                 (type.IsSimplifiedApplicationRing() || type.IsOnionInfrastructureRing()))
             {
-                yield return symbol.ViolatesInwardDependency(type);
+                yield return symbol.ViolatesInwardDependency(type, Rules.OnionDependenciesMustPointInwardRule);
             }
 
             if (owner.IsSimplifiedApplicationRing() &&
                 type.IsOnionInfrastructureRing())
             {
-                yield return symbol.ViolatesInwardDependency(type);
+                yield return symbol.ViolatesInwardDependency(type, Rules.OnionDependenciesMustPointInwardRule);
             }
         }
 
-        private static Diagnostic ViolatesInwardDependency(this ISymbol symbol, ITypeSymbol dependency) =>
-            symbol.Diagnostic(Rules.OnionDependenciesMustPointInwardRule, symbol.DiagnosticTargetName(), dependency.DisplayName());
+        private static Diagnostic ViolatesInwardDependency(this ISymbol symbol, ITypeSymbol dependency, DiagnosticDescriptor rule) =>
+            symbol.Diagnostic(rule, symbol.DiagnosticTargetName(), dependency.DisplayName());
 
         internal static bool IsOnionRing(this ITypeSymbol type) =>
             type.IsClassicDomainModelRing() ||
