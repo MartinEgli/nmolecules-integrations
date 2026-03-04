@@ -21,6 +21,8 @@ namespace NMolecules.Analyzers.Test
                     ElementNames.ApplicationService when !result.Contains("public class ApplicationServiceAttribute") => result + ApplicationServiceShim,
                     ElementNames.CommandHandler when !result.Contains("public class CommandHandlerAttribute") => result + CommandHandlerShim,
                     ElementNames.CommandDispatcher when !result.Contains("public class CommandDispatcherAttribute") => result + CommandDispatcherShim,
+                    ElementNames.Query when !result.Contains("public class QueryAttribute") => result + QueryShim,
+                    ElementNames.QueryHandler when !result.Contains("public class QueryHandlerAttribute") => result + QueryHandlerShim,
                     ElementNames.ApplicationLayer when !result.Contains("public class ApplicationLayerAttribute") => result + ApplicationLayerShim,
                     ElementNames.DomainLayer when !result.Contains("public class DomainLayerAttribute") => result + DomainLayerShim,
                     ElementNames.InterfaceLayer when !result.Contains("public class InterfaceLayerAttribute") => result + InterfaceLayerShim,
@@ -74,6 +76,28 @@ namespace NMolecules.Architecture.Cqrs
     using System;
 
     public class CommandDispatcherAttribute : Attribute
+    {
+    }
+}";
+
+        private const string QueryShim = @"
+
+namespace NMolecules.Architecture.Cqrs
+{
+    using System;
+
+    public class QueryAttribute : Attribute
+    {
+    }
+}";
+
+        private const string QueryHandlerShim = @"
+
+namespace NMolecules.Architecture.Cqrs
+{
+    using System;
+
+    public class QueryHandlerAttribute : Attribute
     {
     }
 }";

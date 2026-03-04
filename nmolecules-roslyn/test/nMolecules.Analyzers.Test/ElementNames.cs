@@ -13,6 +13,8 @@
         public const string CommandHandler = nameof(CommandHandler);
         public const string CommandDispatcher = nameof(CommandDispatcher);
         public const string Identity = nameof(Identity);
+        public const string Query = nameof(Query);
+        public const string QueryHandler = nameof(QueryHandler);
         public const string ApplicationLayer = nameof(ApplicationLayer);
         public const string DomainLayer = nameof(DomainLayer);
         public const string InterfaceLayer = nameof(InterfaceLayer);

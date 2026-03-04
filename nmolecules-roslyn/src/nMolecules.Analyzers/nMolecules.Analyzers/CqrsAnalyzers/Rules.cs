@@ -4,9 +4,19 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
 {
     public static class Rules
     {
+        public const string CqrsSupportRequiresQueryAndQueryHandlerId = "XMoleculesCQRS0001";
         public const string CommandHandlersMustNotDependOnQueryModelsId = "XMoleculesCQRS0002";
         public const string QueryModelsMustBeReadOnlyId = "XMoleculesCQRS0004";
         public const string CommandDispatchersMustNotContainDomainRulesId = "XMoleculesCQRS0006";
+
+        public static readonly DiagnosticDescriptor CqrsSupportRequiresQueryAndQueryHandlerRule = new(
+            CqrsSupportRequiresQueryAndQueryHandlerId,
+            "CQRS support requires both query and query handler markers",
+            "{0} '{1}' requires at least one {2} in the same compilation",
+            Category.Architecture,
+            DiagnosticSeverity.Error,
+            true,
+            "A CQRS read side is only structurally complete when both query request markers and query handler markers are present.");
 
         public static readonly DiagnosticDescriptor CommandHandlersMustNotDependOnQueryModelsRule = new(
             CommandHandlersMustNotDependOnQueryModelsId,

@@ -4,6 +4,9 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
 {
     internal static class Diagnostics
     {
+        public static Diagnostic ViolatesCqrsCompleteness(this ISymbol symbol, string role, string requiredMarker) =>
+            symbol.Diagnostic(Rules.CqrsSupportRequiresQueryAndQueryHandlerRule, role, symbol.DiagnosticTargetName(), requiredMarker);
+
         public static Diagnostic ViolatesCommandHandlerQueryModelDependency(this ISymbol symbol, ITypeSymbol type) =>
             symbol.Diagnostic(Rules.CommandHandlersMustNotDependOnQueryModelsRule, symbol.DiagnosticTargetName(), type.DisplayName());
 
