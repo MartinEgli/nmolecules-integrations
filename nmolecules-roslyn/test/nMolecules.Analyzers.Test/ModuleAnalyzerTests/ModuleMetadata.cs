@@ -19,6 +19,14 @@ namespace NMolecules.Analyzers.Test.ModuleAnalyzerTests
 namespace DomainModel
 {
     [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class BoundedContextAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
     public sealed class ModuleAttribute : Attribute
     {
         public string Id { get; set; } = string.Empty;
@@ -41,6 +49,14 @@ namespace DomainModel
 
 namespace DomainModel
 {
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class BoundedContextAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+    }
+
     [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
     public sealed class ModuleAttribute : Attribute
     {
@@ -65,6 +81,14 @@ namespace DomainModel
 namespace DomainModel
 {
     [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class BoundedContextAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
     public sealed class ModuleAttribute : Attribute
     {
         public string Id { get; set; } = string.Empty;
@@ -84,9 +108,18 @@ namespace DomainModel
         {
             var testCode = @"using System;
 [module: DomainModel.Module(""Accounts"", Id = ""Accounts"", BoundedContextId = ""Billing"")]
+[assembly: DomainModel.BoundedContext(Id = ""Billing"", Name = ""Billing"")]
 
 namespace DomainModel
 {
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class BoundedContextAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+    }
+
     [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
     public sealed class ModuleAttribute : Attribute
     {
@@ -121,6 +154,68 @@ namespace LegacyModel
     [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
     public sealed class ModuleAttribute : Attribute
     {
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
+        }
+
+        [Fact]
+        public async Task Analyze_WithUnknownBoundedContextReference_EmitsWarning()
+        {
+            var testCode = @"using System;
+[assembly: DomainModel.BoundedContext(Id = ""Billing"", Name = ""Billing"")]
+[module: {|#0:DomainModel.Module(Id = ""Accounts"", Name = ""Accounts"", BoundedContextId = ""Sales"")|}]
+
+namespace DomainModel
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class BoundedContextAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class ModuleAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+        public string BoundedContextId { get; set; } = string.Empty;
+    }
+}";
+
+            var expected = new DiagnosticResult(Rules.ModuleShouldReferenceDeclaredBoundedContextId, DiagnosticSeverity.Warning)
+                .WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithKnownBoundedContextReference_DoesNotEmitViolations()
+        {
+            var testCode = @"using System;
+[assembly: DomainModel.BoundedContext(Id = ""Billing"", Name = ""Billing"")]
+[module: DomainModel.Module(Id = ""Accounts"", Name = ""Accounts"", BoundedContextId = ""Billing"")]
+
+namespace DomainModel
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class BoundedContextAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class ModuleAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+        public string BoundedContextId { get; set; } = string.Empty;
     }
 }";
 

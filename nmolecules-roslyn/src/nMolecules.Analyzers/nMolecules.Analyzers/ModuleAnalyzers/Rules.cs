@@ -7,6 +7,7 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
         public const string ModuleShouldDefineIdId = "XMoleculesModule0001";
         public const string ModuleShouldDefineNameId = "XMoleculesModule0002";
         public const string ModuleShouldDefineBoundedContextIdId = "XMoleculesModule0003";
+        public const string ModuleShouldReferenceDeclaredBoundedContextId = "XMoleculesModule0004";
 
         public static readonly DiagnosticDescriptor ModuleShouldDefineIdRule = new(
             ModuleShouldDefineIdId,
@@ -34,5 +35,14 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             DiagnosticSeverity.Warning,
             true,
             "Modules should declare the bounded context they belong to so tooling can derive context-module mappings.");
+
+        public static readonly DiagnosticDescriptor ModuleShouldReferenceDeclaredBoundedContextRule = new(
+            ModuleShouldReferenceDeclaredBoundedContextId,
+            "Module should reference a declared BoundedContext",
+            "Module on {0} references unknown BoundedContextId '{1}'. Declared bounded contexts: {2}",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "Module BoundedContextId values should reference bounded contexts declared in the same compilation metadata.");
     }
 }

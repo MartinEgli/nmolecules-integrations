@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -13,7 +14,8 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             ImmutableArray.Create(
                 ModuleShouldDefineIdRule,
                 ModuleShouldDefineNameRule,
-                ModuleShouldDefineBoundedContextIdRule);
+                ModuleShouldDefineBoundedContextIdRule,
+                ModuleShouldReferenceDeclaredBoundedContextRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -24,11 +26,15 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
 
         private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
-            AnalyzeScope(context, context.Compilation.Assembly);
-            AnalyzeScope(context, context.Compilation.SourceModule);
+            var declaredBoundedContextIds = GetDeclaredBoundedContextIds(context.Compilation);
+            AnalyzeScope(context, context.Compilation.Assembly, declaredBoundedContextIds);
+            AnalyzeScope(context, context.Compilation.SourceModule, declaredBoundedContextIds);
         }
 
-        private static void AnalyzeScope(CompilationAnalysisContext context, ISymbol symbol)
+        private static void AnalyzeScope(
+            CompilationAnalysisContext context,
+            ISymbol symbol,
+            ISet<string> declaredBoundedContextIds)
         {
             foreach (var attribute in symbol.GetAttributes().Where(IsModuleAttribute))
             {
@@ -51,11 +57,54 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
                 {
                     context.Report(attribute, symbol, ModuleShouldDefineBoundedContextIdRule, symbol.MetadataScopeLabel());
                 }
+
+                var boundedContextId = attribute.GetNamedString("BoundedContextId");
+                if (!IsBlank(boundedContextId) &&
+                    declaredBoundedContextIds.Count > 0 &&
+                    !declaredBoundedContextIds.Contains(boundedContextId!))
+                {
+                    var declared = string.Join(", ", declaredBoundedContextIds.OrderBy(it => it));
+                    context.Report(
+                        attribute,
+                        symbol,
+                        ModuleShouldReferenceDeclaredBoundedContextRule,
+                        symbol.MetadataScopeLabel(),
+                        boundedContextId!,
+                        declared);
+                }
+            }
+        }
+
+        private static HashSet<string> GetDeclaredBoundedContextIds(Compilation compilation)
+        {
+            var result = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+            CollectBoundedContextIds(compilation.Assembly, result);
+            CollectBoundedContextIds(compilation.SourceModule, result);
+            return result;
+        }
+
+        private static void CollectBoundedContextIds(ISymbol symbol, ISet<string> ids)
+        {
+            foreach (var attribute in symbol.GetAttributes().Where(IsBoundedContextAttribute))
+            {
+                if (!attribute.SupportsMember("Id"))
+                {
+                    continue;
+                }
+
+                var id = attribute.GetNamedString("Id");
+                if (!IsBlank(id))
+                {
+                    ids.Add(id!);
+                }
             }
         }
 
         private static bool IsModuleAttribute(AttributeData attribute) =>
             attribute.AttributeClass?.Name == "ModuleAttribute";
+
+        private static bool IsBoundedContextAttribute(AttributeData attribute) =>
+            attribute.AttributeClass?.Name == "BoundedContextAttribute";
 
         private static bool IsBlank(string? value) => string.IsNullOrWhiteSpace(value);
     }
