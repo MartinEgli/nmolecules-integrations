@@ -7,6 +7,7 @@ Use it to validate that the VS Code extension can:
 - refresh nMolecules diagnostics into the Problems view
 - point developers from diagnostics to the workspace documentation
 - demonstrate concrete DDD and layered-architecture violations
+- show isolated single-rule violations and combined multi-rule violations
 
 ## Open In VS Code
 
@@ -43,5 +44,7 @@ dotnet build Banking.Sample.Violations.sln -v minimal
 ## Documentation
 
 - [Architecture](docs/architecture.md)
+- [Constellation Catalog](docs/constellation-catalog.md)
 - [Expected Diagnostics](docs/expected-diagnostics.md)
+- [Exact Diagnostic Details](docs/exact-diagnostic-details.md)
 - [Using The Extension](docs/using-the-extension.md)

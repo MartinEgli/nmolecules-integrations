@@ -38,6 +38,7 @@ function enumerateFiles(root) {
 test('sample workspace contains the expected documentation entry points', () => {
   assert.equal(fs.existsSync(path.join(sampleRoot, 'README.md')), true);
   assert.equal(fs.existsSync(path.join(sampleRoot, 'docs', 'architecture.md')), true);
+  assert.equal(fs.existsSync(path.join(sampleRoot, 'docs', 'constellation-catalog.md')), true);
   assert.equal(fs.existsSync(path.join(sampleRoot, 'docs', 'layer-matrix.md')), true);
   assert.equal(fs.existsSync(path.join(sampleRoot, 'docs', 'expected-inspection-output.md')), true);
   assert.equal(fs.existsSync(path.join(sampleRoot, 'nmolecules-sample.code-workspace')), true);
@@ -66,7 +67,9 @@ test('sample workspace projects are all wired to the local analyzer project', ()
 test('violations workspace contains dedicated extension usage documentation', () => {
   assert.equal(fs.existsSync(path.join(violationsRoot, 'README.md')), true);
   assert.equal(fs.existsSync(path.join(violationsRoot, 'docs', 'architecture.md')), true);
+  assert.equal(fs.existsSync(path.join(violationsRoot, 'docs', 'constellation-catalog.md')), true);
   assert.equal(fs.existsSync(path.join(violationsRoot, 'docs', 'expected-diagnostics.md')), true);
+  assert.equal(fs.existsSync(path.join(violationsRoot, 'docs', 'exact-diagnostic-details.md')), true);
   assert.equal(fs.existsSync(path.join(violationsRoot, 'docs', 'using-the-extension.md')), true);
   assert.equal(fs.existsSync(path.join(violationsRoot, 'nmolecules-violations.code-workspace')), true);
 });
@@ -79,4 +82,24 @@ test('violations workspace uses local analyzer project references in every proje
   assert.equal(report.analyzerPackageProjects, 0);
   assert.equal(report.analyzerProjectReferenceProjects, 3);
   assert.equal(report.coreReferenceProjects, 3);
+});
+
+test('sample catalogs include multiple valid and invalid example files', () => {
+  const validExampleFiles = [
+    path.join(sampleRoot, 'src', 'Banking.Domain', 'ConstellationExamples.cs'),
+    path.join(sampleRoot, 'src', 'Banking.Application', 'ApplicationConstellationExamples.cs'),
+    path.join(sampleRoot, 'src', 'Banking.Infrastructure', 'InfrastructureConstellationExamples.cs'),
+    path.join(sampleRoot, 'src', 'Banking.Api', 'UserInterfaceConstellationExamples.cs')
+  ];
+  const invalidExampleFiles = [
+    path.join(violationsRoot, 'src', 'Banking.Violations.Domain', 'IsolatedValueObjectViolations.cs'),
+    path.join(violationsRoot, 'src', 'Banking.Violations.Domain', 'IdentityAndServiceViolations.cs'),
+    path.join(violationsRoot, 'src', 'Banking.Violations.Application', 'ApplicationViolationCatalog.cs'),
+    path.join(violationsRoot, 'src', 'Banking.Violations.Infrastructure', 'FactoryAndLayerViolations.cs'),
+    path.join(violationsRoot, 'src', 'Banking.Violations.Infrastructure', 'CombinedViolationScenarios.cs')
+  ];
+
+  for (const filePath of [...validExampleFiles, ...invalidExampleFiles]) {
+    assert.equal(fs.existsSync(filePath), true, filePath);
+  }
 });

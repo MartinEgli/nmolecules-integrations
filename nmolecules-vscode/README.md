@@ -26,6 +26,7 @@ A detailed sample workspace is included in:
 - [sample-violations/README.md](sample-violations/README.md)
 
 They cover both a healthy layered .NET solution and a deliberately broken workspace that drives analyzer findings into the Problems view.
+The samples now include valid constellation catalogs, isolated single-rule failures, and combined multi-rule failures.
 
 ## Tests
 

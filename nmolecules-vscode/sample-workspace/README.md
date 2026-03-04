@@ -7,6 +7,8 @@ It demonstrates:
 - a layered C# workspace with `Domain`, `Application`, `Infrastructure`, and `UserInterface`
 - explicit use of `NMolecules.DDD` and `NMolecules.Architecture`
 - local analyzer project references to the Roslyn analyzer project
+- valid role constellations for every major nMolecules marker used in this workspace
+- a combined valid end-to-end flow across all layers
 - the current extension commands against a realistic multi-project workspace
 
 ## Projects
@@ -55,6 +57,7 @@ dotnet build Banking.Sample.sln -v minimal
 ## Documentation
 
 - [Architecture](docs/architecture.md)
+- [Constellation Catalog](docs/constellation-catalog.md)
 - [Layer Matrix](docs/layer-matrix.md)
 - [Expected Inspection Output](docs/expected-inspection-output.md)
 

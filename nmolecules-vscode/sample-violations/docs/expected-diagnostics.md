@@ -1,14 +1,34 @@
 # Expected Diagnostics
 
-The broken sample is designed to populate the VS Code Problems view with nMolecules diagnostics.
+The broken sample is designed to populate the VS Code Problems view with both isolated and combined nMolecules diagnostics.
 
-The exact line numbers can change as the sample evolves, but the current expected rule set is:
+## Isolated Rules Covered
 
-- `XMoleculesValueObject0005` for a mutable value object
-- `XMoleculesValueObject0006` for an identity member inside a value object
-- `XMoleculesValueObject1001` for a value object that does not implement `IEquatable<T>`
-- `XMoleculesValueObject1002` for a value object class that is not `sealed`
-- `XMoleculesAggregateRoot0004` for an aggregate root with more than one identity member
-- `XMoleculesApplicationService0001` for an application service that is also marked as a domain building block
-- `XMoleculesFactory0001` for a factory depending on an application service
-- `XMoleculesService0001` for a legacy `[Service]` marker
+- `XMoleculesValueObject0005`
+- `XMoleculesValueObject0006`
+- `XMoleculesValueObject1001`
+- `XMoleculesValueObject1002`
+- `XMoleculesAggregateRoot0004`
+- `XMoleculesIdentity0001`
+- `XMoleculesService0001`
+- `XMoleculesDomainService0001`
+- `XMoleculesApplicationService0001`
+- `XMoleculesApplicationService0002`
+- `XMoleculesFactory0001`
+- `XMoleculesDomainLayer0001`
+- `XMoleculesDomainLayer0002`
+- `XMoleculesDomainLayer0003`
+- `XMoleculesApplicationLayer0003`
+
+## Combined Rule Examples
+
+- `CombinedRoleMismatch`
+  Shows a role collision on one type
+
+- `CombinedBrokenSnapshot`
+  Shows multiple value-object failures on one type
+
+See:
+
+- [Constellation Catalog](constellation-catalog.md)
+- [Exact Diagnostic Details](exact-diagnostic-details.md)
