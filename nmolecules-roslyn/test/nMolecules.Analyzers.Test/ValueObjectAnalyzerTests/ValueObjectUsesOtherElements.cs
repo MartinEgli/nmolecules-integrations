@@ -118,6 +118,31 @@ namespace NMolecules.Analyzers.Test.ValueObjectAnalyzerTests
                 aggregateRootUsedInMethodBody);
         }
 
+        [Fact]
+        public async Task Analyze_WithValueObjectUsesFactory_EmitsCompilerError()
+        {
+            var testCode = GenerateClass(Factory);
+            var factoryAsField = CompilerError(Rules.NoFactoriesInValueObjectsId)
+                .WithSpan(FieldLineNumber, 38, FieldLineNumber, 45);
+            var factoryAsParameterInCtor = CompilerError(Rules.NoFactoriesInValueObjectsId)
+                .WithSpan(CtorLineNumber, 47, CtorLineNumber, 52);
+            var factoryAsProperty = CompilerError(Rules.NoFactoriesInValueObjectsId)
+                .WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
+            var factoryAsReturnValue = CompilerError(Rules.NoFactoriesInValueObjectsId)
+                .WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
+            var factoryAsParameterInMethod = CompilerError(Rules.NoFactoriesInValueObjectsId)
+                .WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
+            var factoryUsedInMethodBody = CompilerError(Rules.NoFactoriesInValueObjectsId)
+                .WithSpan(TypeInMethodBodyLineNumber, 17, TypeInMethodBodyLineNumber, 28);
+            await VerifyCS.VerifyAnalyzerAsync(testCode,
+                factoryAsField,
+                factoryAsParameterInCtor,
+                factoryAsProperty,
+                factoryAsReturnValue,
+                factoryAsParameterInMethod,
+                factoryUsedInMethodBody);
+        }
+
         private static string GenerateClass(string type)
         {
             var invalidUsageTemplate = new InvalidUsageTemplate

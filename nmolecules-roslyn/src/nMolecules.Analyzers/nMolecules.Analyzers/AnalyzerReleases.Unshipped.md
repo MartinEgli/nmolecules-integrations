@@ -19,6 +19,7 @@ XMoleculesFactory0002 | DDD | Error | Factory should not use repositories
 XMoleculesFactory0003 | DDD | Error | Factory must not also be a domain building block
 XMoleculesService0001 | DDD | Warning | Service should use a specific role marker
 XMoleculesValueObject0006 | DDD | Error | Value object should not declare identity members
+XMoleculesValueObject0007 | DDD | Error | Value object should not depend on factories
 XMoleculesDomainEvent0001 | Events | Error | Domain events must not reference entities
 XMoleculesDomainEvent0002 | Events | Error | Domain events must not reference aggregate roots
 XMoleculesDomainEvent0003 | Events | Error | Domain events must not reference repositories

@@ -36,6 +36,11 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
             {
                 yield return symbol.ViolatesAggregateRootUsage();
             }
+
+            if (type.IsFactory())
+            {
+                yield return symbol.ViolatesFactoryUsage(type);
+            }
         }
 
         public static Diagnostic? AnalyzeIdentityDeclaration(ISymbol symbol)
@@ -52,5 +57,12 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
         private static Diagnostic ViolatesRepositoryUsage(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotUseRepositoryRule);
 
         private static Diagnostic ViolatesAggregateRootUsage(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotUseAggregateRootRule);
+
+        private static Diagnostic ViolatesFactoryUsage(this ISymbol symbol, ITypeSymbol type) =>
+            symbol.Diagnostic(
+                ValueObjectMustNotUseFactoryRule,
+                symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(),
+                type.DisplayName(),
+                symbol.Name);
     }
 }

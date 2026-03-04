@@ -16,6 +16,7 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
             ValueObjectMustNotUseAggregateRootRule,
             ValueObjectShouldBeImmutableRule,
             ValueObjectMustNotDeclareIdentityRule,
+            ValueObjectMustNotUseFactoryRule,
             ValueObjectMustImplementIEquatableRule,
             ValueObjectShouldBeSealedRule);
 

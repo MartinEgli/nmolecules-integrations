@@ -10,6 +10,7 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
         public const string NoAggregateRootsInValueObjectsId = "XMoleculesValueObject0004";
         public const string ValueObjectsShouldBeImmutableId = "XMoleculesValueObject0005";
         public const string ValueObjectsMustNotDeclareIdentityId = "XMoleculesValueObject0006";
+        public const string NoFactoriesInValueObjectsId = "XMoleculesValueObject0007";
         public const string ValueObjectsMustImplementIEquatableId = "XMoleculesValueObject1001";
         public const string ValueObjectsShouldBeSealedId = "XMoleculesValueObject1002";
 
@@ -84,6 +85,14 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
             DiagnosticSeverity.Error,
             true,
             "Value objects are defined by value and must not introduce entity-style identities.");
+
+        public static readonly DiagnosticDescriptor ValueObjectMustNotUseFactoryRule = new(NoFactoriesInValueObjectsId,
+            "Value objects must not depend on factories",
+            "Value object '{0}' must not depend on factory '{1}' in member '{2}'",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "Value objects should not depend on factory abstractions or implementations.");
 
         public static readonly DiagnosticDescriptor ValueObjectMustImplementIEquatableRule = new(ValueObjectsMustImplementIEquatableId,
             "Value objects must implement IEquatable<T>",
