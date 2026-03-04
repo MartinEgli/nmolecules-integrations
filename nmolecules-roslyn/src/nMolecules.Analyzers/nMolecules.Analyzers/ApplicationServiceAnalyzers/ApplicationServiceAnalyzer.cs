@@ -12,7 +12,8 @@ namespace NMolecules.Analyzers.ApplicationServiceAnalyzers
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
                 Rules.ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule,
-                Rules.ApplicationServicesShouldNotUseLegacyServicesRule);
+                Rules.ApplicationServicesShouldNotUseLegacyServicesRule,
+                Rules.ApplicationServicesShouldNotUseApplicationServicesRule);
 
         public override void Initialize(AnalysisContext context)
         {

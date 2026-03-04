@@ -8,6 +8,7 @@ XMoleculesEntity0005 | DDD | Error | Entity should declare exactly one identity 
 XMoleculesAggregateRoot0004 | DDD | Error | Aggregate root should declare exactly one identity member
 XMoleculesApplicationService0001 | DDD | Error | Application service should not also be a domain building block
 XMoleculesApplicationService0002 | DDD | Warning | Application service should depend on explicit domain services
+XMoleculesApplicationService0003 | DDD | Warning | Application service should not depend on other application services
 XMoleculesAggregateRoot0005 | DDD | Error | Aggregate root should not reference aggregate roots directly
 XMoleculesFactory0001 | DDD | Error | Factory should not use application services
 XMoleculesFactory0002 | DDD | Error | Factory should not use repositories

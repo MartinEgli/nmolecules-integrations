@@ -11,6 +11,11 @@ namespace NMolecules.Analyzers.ApplicationServiceAnalyzers
             {
                 yield return symbol.Diagnostic(Rules.ApplicationServicesShouldNotUseLegacyServicesRule, symbol.DiagnosticTargetName(), type.DisplayName());
             }
+
+            if (type.IsApplicationService())
+            {
+                yield return symbol.Diagnostic(Rules.ApplicationServicesShouldNotUseApplicationServicesRule, symbol.DiagnosticTargetName(), type.DisplayName());
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ namespace NMolecules.Analyzers.ApplicationServiceAnalyzers
     {
         public const string ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksId = "XMoleculesApplicationService0001";
         public const string ApplicationServicesShouldNotUseLegacyServicesId = "XMoleculesApplicationService0002";
+        public const string ApplicationServicesShouldNotUseApplicationServicesId = "XMoleculesApplicationService0003";
 
         public static readonly DiagnosticDescriptor ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule = new(
             ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksId,
@@ -24,5 +25,14 @@ namespace NMolecules.Analyzers.ApplicationServiceAnalyzers
             DiagnosticSeverity.Warning,
             true,
             "Application services should use explicit domain service dependencies instead of the legacy [Service] marker.");
+
+        public static readonly DiagnosticDescriptor ApplicationServicesShouldNotUseApplicationServicesRule = new(
+            ApplicationServicesShouldNotUseApplicationServicesId,
+            "Application services should not depend on other application services",
+            "Application service '{0}' must not depend on application service '{1}' directly",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "Application services should orchestrate a use case boundary directly instead of chaining through other application services.");
     }
 }
