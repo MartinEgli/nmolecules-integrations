@@ -9,7 +9,9 @@ namespace NMolecules.Analyzers.EventAnalyzers
     public class DomainEventPublisherAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Rules.RepositoriesAndFactoriesMustNotPublishDomainEventsRule);
+            ImmutableArray.Create(
+                Rules.DomainEventPublishersShouldPreferAggregateRootsOrApplicationServicesRule,
+                Rules.RepositoriesAndFactoriesMustNotPublishDomainEventsRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -44,6 +46,15 @@ namespace NMolecules.Analyzers.EventAnalyzers
 
         private static void ReportIfForbiddenHost(SymbolAnalysisContext context, ISymbol publisher, ITypeSymbol host)
         {
+            if (!host.IsAggregateRoot() && !host.IsApplicationService() && !host.IsRepository() && !host.IsFactory())
+            {
+                context.ReportDiagnostic(publisher.Diagnostic(
+                    Rules.DomainEventPublishersShouldPreferAggregateRootsOrApplicationServicesRule,
+                    publisher.Kind.ToString(),
+                    publisher.DiagnosticTargetName(),
+                    host.DisplayName()));
+            }
+
             if (host.IsRepository())
             {
                 context.ReportDiagnostic(publisher.Diagnostic(

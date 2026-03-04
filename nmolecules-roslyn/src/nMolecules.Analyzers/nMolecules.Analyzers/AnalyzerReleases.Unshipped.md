@@ -20,6 +20,7 @@ XMoleculesDomainEvent0001 | Events | Error | Domain events must not reference en
 XMoleculesDomainEvent0002 | Events | Error | Domain events must not reference aggregate roots
 XMoleculesDomainEvent0003 | Events | Error | Domain events must not reference repositories
 XMoleculesDomainEvent0004 | Events | Error | Domain events must not reference services
+XMoleculesDomainEvent0005 | Events | Warning | Domain event publishers should prefer aggregate roots or application services
 XMoleculesDomainEvent0006 | Events | Error | Repositories and factories must not publish domain events directly
 XMoleculesDomainEvent0007 | Events | Error | Domain event handlers must consume domain events
 XMoleculesRepository0002 | DDD | Warning | Repositories must not expose infrastructure-layer types in public signatures

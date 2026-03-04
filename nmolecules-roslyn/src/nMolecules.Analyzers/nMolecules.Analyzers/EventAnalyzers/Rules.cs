@@ -8,6 +8,7 @@ namespace NMolecules.Analyzers.EventAnalyzers
         public const string DomainEventsMustNotReferenceAggregateRootsId = "XMoleculesDomainEvent0002";
         public const string DomainEventsMustNotReferenceRepositoriesId = "XMoleculesDomainEvent0003";
         public const string DomainEventsMustNotReferenceServicesId = "XMoleculesDomainEvent0004";
+        public const string DomainEventPublishersShouldPreferAggregateRootsOrApplicationServicesId = "XMoleculesDomainEvent0005";
         public const string RepositoriesAndFactoriesMustNotPublishDomainEventsId = "XMoleculesDomainEvent0006";
         public const string DomainEventHandlersMustConsumeDomainEventsId = "XMoleculesDomainEvent0007";
 
@@ -46,6 +47,15 @@ namespace NMolecules.Analyzers.EventAnalyzers
             DiagnosticSeverity.Error,
             true,
             "Domain event payloads must not carry service abstractions or orchestration roles.");
+
+        public static readonly DiagnosticDescriptor DomainEventPublishersShouldPreferAggregateRootsOrApplicationServicesRule = new(
+            DomainEventPublishersShouldPreferAggregateRootsOrApplicationServicesId,
+            "Domain event publishers should prefer aggregate roots or application services",
+            "{0} '{1}' publishes domain events from host '{2}'; prefer AggregateRoot or ApplicationService as the default source",
+            Category.Events,
+            DiagnosticSeverity.Warning,
+            true,
+            "Aggregate roots and application services are the preferred default sources for domain event publication. Other hosts should be a conscious exception.");
 
         public static readonly DiagnosticDescriptor RepositoriesAndFactoriesMustNotPublishDomainEventsRule = new(
             RepositoriesAndFactoriesMustNotPublishDomainEventsId,
