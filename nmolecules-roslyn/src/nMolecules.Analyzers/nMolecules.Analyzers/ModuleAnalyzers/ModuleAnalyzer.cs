@@ -15,7 +15,8 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
                 ModuleShouldDefineIdRule,
                 ModuleShouldDefineNameRule,
                 ModuleShouldDefineBoundedContextIdRule,
-                ModuleShouldReferenceDeclaredBoundedContextRule);
+                ModuleShouldReferenceDeclaredBoundedContextRule,
+                ModuleShouldUseSingleNamePerIdRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -27,27 +28,31 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
         private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
             var declaredBoundedContextIds = GetDeclaredBoundedContextIds(context.Compilation);
-            AnalyzeScope(context, context.Compilation.Assembly, declaredBoundedContextIds);
-            AnalyzeScope(context, context.Compilation.SourceModule, declaredBoundedContextIds);
+            var declarations = new List<ModuleDeclaration>();
+            declarations.AddRange(AnalyzeScope(context, context.Compilation.Assembly, declaredBoundedContextIds));
+            declarations.AddRange(AnalyzeScope(context, context.Compilation.SourceModule, declaredBoundedContextIds));
+            AnalyzeNameConsistencyPerId(context, declarations);
         }
 
-        private static void AnalyzeScope(
+        private static IEnumerable<ModuleDeclaration> AnalyzeScope(
             CompilationAnalysisContext context,
             ISymbol symbol,
             ISet<string> declaredBoundedContextIds)
         {
             foreach (var attribute in symbol.GetAttributes().Where(IsModuleAttribute))
             {
+                var id = attribute.GetNamedString("Id");
                 if (attribute.SupportsMember("Id") &&
-                    IsBlank(attribute.GetNamedString("Id")))
+                    IsBlank(id))
                 {
                     context.Report(attribute, symbol, ModuleShouldDefineIdRule, symbol.MetadataScopeLabel());
                 }
 
                 var supportsName = attribute.SupportsMember("Name");
                 var supportsValue = attribute.SupportsMember("Value");
+                var name = attribute.GetNameOrAliasValue();
                 if ((supportsName || supportsValue) &&
-                    IsBlank(attribute.GetNameOrAliasValue()))
+                    IsBlank(name))
                 {
                     context.Report(attribute, symbol, ModuleShouldDefineNameRule, symbol.MetadataScopeLabel());
                 }
@@ -71,6 +76,45 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
                         symbol.MetadataScopeLabel(),
                         boundedContextId!,
                         declared);
+                }
+
+                yield return new ModuleDeclaration(symbol, attribute, id, name);
+            }
+        }
+
+        private static void AnalyzeNameConsistencyPerId(
+            CompilationAnalysisContext context,
+            IEnumerable<ModuleDeclaration> declarations)
+        {
+            var groups = declarations
+                .Where(it => !IsBlank(it.Id))
+                .Where(it => !IsBlank(it.Name))
+                .GroupBy(it => it.Id!, System.StringComparer.OrdinalIgnoreCase);
+
+            foreach (var group in groups)
+            {
+                var names = group
+                    .Select(it => it.Name!)
+                    .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(it => it)
+                    .ToArray();
+
+                if (names.Length <= 1)
+                {
+                    continue;
+                }
+
+                var declaredNames = string.Join(", ", names);
+                foreach (var declaration in group)
+                {
+                    context.Report(
+                        declaration.Attribute,
+                        declaration.Symbol,
+                        ModuleShouldUseSingleNamePerIdRule,
+                        declaration.Symbol.MetadataScopeLabel(),
+                        declaration.Name!,
+                        group.Key,
+                        declaredNames);
                 }
             }
         }
@@ -107,6 +151,22 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             attribute.AttributeClass?.Name == "BoundedContextAttribute";
 
         private static bool IsBlank(string? value) => string.IsNullOrWhiteSpace(value);
+
+        private sealed class ModuleDeclaration
+        {
+            public ModuleDeclaration(ISymbol symbol, AttributeData attribute, string? id, string? name)
+            {
+                Symbol = symbol;
+                Attribute = attribute;
+                Id = id;
+                Name = name;
+            }
+
+            public ISymbol Symbol { get; }
+            public AttributeData Attribute { get; }
+            public string? Id { get; }
+            public string? Name { get; }
+        }
     }
 
     internal static class ModuleAnalyzerExtensions

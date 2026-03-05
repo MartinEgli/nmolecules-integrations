@@ -8,6 +8,7 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
         public const string ModuleShouldDefineNameId = "XMoleculesModule0002";
         public const string ModuleShouldDefineBoundedContextIdId = "XMoleculesModule0003";
         public const string ModuleShouldReferenceDeclaredBoundedContextId = "XMoleculesModule0004";
+        public const string ModuleShouldUseSingleNamePerIdId = "XMoleculesModule0005";
 
         public static readonly DiagnosticDescriptor ModuleShouldDefineIdRule = new(
             ModuleShouldDefineIdId,
@@ -44,5 +45,14 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             DiagnosticSeverity.Warning,
             true,
             "Module BoundedContextId values should reference bounded contexts declared in the same compilation metadata.");
+
+        public static readonly DiagnosticDescriptor ModuleShouldUseSingleNamePerIdRule = new(
+            ModuleShouldUseSingleNamePerIdId,
+            "Module declarations with same Id should use a single Name",
+            "Module on {0} declares Name/Value '{1}' for Id '{2}', but this Id has multiple names in compilation: {3}",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "Module declarations that share one Id should converge on a single Name/Value for stable diagnostics and reporting.");
     }
 }
