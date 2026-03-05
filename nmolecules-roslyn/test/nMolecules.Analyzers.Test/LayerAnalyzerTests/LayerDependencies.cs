@@ -171,5 +171,51 @@ namespace NMolecules.Analyzers.Test.LayerAnalyzerTests
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
         }
+
+        [Fact]
+        public async Task Analyze_WithApplicationLayerUsingInfrastructureLayer_EmitsWarning()
+        {
+            var testCode = ServiceRoleShims.AppendIfNeeded(@"namespace NMolecules.Analyzers.Test.LayerAnalyzerTests.SampleData
+{
+    using NMolecules.Architecture.Layered;
+
+    [InfrastructureLayer]
+    public class SqlAccounts
+    {
+    }
+
+    [ApplicationLayer]
+    public class TransferMoney
+    {
+        private readonly SqlAccounts {|#0:sqlAccounts|};
+    }
+}", ElementNames.ApplicationLayer, ElementNames.InfrastructureLayer);
+
+            var expected = new DiagnosticResult(Rules.ApplicationLayersShouldLimitInfrastructureDependenciesId, DiagnosticSeverity.Warning).WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithInfrastructureLayerUsingApplicationLayer_EmitsWarning()
+        {
+            var testCode = ServiceRoleShims.AppendIfNeeded(@"namespace NMolecules.Analyzers.Test.LayerAnalyzerTests.SampleData
+{
+    using NMolecules.Architecture.Layered;
+
+    [ApplicationLayer]
+    public class TransferMoney
+    {
+    }
+
+    [InfrastructureLayer]
+    public class SqlHost
+    {
+        public TransferMoney {|#0:UseCase|} { get; set; }
+    }
+}", ElementNames.ApplicationLayer, ElementNames.InfrastructureLayer);
+
+            var expected = new DiagnosticResult(Rules.InfrastructureLayersShouldUseApplicationLayersForWiringOnlyId, DiagnosticSeverity.Warning).WithLocation(0);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
     }
 }

@@ -1,0 +1,48 @@
+name: IDE Release By Tag
+
+on:
+  push:
+    tags:
+    - 'vs/*'
+    - 'vscode/*'
+
+jobs:
+  visual-studio-release:
+    if: startsWith(github.ref, 'refs/tags/vs/')
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Build Visual Studio release artifacts
+      run: pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release -SkipAnalyzerTests -SkipVsCodeTests -SkipVsCodePackage
+    - name: Upload Visual Studio release artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: visual-studio-release-${{ github.ref_name }}
+        path: artifacts/installers/visual-studio/**
+
+  vscode-release:
+    if: startsWith(github.ref, 'refs/tags/vscode/')
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24
+    - name: Build VS Code release artifacts
+      run: pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release -SkipAnalyzerTests -SkipVsCodeTests -SkipVisualStudioVsix
+    - name: Upload VS Code release artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: vscode-release-${{ github.ref_name }}
+        path: artifacts/installers/vscode/**

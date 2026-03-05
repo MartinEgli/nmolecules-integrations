@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.DDD\nMolecules.DDD.csproj" />
     <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture\nMolecules.Architecture.csproj" />
+    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Events\nMolecules.Events.csproj" />
     <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.DDD\nMolecules.DDD.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />

@@ -1,5 +1,4 @@
 using Banking.Application;
-using Banking.Infrastructure;
 using NMolecules.Architecture.Layered;
 
 namespace Banking.Api;
@@ -9,11 +8,9 @@ public class AccountsController
 {
     private readonly TransferMoneyUseCase transferMoneyUseCase;
 
-    public AccountsController()
+    public AccountsController(TransferMoneyUseCase transferMoneyUseCase)
     {
-        var accounts = new InMemoryAccounts();
-        var transferPolicy = new Banking.Domain.TransferPolicy();
-        transferMoneyUseCase = new TransferMoneyUseCase(accounts, transferPolicy);
+        this.transferMoneyUseCase = transferMoneyUseCase;
     }
 
     public void PostTransfer(Guid sourceAccountId, Guid targetAccountId, decimal amount)

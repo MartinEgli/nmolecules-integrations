@@ -36,3 +36,43 @@ jobs:
         node-version: 24
     - name: Test VS Code extension project
       run: npm test --prefix nmolecules-vscode
+
+  visual-studio-installers:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Build Visual Studio setup artifacts
+      run: pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release -SkipAnalyzerTests -SkipVsCodeTests -SkipVsCodePackage
+    - name: Upload Visual Studio setup artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: visual-studio-installers
+        path: artifacts/installers/visual-studio/**
+
+  vscode-installers:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24
+    - name: Build VS Code setup artifacts
+      run: pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release -SkipAnalyzerTests -SkipVsCodeTests -SkipVisualStudioVsix
+    - name: Upload VS Code setup artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: vscode-installers
+        path: artifacts/installers/vscode/**

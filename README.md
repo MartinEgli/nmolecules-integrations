@@ -22,3 +22,54 @@ Current scope:
 - inspect C# workspaces for nMolecules package and project references
 - open the relevant workspace documentation from within VS Code
 - provide a stable starting point for future Roslyn-based diagnostics in VS Code
+
+## Installer Build
+
+The workspace now provides one packaging entry point for IDE delivery:
+
+```powershell
+pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release
+```
+
+Local fallback (without Visual Studio MSBuild or VS Code packaging):
+
+```powershell
+pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release -SkipVisualStudioVsix -SkipVsCodePackage
+```
+
+What it builds:
+
+- Visual Studio extension package (`.vsix`) and a setup executable (`nMolecules.Setup.VisualStudio.exe`)
+- VS Code extension package (`.vsix`) and a setup executable (`nMolecules.Setup.VSCode.exe`)
+- helper install scripts in the setup folders (`install-visual-studio-extension.cmd`, `install-vscode-extension.cmd`)
+
+Output path:
+
+- `artifacts/installers/visual-studio/setup`
+- `artifacts/installers/vscode/setup`
+
+## CI Artifact Split
+
+The CI pipeline publishes installer artifacts per IDE channel:
+
+- `visual-studio-installers` from `artifacts/installers/visual-studio/**`
+- `vscode-installers` from `artifacts/installers/vscode/**`
+
+The tag-based release workflow is split the same way:
+
+- `vs/*` tags trigger Visual Studio release artifact builds only
+- `vscode/*` tags trigger VS Code release artifact builds only
+
+## Tag Convention
+
+Use channel-prefixed tags:
+
+- `vs/v<semver>` for Visual Studio releases (example: `vs/v1.8.0`)
+- `vscode/v<semver>` for VS Code releases (example: `vscode/v1.8.0`)
+
+Helper script:
+
+```powershell
+pwsh .\tools\release\new-ide-tag.ps1 -Channel vs -Version 1.8.0 -Push
+pwsh .\tools\release\new-ide-tag.ps1 -Channel vscode -Version 1.8.0 -Push
+```

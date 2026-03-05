@@ -20,6 +20,16 @@ The broken sample is designed to populate the VS Code Problems view with both is
 - `XMoleculesLayered0002`
 - `XMoleculesLayered0003`
 - `XMoleculesValueObject0002`
+- `XMoleculesCQRS0001`
+- `XMoleculesDomainEvent0002`
+- `XMoleculesDomainEvent0006`
+- `XMoleculesDomainEvent0007`
+- `XMoleculesDomainEvent0009`
+- `XMoleculesBoundedContext0003`
+- `XMoleculesModule0004`
+- `XMoleculesOnion0005`
+- `XMoleculesCrossStyle0001`
+- `XMoleculesCrossStyle0003`
 
 ## Combined Rule Examples
 

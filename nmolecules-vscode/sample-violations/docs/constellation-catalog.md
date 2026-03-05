@@ -51,11 +51,39 @@ This workspace is split into isolated violations and combined violations.
 - `DomainLayerUsingOtherLayers`
   File: `src/Banking.Violations.Infrastructure/FactoryAndLayerViolations.cs`
   Expected primary diagnostics:
-  `XMoleculesDomainLayer0001`, `XMoleculesDomainLayer0002`, `XMoleculesDomainLayer0003`
+  `XMoleculesLayered0001`, `XMoleculesLayered0002`, `XMoleculesLayered0003`
 
 - `ApplicationLayerUsingUi`
   File: `src/Banking.Violations.Application/ApplicationViolationCatalog.cs`
-  Expected primary diagnostic: `XMoleculesApplicationLayer0003`
+  Expected primary diagnostic: `XMoleculesLayered0003`
+
+- `MissingQueryHandlerQuery`
+  File: `src/Banking.Violations.Domain/ArchitectureFamilyViolations.cs`
+  Expected primary diagnostic: `XMoleculesCQRS0001`
+
+- `EventLeakingAggregate`
+  File: `src/Banking.Violations.Domain/ArchitectureFamilyViolations.cs`
+  Expected primary diagnostic: `XMoleculesDomainEvent0002`
+
+- `ForbiddenEventPublisherFactory`
+  File: `src/Banking.Violations.Domain/ArchitectureFamilyViolations.cs`
+  Expected primary diagnostic: `XMoleculesDomainEvent0006`
+
+- `BrokenEventHandlers.HandleWithoutPayload`
+  File: `src/Banking.Violations.Domain/ArchitectureFamilyViolations.cs`
+  Expected primary diagnostic: `XMoleculesDomainEvent0007`
+
+- `BrokenEventHandlers.HandleTooMany`
+  File: `src/Banking.Violations.Domain/ArchitectureFamilyViolations.cs`
+  Expected primary diagnostic: `XMoleculesDomainEvent0009`
+
+- assembly/module metadata in `ArchitectureFamilyViolations.cs`
+  File: `src/Banking.Violations.Domain/ArchitectureFamilyViolations.cs`
+  Expected primary diagnostics: `XMoleculesBoundedContext0003`, `XMoleculesModule0004`
+
+- onion/cross-style mix in one bounded context
+  File: `src/Banking.Violations.Domain/ArchitectureFamilyViolations.cs`
+  Expected primary diagnostics: `XMoleculesOnion0005`, `XMoleculesCrossStyle0001`, `XMoleculesCrossStyle0003`
 
 ## Combined Multi-Rule Examples
 

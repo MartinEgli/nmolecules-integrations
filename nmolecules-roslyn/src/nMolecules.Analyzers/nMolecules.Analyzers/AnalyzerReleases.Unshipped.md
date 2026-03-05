@@ -46,6 +46,8 @@ XMoleculesLayered0001 | Architecture | Error | Domain layers must not depend on 
 XMoleculesLayered0002 | Architecture | Error | Domain layers must not depend on infrastructure layers
 XMoleculesLayered0003 | Architecture | Error | Domain layers must not depend on interface layers
 XMoleculesLayered0004 | Architecture | Error | Interface layers must not depend on domain layers directly
+XMoleculesLayered0005 | Architecture | Warning | Application to infrastructure dependencies should stay explicit and limited
+XMoleculesLayered0006 | Architecture | Warning | Infrastructure to application dependencies should be wiring-only
 XMoleculesOnion0001 | Architecture | Error | Onion dependencies must point inward only
 XMoleculesOnion0002 | Architecture | Error | Domain model rings must not depend on outer rings
 XMoleculesOnion0003 | Architecture | Error | Domain service rings must not depend on outer rings
@@ -62,3 +64,19 @@ XMoleculesCQRS0003 | Architecture | Error | Query handlers must stay on the read
 XMoleculesCQRS0004 | Architecture | Error | Query models must be read-only
 XMoleculesCQRS0005 | Architecture | Error | Projections may update query models but must not depend on write-side roles directly
 XMoleculesCQRS0006 | Architecture | Error | Command dispatchers must route and must not contain domain rules
+XMoleculesCrossStyle0001 | Architecture | Error | Primary structural styles must follow the compatibility matrix
+XMoleculesCrossStyle0002 | Architecture | Warning | CQRS may overlay a primary structural style
+XMoleculesCrossStyle0003 | Architecture | Error | Classic and simplified onion styles must not coexist in the same bounded context
+XMoleculesBricks0001 | Architecture | Error | Brick rules must be honored
+XMoleculesBricks0002 | Architecture | Warning | Brick rule configuration must be valid
+XMoleculesEventStorming0001 | Architecture | Error | Event Storming actors must not depend on aggregates
+XMoleculesEventStorming0002 | Architecture | Warning | Event Storming commands should target aggregates
+XMoleculesEventStorming0003 | Architecture | Warning | Event Storming policies should react to domain events
+XMoleculesEventStorming0004 | Architecture | Error | Event Storming read models must not depend on aggregates
+XMoleculesEventStorming0005 | Architecture | Error | Event Storming external systems must not depend on aggregates
+XMoleculesMicroservices0001 | Architecture | Warning | API gateways should depend on service contracts
+XMoleculesMicroservices0002 | Architecture | Warning | BFF components should depend on service contracts
+XMoleculesMicroservices0003 | Architecture | Error | Service contracts must not depend on microservice implementations
+XMoleculesMicroservices0004 | Architecture | Error | Integration events must not depend on microservice implementations
+XMoleculesMicroservices0005 | Architecture | Warning | Saga orchestrators should depend on contracts or integration events
+XMoleculesMicroservices0006 | Architecture | Error | Saga participants must not depend on gateways or BFF components

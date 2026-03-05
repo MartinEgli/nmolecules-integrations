@@ -8,6 +8,8 @@ namespace NMolecules.Analyzers.LayerAnalyzers
         public const string DomainLayersShouldNotUseInfrastructureLayersId = "XMoleculesLayered0002";
         public const string DomainLayersShouldNotUseUserInterfaceLayersId = "XMoleculesLayered0003";
         public const string InterfaceLayersShouldNotUseDomainLayersId = "XMoleculesLayered0004";
+        public const string ApplicationLayersShouldLimitInfrastructureDependenciesId = "XMoleculesLayered0005";
+        public const string InfrastructureLayersShouldUseApplicationLayersForWiringOnlyId = "XMoleculesLayered0006";
 
         public static readonly DiagnosticDescriptor DomainLayersShouldNotUseApplicationLayersRule = new(
             DomainLayersShouldNotUseApplicationLayersId,
@@ -44,5 +46,23 @@ namespace NMolecules.Analyzers.LayerAnalyzers
             DiagnosticSeverity.Error,
             true,
             "The interface layer must not bypass application orchestration and couple directly to the domain layer.");
+
+        public static readonly DiagnosticDescriptor ApplicationLayersShouldLimitInfrastructureDependenciesRule = new(
+            ApplicationLayersShouldLimitInfrastructureDependenciesId,
+            "Application to infrastructure dependencies should stay explicit and limited",
+            "Application layer symbol '{0}' depends on infrastructure layer type '{1}'; keep this dependency explicit and limited",
+            Category.Architecture,
+            DiagnosticSeverity.Warning,
+            true,
+            "Application-layer infrastructure coupling should be explicit and constrained to narrowly scoped integration points.");
+
+        public static readonly DiagnosticDescriptor InfrastructureLayersShouldUseApplicationLayersForWiringOnlyRule = new(
+            InfrastructureLayersShouldUseApplicationLayersForWiringOnlyId,
+            "Infrastructure to application dependencies should be wiring-only",
+            "Infrastructure layer symbol '{0}' depends on application layer type '{1}'; keep this dependency wiring-only",
+            Category.Architecture,
+            DiagnosticSeverity.Warning,
+            true,
+            "Infrastructure-layer references to application services should stay in composition/wiring boundaries, not business orchestration.");
     }
 }

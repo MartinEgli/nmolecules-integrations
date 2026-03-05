@@ -38,8 +38,10 @@ The main intent is to give the VS Code extension a realistic workspace to inspec
 
 ## Current Extension Relevance
 
-The current VS Code extension does not yet surface Roslyn diagnostics in Problems.
-It does, however, inspect this workspace and should recognize:
+The current VS Code extension inspects this workspace and can refresh Roslyn diagnostics into Problems.
+For this healthy sample, diagnostics refresh should stay clean while still exposing architecture metadata.
+
+The extension should recognize:
 
 - all four projects as C# projects
 - local analyzer project references

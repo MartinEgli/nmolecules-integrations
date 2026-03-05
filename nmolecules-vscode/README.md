@@ -26,6 +26,7 @@ A detailed sample workspace is included in:
 
 - [sample-workspace/README.md](sample-workspace/README.md)
 - [sample-violations/README.md](sample-violations/README.md)
+- [rule-family-sample-index.md](rule-family-sample-index.md)
 
 They cover both a healthy layered .NET solution and a deliberately broken workspace that drives analyzer findings into the Problems view.
 The samples now include valid constellation catalogs, isolated single-rule failures, and combined multi-rule failures.
@@ -44,6 +45,21 @@ For the VS Code extension host path:
 npm install --prefix nmolecules-vscode
 npm run test:host --prefix nmolecules-vscode
 ```
+
+## Packaging
+
+From the integrations repo root:
+
+```powershell
+pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release -SkipVisualStudioVsix
+```
+
+This produces:
+
+- `artifacts/installers/vscode/nMolecules.VSCode.vsix`
+- `artifacts/installers/vscode/setup/nMolecules.Setup.VSCode.exe`
+
+Release tags for this channel use `vscode/*` (for example `vscode/v1.8.0`).
 
 ## Current Guidance Surface
 

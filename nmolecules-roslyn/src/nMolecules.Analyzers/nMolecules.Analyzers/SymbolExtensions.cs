@@ -170,6 +170,15 @@ namespace NMolecules.Analyzers
             return attributes.Any(it => it.AttributeClass is { Name: var name } && attributeNames.Contains(name));
         }
 
+        public static bool HasAttributeNamedInNamespace(this ISymbol symbol, string namespaceName, params string[] attributeNames)
+        {
+            var attributes = symbol.GetAttributes().ToArray();
+            return attributes.Any(attribute =>
+                attribute.AttributeClass is { Name: var name, ContainingNamespace: { } containingNamespace } &&
+                attributeNames.Contains(name) &&
+                string.Equals(containingNamespace.ToDisplayString(), namespaceName, StringComparison.Ordinal));
+        }
+
         public static Diagnostic Diagnostic(
             this ISymbol symbol,
             DiagnosticDescriptor descriptor,

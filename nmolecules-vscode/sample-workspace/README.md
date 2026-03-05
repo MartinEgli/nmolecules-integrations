@@ -8,6 +8,7 @@ It demonstrates:
 - explicit use of `NMolecules.DDD` and `NMolecules.Architecture`
 - local analyzer project references to the Roslyn analyzer project
 - valid role constellations for every major nMolecules marker used in this workspace
+- explicit CQRS, Hexagonal, Event, and metadata marker constellations
 - a combined valid end-to-end flow across all layers
 - the current extension commands against a realistic multi-project workspace
 
@@ -60,6 +61,7 @@ dotnet build Banking.Sample.sln -v minimal
 - [Constellation Catalog](docs/constellation-catalog.md)
 - [Layer Matrix](docs/layer-matrix.md)
 - [Expected Inspection Output](docs/expected-inspection-output.md)
+- [Rule Family Sample Index](../rule-family-sample-index.md)
 
 ## Broken Companion Workspace
 

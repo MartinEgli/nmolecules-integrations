@@ -51,6 +51,14 @@ pwsh .\tools\validate-vsix-metadata.ps1
 
 This validates the VSIX manifest target matrix and analyzer/code-fix payload mapping without requiring a local Visual Studio instance.
 
+For release packaging, use the shared installer build flow from the integrations repo root:
+
+```powershell
+pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release
+```
+
+This build creates the Visual Studio `.vsix` package and a setup executable wrapper in `artifacts/installers/visual-studio/setup`.
+
 ## Smoke Test Checklist
 
 Run the following checklist once for Visual Studio 2022 and once for Visual Studio 2026.

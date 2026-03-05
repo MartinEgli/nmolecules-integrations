@@ -34,6 +34,16 @@ The sample is intentionally built to raise multiple nMolecules analyzer diagnost
 - `XMoleculesApplicationService0001`
 - `XMoleculesFactory0001`
 - `XMoleculesService0001`
+- `XMoleculesCQRS0001`
+- `XMoleculesOnion0005`
+- `XMoleculesCrossStyle0001`
+- `XMoleculesCrossStyle0003`
+- `XMoleculesBoundedContext0003`
+- `XMoleculesModule0004`
+- `XMoleculesDomainEvent0002`
+- `XMoleculesDomainEvent0006`
+- `XMoleculesDomainEvent0007`
+- `XMoleculesDomainEvent0009`
 
 ## Build The Sample
 
@@ -48,3 +58,4 @@ dotnet build Banking.Sample.Violations.sln -v minimal
 - [Expected Diagnostics](docs/expected-diagnostics.md)
 - [Exact Diagnostic Details](docs/exact-diagnostic-details.md)
 - [Using The Extension](docs/using-the-extension.md)
+- [Rule Family Sample Index](../rule-family-sample-index.md)

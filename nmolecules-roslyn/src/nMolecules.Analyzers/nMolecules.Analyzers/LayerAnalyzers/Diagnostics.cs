@@ -36,6 +36,16 @@ namespace NMolecules.Analyzers.LayerAnalyzers
             {
                 yield return symbol.Diagnostic(Rules.InterfaceLayersShouldNotUseDomainLayersRule, symbol.DiagnosticTargetName(), type.DisplayName());
             }
+
+            if (owner.IsApplicationLayer() && type.IsInfrastructureLayer())
+            {
+                yield return symbol.Diagnostic(Rules.ApplicationLayersShouldLimitInfrastructureDependenciesRule, symbol.DiagnosticTargetName(), type.DisplayName());
+            }
+
+            if (owner.IsInfrastructureLayer() && type.IsApplicationLayer())
+            {
+                yield return symbol.Diagnostic(Rules.InfrastructureLayersShouldUseApplicationLayersForWiringOnlyRule, symbol.DiagnosticTargetName(), type.DisplayName());
+            }
         }
     }
 }
