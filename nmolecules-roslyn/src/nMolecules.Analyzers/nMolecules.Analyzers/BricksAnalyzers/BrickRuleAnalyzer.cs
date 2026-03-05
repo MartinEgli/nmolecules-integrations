@@ -10,9 +10,9 @@ namespace NMolecules.Analyzers.BricksAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class BrickRuleAnalyzer : DiagnosticAnalyzer
     {
-        private static readonly string[] RuleAttributeNames = { "RuleAttribute", "BrickRuleAttribute" };
-        private static readonly string[] RoleAttributeNames = { "RoleAttribute", "BrickRoleAttribute" };
-        private static readonly string[] RoleAliasAttributeNames = { "RoleAliasAttribute", "BrickRoleAliasAttribute" };
+        private static readonly string[] RuleAttributeNames = { "RuleAttribute" };
+        private static readonly string[] RoleAttributeNames = { "RoleAttribute" };
+        private static readonly string[] RoleAliasAttributeNames = { "RoleAliasAttribute" };
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Rules.BrickRuleViolationRule,
