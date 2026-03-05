@@ -17,7 +17,8 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
                 ModuleShouldDefineBoundedContextIdRule,
                 ModuleShouldReferenceDeclaredBoundedContextRule,
                 ModuleShouldUseSingleNamePerIdRule,
-                ModuleShouldUseSingleBoundedContextIdPerIdRule);
+                ModuleShouldUseSingleBoundedContextIdPerIdRule,
+                ModuleNameShouldMapToSingleIdPerBoundedContextRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -34,6 +35,7 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             declarations.AddRange(AnalyzeScope(context, context.Compilation.SourceModule, declaredBoundedContextIds));
             AnalyzeNameConsistencyPerId(context, declarations);
             AnalyzeBoundedContextConsistencyPerId(context, declarations);
+            AnalyzeIdConsistencyPerBoundedContextAndName(context, declarations);
         }
 
         private static IEnumerable<ModuleDeclaration> AnalyzeScope(
@@ -154,6 +156,46 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
                         declaration.BoundedContextId!,
                         group.Key,
                         declaredBoundedContextIds);
+                }
+            }
+        }
+
+        private static void AnalyzeIdConsistencyPerBoundedContextAndName(
+            CompilationAnalysisContext context,
+            IEnumerable<ModuleDeclaration> declarations)
+        {
+            var groups = declarations
+                .Where(it => !IsBlank(it.Id))
+                .Where(it => !IsBlank(it.Name))
+                .Where(it => !IsBlank(it.BoundedContextId))
+                .GroupBy(it => $"{it.BoundedContextId!.Trim().ToUpperInvariant()}::{it.Name!.Trim().ToUpperInvariant()}");
+
+            foreach (var group in groups)
+            {
+                var ids = group
+                    .Select(it => it.Id!)
+                    .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(it => it)
+                    .ToArray();
+
+                if (ids.Length <= 1)
+                {
+                    continue;
+                }
+
+                var declaredIds = string.Join(", ", ids);
+                var representative = group.First();
+                foreach (var declaration in group)
+                {
+                    context.Report(
+                        declaration.Attribute,
+                        declaration.Symbol,
+                        ModuleNameShouldMapToSingleIdPerBoundedContextRule,
+                        declaration.Symbol.MetadataScopeLabel(),
+                        declaration.Name!,
+                        representative.BoundedContextId!,
+                        declaration.Id!,
+                        declaredIds);
                 }
             }
         }

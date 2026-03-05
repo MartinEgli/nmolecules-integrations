@@ -6,7 +6,9 @@ using NMolecules.DDD;
 using NMolecules.Events;
 
 [assembly: BoundedContext(Id = "Billing", Name = "Billing")]
+[assembly: Module(Id = "Accounts.Core", Name = "Accounts", BoundedContextId = "Billing")]
 [module: BoundedContext(Id = "Sales", Name = "Sales")]
+[module: Module(Id = "Accounts.Api", Name = "Accounts", BoundedContextId = "Billing")]
 [module: Module(Id = "Accounts", Name = "Accounts", BoundedContextId = "UnknownContext")]
 
 namespace Banking.Violations.Domain;

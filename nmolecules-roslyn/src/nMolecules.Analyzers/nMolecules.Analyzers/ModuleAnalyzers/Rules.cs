@@ -10,6 +10,7 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
         public const string ModuleShouldReferenceDeclaredBoundedContextId = "XMoleculesModule0004";
         public const string ModuleShouldUseSingleNamePerIdId = "XMoleculesModule0005";
         public const string ModuleShouldUseSingleBoundedContextIdPerIdId = "XMoleculesModule0006";
+        public const string ModuleNameShouldMapToSingleIdPerBoundedContextId = "XMoleculesModule0007";
 
         public static readonly DiagnosticDescriptor ModuleShouldDefineIdRule = new(
             ModuleShouldDefineIdId,
@@ -64,5 +65,14 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             DiagnosticSeverity.Warning,
             true,
             "Module declarations that share one Id should converge on a single BoundedContextId for stable context ownership semantics.");
+
+        public static readonly DiagnosticDescriptor ModuleNameShouldMapToSingleIdPerBoundedContextRule = new(
+            ModuleNameShouldMapToSingleIdPerBoundedContextId,
+            "Module names should map to a single Id inside a bounded context",
+            "Module on {0} declares Name/Value '{1}' in BoundedContextId '{2}' with Id '{3}', but this name maps to multiple Ids in that context: {4}",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "Inside one bounded context, each module name should map to one stable module Id for unambiguous ownership metadata.");
     }
 }
