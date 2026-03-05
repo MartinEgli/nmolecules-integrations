@@ -25,6 +25,7 @@ XMoleculesBoundedContext0001 | DDD | Warning | BoundedContext should define stab
 XMoleculesBoundedContext0002 | DDD | Warning | BoundedContext should define readable Name metadata
 XMoleculesBoundedContext0003 | DDD | Warning | BoundedContext declarations should use a single Id per compilation
 XMoleculesBoundedContext0004 | DDD | Warning | BoundedContext declarations with same Id should use one Name/Value
+XMoleculesBoundedContext0005 | DDD | Warning | Module ownership should match the bounded context declared on the same metadata scope
 XMoleculesModule0001 | DDD | Warning | Module should define stable Id metadata
 XMoleculesModule0002 | DDD | Warning | Module should define readable Name metadata
 XMoleculesModule0003 | DDD | Warning | Module should define BoundedContextId metadata

@@ -8,6 +8,7 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
         public const string BoundedContextShouldDefineNameId = "XMoleculesBoundedContext0002";
         public const string BoundedContextShouldUseSingleIdPerCompilationId = "XMoleculesBoundedContext0003";
         public const string BoundedContextShouldUseSingleNamePerIdId = "XMoleculesBoundedContext0004";
+        public const string BoundedContextModuleOwnershipShouldMatchScopeIdId = "XMoleculesBoundedContext0005";
 
         public static readonly DiagnosticDescriptor BoundedContextShouldDefineIdRule = new(
             BoundedContextShouldDefineIdId,
@@ -44,5 +45,14 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             DiagnosticSeverity.Warning,
             true,
             "Bounded context declarations that share one Id should also converge on a single Name/Value for stable diagnostics and reporting.");
+
+        public static readonly DiagnosticDescriptor BoundedContextModuleOwnershipShouldMatchScopeIdRule = new(
+            BoundedContextModuleOwnershipShouldMatchScopeIdId,
+            "Module ownership should match the bounded context declared on the same metadata scope",
+            "Module on {0} declares BoundedContextId '{1}', but the same scope declares BoundedContext Id '{2}'",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "When a metadata scope declares a bounded context, module ownership declared on that same scope should use the same context Id.");
     }
 }

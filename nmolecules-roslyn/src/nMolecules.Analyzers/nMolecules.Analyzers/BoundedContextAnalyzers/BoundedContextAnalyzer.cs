@@ -15,7 +15,8 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
                 BoundedContextShouldDefineIdRule,
                 BoundedContextShouldDefineNameRule,
                 BoundedContextShouldUseSingleIdPerCompilationRule,
-                BoundedContextShouldUseSingleNamePerIdRule);
+                BoundedContextShouldUseSingleNamePerIdRule,
+                BoundedContextModuleOwnershipShouldMatchScopeIdRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -31,6 +32,7 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             declarations.AddRange(AnalyzeScope(context, context.Compilation.SourceModule));
             AnalyzeIdConsistency(context, declarations);
             AnalyzeNameConsistencyPerId(context, declarations);
+            AnalyzeModuleOwnershipConsistency(context, declarations);
         }
 
         private static IEnumerable<BoundedContextDeclaration> AnalyzeScope(CompilationAnalysisContext context, ISymbol symbol)
@@ -124,8 +126,68 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             }
         }
 
+        private static void AnalyzeModuleOwnershipConsistency(
+            CompilationAnalysisContext context,
+            IEnumerable<BoundedContextDeclaration> declarations)
+        {
+            var idsByScope = declarations
+                .Where(it => !IsBlank(it.Id))
+                .GroupBy(it => it.Symbol, SymbolEqualityComparer.Default)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group
+                        .Select(it => it.Id!)
+                        .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                        .ToArray(),
+                    SymbolEqualityComparer.Default);
+
+            AnalyzeScopeModuleOwnership(context, context.Compilation.Assembly, idsByScope);
+            AnalyzeScopeModuleOwnership(context, context.Compilation.SourceModule, idsByScope);
+        }
+
+        private static void AnalyzeScopeModuleOwnership(
+            CompilationAnalysisContext context,
+            ISymbol symbol,
+            IReadOnlyDictionary<ISymbol, string[]> idsByScope)
+        {
+            if (!idsByScope.TryGetValue(symbol, out var scopeIds) ||
+                scopeIds.Length != 1)
+            {
+                return;
+            }
+
+            var scopeId = scopeIds[0];
+            foreach (var moduleAttribute in symbol.GetAttributes().Where(IsModuleAttribute))
+            {
+                if (!moduleAttribute.SupportsMember("BoundedContextId"))
+                {
+                    continue;
+                }
+
+                var moduleBoundedContextId = moduleAttribute.GetNamedString("BoundedContextId");
+                if (IsBlank(moduleBoundedContextId))
+                {
+                    continue;
+                }
+
+                if (!moduleBoundedContextId!.Equals(scopeId, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Report(
+                        moduleAttribute,
+                        symbol,
+                        BoundedContextModuleOwnershipShouldMatchScopeIdRule,
+                        symbol.MetadataScopeLabel(),
+                        moduleBoundedContextId,
+                        scopeId);
+                }
+            }
+        }
+
         private static bool IsBoundedContextAttribute(AttributeData attribute) =>
             attribute.AttributeClass?.Name == "BoundedContextAttribute";
+
+        private static bool IsModuleAttribute(AttributeData attribute) =>
+            attribute.AttributeClass?.Name == "ModuleAttribute";
 
         private static bool IsBlank(string? value) => string.IsNullOrWhiteSpace(value);
 
