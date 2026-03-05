@@ -14,7 +14,8 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             ImmutableArray.Create(
                 BoundedContextShouldDefineIdRule,
                 BoundedContextShouldDefineNameRule,
-                BoundedContextShouldUseSingleIdPerCompilationRule);
+                BoundedContextShouldUseSingleIdPerCompilationRule,
+                BoundedContextShouldUseSingleNamePerIdRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -29,6 +30,7 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             declarations.AddRange(AnalyzeScope(context, context.Compilation.Assembly));
             declarations.AddRange(AnalyzeScope(context, context.Compilation.SourceModule));
             AnalyzeIdConsistency(context, declarations);
+            AnalyzeNameConsistencyPerId(context, declarations);
         }
 
         private static IEnumerable<BoundedContextDeclaration> AnalyzeScope(CompilationAnalysisContext context, ISymbol symbol)
@@ -45,13 +47,14 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
 
                 var supportsName = attribute.SupportsMember("Name");
                 var supportsValue = attribute.SupportsMember("Value");
+                var name = attribute.GetNameOrAliasValue();
                 if ((supportsName || supportsValue) &&
-                    IsBlank(attribute.GetNameOrAliasValue()))
+                    IsBlank(name))
                 {
                     context.Report(attribute, symbol, BoundedContextShouldDefineNameRule, symbol.MetadataScopeLabel());
                 }
 
-                yield return new BoundedContextDeclaration(symbol, attribute, id);
+                yield return new BoundedContextDeclaration(symbol, attribute, id, name);
             }
         }
 
@@ -84,6 +87,43 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             }
         }
 
+        private static void AnalyzeNameConsistencyPerId(
+            CompilationAnalysisContext context,
+            IEnumerable<BoundedContextDeclaration> declarations)
+        {
+            var groups = declarations
+                .Where(it => !IsBlank(it.Id))
+                .Where(it => !IsBlank(it.Name))
+                .GroupBy(it => it.Id!, System.StringComparer.OrdinalIgnoreCase);
+
+            foreach (var group in groups)
+            {
+                var names = group
+                    .Select(it => it.Name!)
+                    .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(it => it)
+                    .ToArray();
+
+                if (names.Length <= 1)
+                {
+                    continue;
+                }
+
+                var declaredNames = string.Join(", ", names);
+                foreach (var declaration in group)
+                {
+                    context.Report(
+                        declaration.Attribute,
+                        declaration.Symbol,
+                        BoundedContextShouldUseSingleNamePerIdRule,
+                        declaration.Symbol.MetadataScopeLabel(),
+                        declaration.Name!,
+                        group.Key,
+                        declaredNames);
+                }
+            }
+        }
+
         private static bool IsBoundedContextAttribute(AttributeData attribute) =>
             attribute.AttributeClass?.Name == "BoundedContextAttribute";
 
@@ -91,16 +131,18 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
 
         private sealed class BoundedContextDeclaration
         {
-            public BoundedContextDeclaration(ISymbol symbol, AttributeData attribute, string? id)
+            public BoundedContextDeclaration(ISymbol symbol, AttributeData attribute, string? id, string? name)
             {
                 Symbol = symbol;
                 Attribute = attribute;
                 Id = id;
+                Name = name;
             }
 
             public ISymbol Symbol { get; }
             public AttributeData Attribute { get; }
             public string? Id { get; }
+            public string? Name { get; }
         }
     }
 

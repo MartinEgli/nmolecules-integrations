@@ -131,6 +131,52 @@ namespace DomainModel
         }
 
         [Fact]
+        public async Task Analyze_WithSameIdButDifferentNames_EmitsWarnings()
+        {
+            var testCode = @"using System;
+[assembly: {|#0:DomainModel.BoundedContext(Id = ""Billing"", Name = ""Billing Core"")|}]
+[module: {|#1:DomainModel.BoundedContext(Id = ""Billing"", Name = ""Billing Payments"")|}]
+
+namespace DomainModel
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class BoundedContextAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+    }
+}";
+
+            var assemblyExpected = new DiagnosticResult(Rules.BoundedContextShouldUseSingleNamePerIdId, DiagnosticSeverity.Warning)
+                .WithLocation(0);
+            var moduleExpected = new DiagnosticResult(Rules.BoundedContextShouldUseSingleNamePerIdId, DiagnosticSeverity.Warning)
+                .WithLocation(1);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(assemblyExpected, moduleExpected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithSameIdAndSameName_DoesNotEmitNameConsistencyViolations()
+        {
+            var testCode = @"using System;
+[assembly: DomainModel.BoundedContext(Id = ""Billing"", Name = ""Billing Core"")]
+[module: DomainModel.BoundedContext(Id = ""Billing"", Value = ""Billing Core"")]
+
+namespace DomainModel
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class BoundedContextAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
+        }
+
+        [Fact]
         public async Task Analyze_WithLegacyAttributeShape_DoesNotEmitViolations()
         {
             var testCode = @"using System;

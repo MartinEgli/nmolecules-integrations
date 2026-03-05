@@ -7,6 +7,7 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
         public const string BoundedContextShouldDefineIdId = "XMoleculesBoundedContext0001";
         public const string BoundedContextShouldDefineNameId = "XMoleculesBoundedContext0002";
         public const string BoundedContextShouldUseSingleIdPerCompilationId = "XMoleculesBoundedContext0003";
+        public const string BoundedContextShouldUseSingleNamePerIdId = "XMoleculesBoundedContext0004";
 
         public static readonly DiagnosticDescriptor BoundedContextShouldDefineIdRule = new(
             BoundedContextShouldDefineIdId,
@@ -34,5 +35,14 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             DiagnosticSeverity.Warning,
             true,
             "Bounded context declarations in one compilation should converge on a single context Id for unambiguous tooling semantics.");
+
+        public static readonly DiagnosticDescriptor BoundedContextShouldUseSingleNamePerIdRule = new(
+            BoundedContextShouldUseSingleNamePerIdId,
+            "BoundedContext declarations with same Id should use a single Name",
+            "BoundedContext on {0} declares Name/Value '{1}' for Id '{2}', but this Id has multiple names in compilation: {3}",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "Bounded context declarations that share one Id should also converge on a single Name/Value for stable diagnostics and reporting.");
     }
 }
