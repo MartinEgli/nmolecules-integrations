@@ -16,7 +16,8 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
                 ModuleShouldDefineNameRule,
                 ModuleShouldDefineBoundedContextIdRule,
                 ModuleShouldReferenceDeclaredBoundedContextRule,
-                ModuleShouldUseSingleNamePerIdRule);
+                ModuleShouldUseSingleNamePerIdRule,
+                ModuleShouldUseSingleBoundedContextIdPerIdRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -32,6 +33,7 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             declarations.AddRange(AnalyzeScope(context, context.Compilation.Assembly, declaredBoundedContextIds));
             declarations.AddRange(AnalyzeScope(context, context.Compilation.SourceModule, declaredBoundedContextIds));
             AnalyzeNameConsistencyPerId(context, declarations);
+            AnalyzeBoundedContextConsistencyPerId(context, declarations);
         }
 
         private static IEnumerable<ModuleDeclaration> AnalyzeScope(
@@ -78,7 +80,7 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
                         declared);
                 }
 
-                yield return new ModuleDeclaration(symbol, attribute, id, name);
+                yield return new ModuleDeclaration(symbol, attribute, id, name, boundedContextId);
             }
         }
 
@@ -119,6 +121,43 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             }
         }
 
+        private static void AnalyzeBoundedContextConsistencyPerId(
+            CompilationAnalysisContext context,
+            IEnumerable<ModuleDeclaration> declarations)
+        {
+            var groups = declarations
+                .Where(it => !IsBlank(it.Id))
+                .Where(it => !IsBlank(it.BoundedContextId))
+                .GroupBy(it => it.Id!, System.StringComparer.OrdinalIgnoreCase);
+
+            foreach (var group in groups)
+            {
+                var boundedContextIds = group
+                    .Select(it => it.BoundedContextId!)
+                    .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(it => it)
+                    .ToArray();
+
+                if (boundedContextIds.Length <= 1)
+                {
+                    continue;
+                }
+
+                var declaredBoundedContextIds = string.Join(", ", boundedContextIds);
+                foreach (var declaration in group)
+                {
+                    context.Report(
+                        declaration.Attribute,
+                        declaration.Symbol,
+                        ModuleShouldUseSingleBoundedContextIdPerIdRule,
+                        declaration.Symbol.MetadataScopeLabel(),
+                        declaration.BoundedContextId!,
+                        group.Key,
+                        declaredBoundedContextIds);
+                }
+            }
+        }
+
         private static HashSet<string> GetDeclaredBoundedContextIds(Compilation compilation)
         {
             var result = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
@@ -154,18 +193,20 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
 
         private sealed class ModuleDeclaration
         {
-            public ModuleDeclaration(ISymbol symbol, AttributeData attribute, string? id, string? name)
+            public ModuleDeclaration(ISymbol symbol, AttributeData attribute, string? id, string? name, string? boundedContextId)
             {
                 Symbol = symbol;
                 Attribute = attribute;
                 Id = id;
                 Name = name;
+                BoundedContextId = boundedContextId;
             }
 
             public ISymbol Symbol { get; }
             public AttributeData Attribute { get; }
             public string? Id { get; }
             public string? Name { get; }
+            public string? BoundedContextId { get; }
         }
     }
 

@@ -287,5 +287,53 @@ namespace DomainModel
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
         }
+
+        [Fact]
+        public async Task Analyze_WithSameModuleIdButDifferentBoundedContextAssignments_EmitsWarnings()
+        {
+            var testCode = @"using System;
+[assembly: {|#0:DomainModel.Module(Id = ""Accounts"", Name = ""Accounts Core"", BoundedContextId = ""Billing"")|}]
+[module: {|#1:DomainModel.Module(Id = ""Accounts"", Name = ""Accounts Core"", BoundedContextId = ""Sales"")|}]
+
+namespace DomainModel
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class ModuleAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+        public string BoundedContextId { get; set; } = string.Empty;
+    }
+}";
+
+            var assemblyExpected = new DiagnosticResult(Rules.ModuleShouldUseSingleBoundedContextIdPerIdId, DiagnosticSeverity.Warning)
+                .WithLocation(0);
+            var moduleExpected = new DiagnosticResult(Rules.ModuleShouldUseSingleBoundedContextIdPerIdId, DiagnosticSeverity.Warning)
+                .WithLocation(1);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(assemblyExpected, moduleExpected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithSameModuleIdAndSameBoundedContextAssignment_DoesNotEmitBoundedContextConsistencyViolations()
+        {
+            var testCode = @"using System;
+[assembly: DomainModel.Module(Id = ""Accounts"", Name = ""Accounts Core"", BoundedContextId = ""Billing"")]
+[module: DomainModel.Module(Id = ""Accounts"", Name = ""Accounts Core"", BoundedContextId = ""Billing"")]
+
+namespace DomainModel
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class ModuleAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+        public string BoundedContextId { get; set; } = string.Empty;
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
+        }
     }
 }

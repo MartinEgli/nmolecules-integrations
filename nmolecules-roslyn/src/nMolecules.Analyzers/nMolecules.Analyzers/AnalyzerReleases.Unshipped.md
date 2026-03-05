@@ -31,6 +31,7 @@ XMoleculesModule0002 | DDD | Warning | Module should define readable Name metada
 XMoleculesModule0003 | DDD | Warning | Module should define BoundedContextId metadata
 XMoleculesModule0004 | DDD | Warning | Module should reference a declared bounded context
 XMoleculesModule0005 | DDD | Warning | Module declarations with same Id should use one Name/Value
+XMoleculesModule0006 | DDD | Warning | Module declarations with same Id should use one BoundedContextId
 XMoleculesValueObject0006 | DDD | Error | Value object should not declare identity members
 XMoleculesValueObject0007 | DDD | Error | Value object should not depend on factories
 XMoleculesDomainEvent0001 | Events | Error | Domain events must not reference entities
