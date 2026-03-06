@@ -61,10 +61,15 @@ These are the intended example messages for the isolated samples. They are writt
 
 - module metadata in `ArchitectureFamilyViolations.cs`
   `Module on module 'Banking.Violations.Domain.dll' references unknown BoundedContextId 'UnknownContext'. Declared bounded contexts: Billing, Sales`
-  `Module on assembly 'Banking.Violations.Domain' declares Name/Value 'Accounts' in BoundedContextId 'Billing' with Id 'Accounts.Core', but this name maps to multiple Ids in that context: Accounts.Api, Accounts.Core`
+  `Module on assembly 'Banking.Violations.Domain' declares Name/Value 'Accounts' in BoundedContextId 'UnknownContext' with Id 'Accounts.Core', but this name maps to multiple Ids in that context: Accounts.Api, Accounts.Core`
 
 - bounded-context metadata in `ArchitectureFamilyViolations.cs`
   `BoundedContext on module 'Banking.Violations.Domain.dll' declares Id 'Sales', but compilation contains multiple BoundedContext Ids: Billing, Sales`
+  `BoundedContext on assembly 'Banking.Violations.Domain' declares dependency 'Billing -> SharedKernel', but target context is not declared in compilation metadata. Declared bounded contexts: Billing, Sales`
+  `BoundedContext on assembly 'Banking.Violations.Domain' declares dependency 'Billing -> Sales', but reverse dependency 'Sales -> Billing' is also declared`
+  `BoundedContext on module 'Banking.Violations.Domain.dll' declares dependency 'Sales -> Billing', but reverse dependency 'Billing -> Sales' is also declared`
+  `BoundedContext on assembly 'Banking.Violations.Domain' declares self dependency 'Billing -> Billing'`
+  `BoundedContext on assembly 'Banking.Violations.Domain' declares duplicate dependency target 'Sales' in DependsOnContextIds`
 
 - onion/cross-style mix in `ArchitectureFamilyViolations.cs`
   `Onion declaration on type 'ClassicDomainRing' mixes classic and simplified markers in the same compilation`

@@ -24,31 +24,25 @@ The workspace is configured to target `Banking.Sample.Violations.sln` when you r
 
 ## Expected Diagnostics
 
-The sample is intentionally built to raise multiple nMolecules analyzer diagnostics, including:
+The workspace now includes dedicated rule-matrix projects and is intentionally configured so that every currently implemented `XMolecules*` analyzer rule is violated at least once across the solution.
 
-- `XMoleculesValueObject0005`
-- `XMoleculesValueObject0006`
-- `XMoleculesValueObject1001`
-- `XMoleculesValueObject1002`
-- `XMoleculesAggregateRoot0004`
-- `XMoleculesApplicationService0001`
-- `XMoleculesFactory0001`
-- `XMoleculesService0001`
-- `XMoleculesCQRS0001`
-- `XMoleculesOnion0005`
-- `XMoleculesCrossStyle0001`
-- `XMoleculesCrossStyle0003`
-- `XMoleculesBoundedContext0003`
-- `XMoleculesModule0004`
-- `XMoleculesDomainEvent0002`
-- `XMoleculesDomainEvent0006`
-- `XMoleculesDomainEvent0007`
-- `XMoleculesDomainEvent0009`
+Coverage helper projects:
+
+- `src/Banking.Violations.RuleMatrix`
+- `src/Banking.Violations.MetadataMissing`
+- `src/Banking.Violations.MetadataConsistency`
+- `src/Banking.Violations.CqrsOnly`
 
 ## Build The Sample
 
 ```powershell
 dotnet build Banking.Sample.Violations.sln -v minimal
+```
+
+Validate full rule coverage:
+
+```powershell
+./tools/validate-violations-rule-coverage.ps1
 ```
 
 ## Documentation

@@ -4,11 +4,15 @@ This workspace keeps the same high-level banking theme as the main sample, but i
 
 It demonstrates how the VS Code extension should surface nMolecules analyzer violations in the Problems view.
 
-## Included Layers
+## Included Projects
 
 - `Banking.Violations.Domain`
 - `Banking.Violations.Application`
 - `Banking.Violations.Infrastructure`
+- `Banking.Violations.RuleMatrix`
+- `Banking.Violations.MetadataMissing`
+- `Banking.Violations.MetadataConsistency`
+- `Banking.Violations.CqrsOnly`
 
 ## Deliberate Mistakes
 
@@ -23,3 +27,6 @@ It demonstrates how the VS Code extension should surface nMolecules analyzer vio
 - cross-style collisions between layered and onion primary styles
 - module metadata pointing to an undeclared bounded-context identifier
 - domain-event contracts that leak aggregate references or violate handler/publisher rules
+- metadata declarations with missing and inconsistent bounded-context/module fields
+- CQRS-only style declarations without a primary structural style marker
+- dedicated rule-matrix violations for the remaining analyzer families

@@ -1,45 +1,50 @@
 # Expected Diagnostics
 
-The broken sample is designed to populate the VS Code Problems view with both isolated and combined nMolecules diagnostics.
+The violation workspace is now configured to trigger every currently implemented analyzer rule at least once across the solution.
 
-## Isolated Rules Covered
+## Full Rule-Coverage Baseline
 
-- `XMoleculesValueObject0005`
-- `XMoleculesValueObject0006`
-- `XMoleculesValueObject1001`
-- `XMoleculesValueObject1002`
-- `XMoleculesAggregateRoot0004`
+- `XMoleculesEntity0001` to `XMoleculesEntity0008`
+- `XMoleculesAggregateRoot0001` to `XMoleculesAggregateRoot0008`
+- `XMoleculesValueObject0001` to `XMoleculesValueObject0009`
+- `XMoleculesValueObject1001` to `XMoleculesValueObject1002`
+- `XMoleculesRepository0001` to `XMoleculesRepository0007`
+- `XMoleculesFactory0001` to `XMoleculesFactory0004`
+- `XMoleculesDomainService0001` to `XMoleculesDomainService0004`
+- `XMoleculesApplicationService0001` to `XMoleculesApplicationService0004`
 - `XMoleculesIdentity0001`
+- `XMoleculesBoundedContext0001` to `XMoleculesBoundedContext0009`
+- `XMoleculesModule0001` to `XMoleculesModule0007`
+- `XMoleculesDomainEvent0001` to `XMoleculesDomainEvent0009`
+- `XMoleculesLayered0001` to `XMoleculesLayered0006`
+- `XMoleculesOnion0001` to `XMoleculesOnion0005`
+- `XMoleculesHexagonal0001` to `XMoleculesHexagonal0005`
+- `XMoleculesCQRS0001` to `XMoleculesCQRS0006`
+- `XMoleculesEventStorming0001` to `XMoleculesEventStorming0005`
+- `XMoleculesMicroservices0001` to `XMoleculesMicroservices0006`
+- `XMoleculesCrossStyle0001` to `XMoleculesCrossStyle0003`
+- `XMoleculesBricks0001` to `XMoleculesBricks0002`
 - `XMoleculesService0001`
-- `XMoleculesDomainService0001`
-- `XMoleculesApplicationService0001`
-- `XMoleculesApplicationService0002`
-- `XMoleculesApplicationService0003`
-- `XMoleculesFactory0001`
-- `XMoleculesLayered0001`
-- `XMoleculesLayered0002`
-- `XMoleculesLayered0003`
-- `XMoleculesValueObject0002`
-- `XMoleculesCQRS0001`
-- `XMoleculesDomainEvent0002`
-- `XMoleculesDomainEvent0006`
-- `XMoleculesDomainEvent0007`
-- `XMoleculesDomainEvent0009`
-- `XMoleculesBoundedContext0003`
-- `XMoleculesModule0004`
-- `XMoleculesOnion0005`
-- `XMoleculesCrossStyle0001`
-- `XMoleculesCrossStyle0003`
 
-## Combined Rule Examples
+## Rule-Matrix Projects
 
-- `CombinedRoleMismatch`
-  Shows a role collision on one type
+- `src/Banking.Violations.RuleMatrix`
+  Covers the remaining DDD, Events, Layered, Onion, Hexagonal, CQRS, EventStorming, Microservices, and Bricks gaps.
 
-- `CombinedBrokenSnapshot`
-  Shows multiple value-object failures on one type
+- `src/Banking.Violations.MetadataMissing`
+  Covers metadata-completeness violations (`BoundedContext0001/0002`, `Module0001/0002/0003`).
 
-See:
+- `src/Banking.Violations.MetadataConsistency`
+  Covers metadata-consistency violations (`BoundedContext0004`, `Module0005/0006`).
 
-- [Constellation Catalog](constellation-catalog.md)
-- [Exact Diagnostic Details](exact-diagnostic-details.md)
+- `src/Banking.Violations.CqrsOnly`
+  Covers `XMoleculesCrossStyle0002` in a CQRS-only compilation without a primary structural style marker.
+
+## Verification
+
+Run `tools/validate-violations-rule-coverage.ps1` in `sample-violations`.  
+Expected output:
+
+- `Violation workspace rule IDs: 111`
+- `Analyzer code rule IDs:       111`
+- `Missing IDs:                  0`
