@@ -11,6 +11,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
         public const string AggregateRootsShouldNotUseAggregateRootsRuleId = "XMoleculesAggregateRoot0005";
         public const string AggregateRootsShouldNotUseApplicationServicesRuleId = "XMoleculesAggregateRoot0006";
         public const string AggregateRootsShouldNotUseFactoriesRuleId = "XMoleculesAggregateRoot0007";
+        public const string AggregateRootsShouldNotUseLegacyServicesRuleId = "XMoleculesAggregateRoot0008";
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseRepositoriesRule = new(
             AggregateRootsShouldNotUseRepositoriesRuleId,
@@ -59,7 +60,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldHaveSingleIdRule = new(
             AggregateRootsShouldHaveSingleIdRuleId,
-            "Aggregate roots should declare a single identity",
+            "Aggregate roots must declare exactly one identity",
             "Aggregate root '{0}' declares {1} [Identity] members: {2}. Exactly one is allowed",
             Category.DDD,
             DiagnosticSeverity.Error,
@@ -68,8 +69,8 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseAggregateRootsRule = new(
             AggregateRootsShouldNotUseAggregateRootsRuleId,
-            "Aggregate roots should not reference aggregate roots",
-            "Aggregate root should not reference other aggregate roots directly",
+            "Aggregate roots must not reference other aggregate roots directly",
+            "Aggregate root '{0}' must not reference aggregate root '{1}' directly",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
@@ -77,7 +78,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseApplicationServicesRule = new(
             AggregateRootsShouldNotUseApplicationServicesRuleId,
-            "Aggregate roots should not depend on application services",
+            "Aggregate roots must not depend on application services",
             "Aggregate root '{0}' must not depend on application service '{1}' in member '{2}'",
             Category.DDD,
             DiagnosticSeverity.Error,
@@ -86,11 +87,20 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseFactoriesRule = new(
             AggregateRootsShouldNotUseFactoriesRuleId,
-            "Aggregate roots should not depend on external factories",
+            "Aggregate roots must not depend on factories",
             "Aggregate root '{0}' must not depend on factory '{1}' in member '{2}'",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
             "Aggregate roots should enforce their own consistency boundary and should not depend on external factory components by default.");
+
+        public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseLegacyServicesRule = new(
+            AggregateRootsShouldNotUseLegacyServicesRuleId,
+            "Aggregate roots must not depend on legacy services",
+            "Aggregate root '{0}' must not depend on legacy service '{1}' in member '{2}'",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "Aggregate roots should not depend on the legacy Service marker. Use explicit DomainService or ApplicationService roles instead.");
     }
 }

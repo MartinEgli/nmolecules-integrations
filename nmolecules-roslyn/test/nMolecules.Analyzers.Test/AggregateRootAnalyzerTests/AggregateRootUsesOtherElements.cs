@@ -42,12 +42,12 @@ namespace NMolecules.Analyzers.Test.AggregateRootAnalyzerTests
         public async Task Analyze_WithAggregateRootUsesService_EmitsCompilerError()
         {
             var aggregateRoot = GenerateClass(Service);
-            var serviceAsField = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId).WithSpan(FieldLineNumber, 38, FieldLineNumber, 45);
-            var serviceAsParameterInCtor = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId).WithSpan(CtorLineNumber, 49, CtorLineNumber, 54);
-            var serviceAsReturnValue = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
-            var serviceAsParameterInMethod = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId).WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
-            var serviceAsPropertyType = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
-            var serviceInMethodBody = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId)
+            var serviceAsField = CompilerError(Rules.AggregateRootsShouldNotUseLegacyServicesRuleId).WithSpan(FieldLineNumber, 38, FieldLineNumber, 45);
+            var serviceAsParameterInCtor = CompilerError(Rules.AggregateRootsShouldNotUseLegacyServicesRuleId).WithSpan(CtorLineNumber, 49, CtorLineNumber, 54);
+            var serviceAsReturnValue = CompilerError(Rules.AggregateRootsShouldNotUseLegacyServicesRuleId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
+            var serviceAsParameterInMethod = CompilerError(Rules.AggregateRootsShouldNotUseLegacyServicesRuleId).WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
+            var serviceAsPropertyType = CompilerError(Rules.AggregateRootsShouldNotUseLegacyServicesRuleId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
+            var serviceInMethodBody = CompilerError(Rules.AggregateRootsShouldNotUseLegacyServicesRuleId)
                 .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 28);
             await VerifyCS.VerifyAnalyzerAsync(aggregateRoot,
                 serviceAsField,
@@ -56,6 +56,26 @@ namespace NMolecules.Analyzers.Test.AggregateRootAnalyzerTests
                 serviceAsReturnValue,
                 serviceAsPropertyType,
                 serviceInMethodBody);
+        }
+
+        [Fact]
+        public async Task Analyze_WithAggregateRootUsesDomainService_EmitsCompilerError()
+        {
+            var aggregateRoot = ServiceRoleShims.AppendIfNeeded(GenerateClass(DomainService), DomainService);
+            var domainServiceAsField = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId).WithSpan(FieldLineNumber, 44, FieldLineNumber, 57);
+            var domainServiceAsParameterInCtor = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId).WithSpan(CtorLineNumber, 55, CtorLineNumber, 60);
+            var domainServiceAsReturnValue = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId).WithSpan(MethodLineNumber, 34, MethodLineNumber, 44);
+            var domainServiceAsParameterInMethod = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId).WithSpan(MethodLineNumber, 63, MethodLineNumber, 76);
+            var domainServiceAsPropertyType = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId).WithSpan(PropertyLineNumber, 34, PropertyLineNumber, 39);
+            var domainServiceInMethodBody = CompilerError(Rules.AggregateRootsShouldNotUseServicesRuleId)
+                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 34);
+            await VerifyCS.VerifyAnalyzerAsync(aggregateRoot,
+                domainServiceAsField,
+                domainServiceAsParameterInCtor,
+                domainServiceAsParameterInMethod,
+                domainServiceAsReturnValue,
+                domainServiceAsPropertyType,
+                domainServiceInMethodBody);
         }
 
         [Fact]

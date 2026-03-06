@@ -13,7 +13,7 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
 
         public static readonly DiagnosticDescriptor CqrsSupportRequiresQueryAndQueryHandlerRule = new(
             CqrsSupportRequiresQueryAndQueryHandlerId,
-            "CQRS support requires both query and query handler markers",
+            "CQRS queries and query handlers must coexist in the same compilation",
             "{0} '{1}' requires at least one {2} in the same compilation",
             Category.Architecture,
             DiagnosticSeverity.Error,
@@ -23,7 +23,7 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
         public static readonly DiagnosticDescriptor CommandHandlersMustNotDependOnQueryModelsRule = new(
             CommandHandlersMustNotDependOnQueryModelsId,
             "Command handlers must not depend on query models directly",
-            "Command handler symbol '{0}' must not depend on query model '{1}' directly",
+            "Command handler '{0}' must not depend on query model '{1}' directly",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -32,7 +32,7 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
         public static readonly DiagnosticDescriptor QueryHandlersMustStayOnReadSideRule = new(
             QueryHandlersMustStayOnReadSideId,
             "Query handlers must stay on the read side",
-            "Query handler symbol '{0}' must not depend on {1} '{2}' directly",
+            "Query handler '{0}' must not depend on {1} '{2}' directly",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -50,7 +50,7 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
         public static readonly DiagnosticDescriptor ProjectionsMustNotDependOnWriteSideRolesRule = new(
             ProjectionsMustNotDependOnWriteSideRolesId,
             "Projections may update query models but must not depend on write-side roles directly",
-            "Projection symbol '{0}' must not depend on {1} '{2}' directly",
+            "Projection '{0}' must not depend on {1} '{2}' directly",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -59,7 +59,7 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
         public static readonly DiagnosticDescriptor CommandDispatchersMustNotContainDomainRulesRule = new(
             CommandDispatchersMustNotContainDomainRulesId,
             "Command dispatchers must route and must not contain domain rules",
-            "Command dispatcher symbol '{0}' must not depend on {1} '{2}' directly",
+            "Command dispatcher '{0}' must not depend on {1} '{2}' directly",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,

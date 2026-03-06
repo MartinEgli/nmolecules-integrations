@@ -1,6 +1,6 @@
 # Visual Studio Support
 
-Status: March 4, 2026
+Status: March 5, 2026
 
 ## Supported Host Matrix
 
@@ -47,9 +47,11 @@ Before host smoke tests, run:
 
 ```powershell
 pwsh .\tools\validate-vsix-metadata.ps1
+dotnet test .\test\nMolecules.Analyzers.Test\nMolecules.Analyzers.Test.csproj -v minimal
 ```
 
 This validates the VSIX manifest target matrix and analyzer/code-fix payload mapping without requiring a local Visual Studio instance.
+It also verifies that the analyzer rule catalog is green before packaging.
 
 For release packaging, use the shared installer build flow from the integrations repo root:
 

@@ -1,86 +1,60 @@
 # nMolecules DDD Rule Catalog
 
-Status: March 3, 2026
+Status: March 6, 2026
 
-This document defines the first shared rule catalog for DDD checks.
-It is the functional foundation for:
+This document defines the shared DDD rule baseline for all integrations.
 
-- Roslyn analyzers
-- Visual Studio integration
-- Visual Studio Code integration
-- user and contributor documentation
+Integration goal:
 
-All IDE integrations should consume the same rule semantics.
-Only the presentation should differ per host, not the domain meaning of the diagnostics.
+- same rule semantics in Roslyn, Visual Studio, and VS Code
+- host-specific UX only (messages and IDs remain semantically identical)
 
-## Rule Groups
+## Implemented Baseline (Current)
 
-### Group A: Identity and Structural Rules
+The DDD analyzer baseline includes:
 
-- entity must declare exactly one identity
-- aggregate root must declare exactly one identity
-- identity is only valid inside entity or aggregate root
-- value object must not declare identity
-- value object should implement `IEquatable<T>`
-- value object should be `sealed` when it is a class
+- identity ownership and singularity rules
+- aggregate root, entity, value object, repository, factory, domain-service, and application-service dependency boundaries
+- migration warning for legacy `Service`
+- module metadata and boundary consistency through `XMoleculesModule0007`
+- bounded-context metadata and dependency-boundary consistency through `XMoleculesBoundedContext0009`
 
-### Group B: Dependency Rules
+For exact IDs and wording, the canonical source is:
 
-- aggregate root must not use repository
-- aggregate root must not use service roles
-- aggregate root must not directly reference aggregate root
-- entity must not use repository
-- entity must not use aggregate root
-- entity must not use service roles
-- repository must not use service roles
-- value object must not use entity
-- value object must not use aggregate root
-- value object must not use repository
-- value object must not use service roles
-- domain service must not use application service
-- factory must not use application service
-- application service should not depend on plain legacy service
+- `docs/architecture/analyzer-rule-map.md` (superproject)
+- `src/nMolecules.Analyzers/nMolecules.Analyzers/AnalyzerReleases.*.md`
 
-### Group C: Role Rules
+## Current Focus
 
-- application service must not also be a domain building block
-- plain legacy service should migrate to a more specific role
+The MVP baseline is complete enough for cross-IDE delivery.
+Current depth work is focused on:
 
-### Group D: Future Architecture Rules
+- bounded-context dependency semantics beyond current duplicate-target baseline (`XMoleculesBoundedContext0010+`)
+- continued message quality and severity harmonization
+- keeping rule map, release catalog, tests, and samples synchronized
 
-- domain layer must not reference infrastructure
-- domain layer must not reference UI
-- application layer boundaries must be clarified
-- module and bounded context rules will be added later
+Recent closure:
 
-## Current MVP Focus
-
-Phase 1 concentrates on rules that are either already present in code or close to being enforceable:
-
-- keep existing rules stable and documented
-- finish service-role separation
-- harden repository and domain service signatures
-- keep rule IDs, messages, and tests aligned
+- direct DDD dependency-matrix prohibitions are now explicit for Entity, AggregateRoot, ValueObject, and Repository service-role pairs
 
 ## Rule Metadata Requirements
 
-Each rule should ultimately have:
+Each rule must have:
 
-- stable diagnostic ID
+- stable `XMolecules*` diagnostic ID
 - category
 - severity
-- short message
-- explanation
-- positive and negative test cases
-- optional code-fix expectation
+- message template and explanation
+- positive and negative analyzer tests
+- release catalog entry (`AnalyzerReleases.*.md`)
+- rule-map documentation entry
 
 ## Definition of Done for New Rules
 
-A rule is only done when:
+A rule is done only when:
 
-- the functional rule is documented
-- the diagnostic ID is stable
-- positive and negative tests exist
-- severity and message are fixed
-- it is clear whether a code fix exists
-- the same meaning can be surfaced in Visual Studio and later in VS Code
+- implementation and documentation are both updated
+- ID and message are final and synchronized
+- analyzer tests cover healthy and violating cases
+- release catalog includes the rule ID
+- rule-doc sync gate passes

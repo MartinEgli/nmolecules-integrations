@@ -12,9 +12,12 @@ namespace NMolecules.Analyzers.EntityAnalyzers
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rules.EntitiesShouldNotUseRepositoriesRule,
             Rules.EntitiesShouldNotUseAggregateRootsRule,
-            Rules.EntitiesShouldNotUseServicesRule,
+            Rules.EntitiesShouldNotUseDomainServicesRule,
             Rules.EntitiesShouldHaveIdRule,
-            Rules.EntitiesShouldHaveSingleIdRule);
+            Rules.EntitiesShouldHaveSingleIdRule,
+            Rules.EntitiesShouldNotUseFactoriesRule,
+            Rules.EntitiesShouldNotUseApplicationServicesRule,
+            Rules.EntitiesShouldNotUseLegacyServicesRule);
         
         protected override void Initialize(AnalysisContext<EntityAttribute> context)
         {

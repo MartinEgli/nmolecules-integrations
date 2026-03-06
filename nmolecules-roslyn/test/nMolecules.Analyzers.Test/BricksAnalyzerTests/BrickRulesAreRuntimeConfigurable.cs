@@ -45,7 +45,7 @@ namespace SampleData
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
         }
 
-        [Fact]
+[Fact]
         public async Task Analyze_WithExcludedMemberName_SkipsExcludedDependency()
         {
             var testCode = @"using System;
@@ -53,8 +53,8 @@ namespace SampleData
     ""BILL-ARCH-002"",
     ""Domain"",
     ""Infrastructure"",
-    NMolecules.Bricks.RuleMode.ForbidDependency,
-    excludedMemberNameContains: ""Allowed"")]
+    NMolecules.Bricks.RuleMode.ForbidDependency)]
+[assembly: NMolecules.Bricks.ExcludedMemberNameContains(""BILL-ARCH-002"", ""Allowed"")]
 
 namespace SampleData
 {
@@ -78,7 +78,7 @@ namespace SampleData
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
         }
 
-        [Fact]
+[Fact]
         public async Task Analyze_WithRequireDependencyRule_EmitsErrorWhenMissing()
         {
             var testCode = @"using System;
@@ -86,8 +86,8 @@ namespace SampleData
     ""BILL-ARCH-003"",
     ""Projection"",
     ""QueryModel"",
-    NMolecules.Bricks.RuleMode.RequireDependency,
-    requiredSourceNameContains: ""Invoice"")]
+    NMolecules.Bricks.RuleMode.RequireDependency)]
+[assembly: NMolecules.Bricks.RequiredSourceNameContains(""BILL-ARCH-003"", ""Invoice"")]
 
 namespace SampleData
 {
@@ -211,12 +211,33 @@ namespace NMolecules.Bricks
             string sourceRole,
             string targetRole,
             RuleMode mode = RuleMode.ForbidDependency,
-            string message = """",
-            string excludedSourceNameContains = """",
-            string excludedTargetNameContains = """",
-            string excludedMemberNameContains = """",
-            string requiredSourceNameContains = """",
-            string requiredTargetNameContains = """")
+            string message = """")
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class, AllowMultiple = true)]
+    public abstract class RuleFilterAttribute : Attribute
+    {
+        protected RuleFilterAttribute(string ruleId, params string[] tokens)
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class, AllowMultiple = true)]
+    public sealed class ExcludedMemberNameContainsAttribute : RuleFilterAttribute
+    {
+        public ExcludedMemberNameContainsAttribute(string ruleId, params string[] tokens)
+            : base(ruleId, tokens)
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class, AllowMultiple = true)]
+    public sealed class RequiredSourceNameContainsAttribute : RuleFilterAttribute
+    {
+        public RequiredSourceNameContainsAttribute(string ruleId, params string[] tokens)
+            : base(ruleId, tokens)
         {
         }
     }

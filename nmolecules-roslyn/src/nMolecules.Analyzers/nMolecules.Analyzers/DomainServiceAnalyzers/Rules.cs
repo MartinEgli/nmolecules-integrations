@@ -11,21 +11,21 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
 
         public static readonly DiagnosticDescriptor DomainServicesShouldNotUseApplicationServicesRule = new(
             DomainServicesShouldNotUseApplicationServicesId,
-            "Domain service should not use application services",
+            "Domain services must not depend on application services",
             "Domain service '{0}' must not depend on application service '{1}'",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Domain services belong to the domain model and should not depend on application service orchestration.");
+            "Domain services belong to the domain model and must not depend on application service orchestration.");
 
         public static readonly DiagnosticDescriptor DomainServicesShouldOnlyUseRepositoryContractsRule = new(
             DomainServicesShouldOnlyUseRepositoryContractsId,
-            "Domain services should only use repository contracts",
+            "Domain services must depend on repository contracts only",
             "Domain service '{0}' must not depend on concrete repository '{1}'",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Domain services may depend on repository contracts, but should not depend on concrete repository implementations.");
+            "Domain services may depend on repository contracts, but must not depend on concrete repository implementations.");
 
         public static readonly DiagnosticDescriptor DomainServicesShouldNotExposeInfrastructureSignaturesRule = new(
             DomainServicesShouldNotExposeInfrastructureSignaturesId,
@@ -38,8 +38,8 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
 
         public static readonly DiagnosticDescriptor DomainServicesShouldNotUseLegacyServicesRule = new(
             DomainServicesShouldNotUseLegacyServicesId,
-            "Domain services should not depend on legacy Service roles",
-            "Domain service symbol '{0}' should not depend on legacy service '{1}'",
+            "Domain services should not depend on legacy services",
+            "Domain service '{0}' should not depend on legacy service '{1}'",
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,

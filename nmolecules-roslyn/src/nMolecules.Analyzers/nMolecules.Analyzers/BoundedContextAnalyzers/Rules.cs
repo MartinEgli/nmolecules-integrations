@@ -9,6 +9,10 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
         public const string BoundedContextShouldUseSingleIdPerCompilationId = "XMoleculesBoundedContext0003";
         public const string BoundedContextShouldUseSingleNamePerIdId = "XMoleculesBoundedContext0004";
         public const string BoundedContextModuleOwnershipShouldMatchScopeIdId = "XMoleculesBoundedContext0005";
+        public const string BoundedContextDependenciesShouldReferenceDeclaredContextsId = "XMoleculesBoundedContext0006";
+        public const string BoundedContextDependenciesShouldNotBeBidirectionalId = "XMoleculesBoundedContext0007";
+        public const string BoundedContextDependenciesShouldNotReferenceSelfId = "XMoleculesBoundedContext0008";
+        public const string BoundedContextDependenciesShouldNotContainDuplicateTargetsId = "XMoleculesBoundedContext0009";
 
         public static readonly DiagnosticDescriptor BoundedContextShouldDefineIdRule = new(
             BoundedContextShouldDefineIdId,
@@ -54,5 +58,41 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             DiagnosticSeverity.Warning,
             true,
             "When a metadata scope declares a bounded context, module ownership declared on that same scope should use the same context Id.");
+
+        public static readonly DiagnosticDescriptor BoundedContextDependenciesShouldReferenceDeclaredContextsRule = new(
+            BoundedContextDependenciesShouldReferenceDeclaredContextsId,
+            "BoundedContext dependencies should reference declared contexts",
+            "BoundedContext on {0} declares dependency '{1} -> {2}', but target context is not declared in compilation metadata. Declared bounded contexts: {3}",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "Declared bounded-context dependency pairs should reference context identifiers declared in the same compilation metadata.");
+
+        public static readonly DiagnosticDescriptor BoundedContextDependenciesShouldNotBeBidirectionalRule = new(
+            BoundedContextDependenciesShouldNotBeBidirectionalId,
+            "BoundedContext dependency direction should be unidirectional per context pair",
+            "BoundedContext on {0} declares dependency '{1} -> {2}', but reverse dependency '{2} -> {1}' is also declared",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "For one bounded-context pair, dependency direction should remain unidirectional to avoid cyclic context coupling.");
+
+        public static readonly DiagnosticDescriptor BoundedContextDependenciesShouldNotReferenceSelfRule = new(
+            BoundedContextDependenciesShouldNotReferenceSelfId,
+            "BoundedContext should not depend on itself",
+            "BoundedContext on {0} declares self dependency '{1} -> {1}'",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "Bounded-context dependency metadata should not contain self-dependencies because they are semantically redundant and usually indicate misconfiguration.");
+
+        public static readonly DiagnosticDescriptor BoundedContextDependenciesShouldNotContainDuplicateTargetsRule = new(
+            BoundedContextDependenciesShouldNotContainDuplicateTargetsId,
+            "BoundedContext dependency targets should be unique",
+            "BoundedContext on {0} declares duplicate dependency target '{1}' in DependsOnContextIds",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            "Bounded-context dependency metadata should not repeat the same target context identifier (case-insensitive) inside one declaration.");
     }
 }

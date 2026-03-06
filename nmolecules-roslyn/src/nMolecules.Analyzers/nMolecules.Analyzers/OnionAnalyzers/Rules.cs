@@ -13,7 +13,7 @@ namespace NMolecules.Analyzers.OnionAnalyzers
         public static readonly DiagnosticDescriptor OnionDependenciesMustPointInwardRule = new(
             OnionDependenciesMustPointInwardId,
             "Onion dependencies must point inward only",
-            "Onion ring symbol '{0}' must not depend on outer ring type '{1}'",
+            "Onion ring '{0}' must not depend on outer ring '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -22,7 +22,7 @@ namespace NMolecules.Analyzers.OnionAnalyzers
         public static readonly DiagnosticDescriptor DomainModelRingMustNotDependOnOuterRingsRule = new(
             DomainModelRingMustNotDependOnOuterRingsId,
             "Domain model rings must not depend on outer rings",
-            "Domain model ring symbol '{0}' must not depend on outer ring type '{1}'",
+            "Domain model ring '{0}' must not depend on outer ring '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -31,7 +31,7 @@ namespace NMolecules.Analyzers.OnionAnalyzers
         public static readonly DiagnosticDescriptor DomainServiceRingMustNotDependOnOuterRingsRule = new(
             DomainServiceRingMustNotDependOnOuterRingsId,
             "Domain service rings must not depend on outer rings",
-            "Domain service ring symbol '{0}' must not depend on outer ring type '{1}'",
+            "Domain service ring '{0}' must not depend on outer ring '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -40,7 +40,7 @@ namespace NMolecules.Analyzers.OnionAnalyzers
         public static readonly DiagnosticDescriptor ApplicationServiceRingMustNotDependOnInfrastructureRingRule = new(
             ApplicationServiceRingMustNotDependOnInfrastructureRingId,
             "Application service rings must not depend on infrastructure rings",
-            "Application service ring symbol '{0}' must not depend on infrastructure ring type '{1}'",
+            "Application service ring '{0}' must not depend on infrastructure ring '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -48,7 +48,7 @@ namespace NMolecules.Analyzers.OnionAnalyzers
 
         public static readonly DiagnosticDescriptor ClassicAndSimplifiedOnionStylesShouldNotMixRule = new(
             ClassicAndSimplifiedOnionStylesShouldNotMixId,
-            "Classic and simplified Onion styles must not be mixed in one compilation",
+            "Classic and simplified onion styles must not mix in the same compilation",
             "Onion declaration on {0} mixes classic and simplified markers in the same compilation",
             Category.Architecture,
             DiagnosticSeverity.Error,

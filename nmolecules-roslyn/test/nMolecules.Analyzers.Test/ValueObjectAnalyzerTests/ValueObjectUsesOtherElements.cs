@@ -46,18 +46,18 @@ namespace NMolecules.Analyzers.Test.ValueObjectAnalyzerTests
         [Fact]
         public async Task Analyze_WithValueObjectUsesService_EmitsCompilerError()
         {
-            var testCode = GenerateClass(Service);
-            var serviceAsField = CompilerError(Rules.NoServicesInValueObjectsId)
+            var testCode = GenerateClass(Service, true);
+            var serviceAsField = CompilerError(Rules.NoLegacyServicesInValueObjectsId)
                 .WithSpan(FieldLineNumber, 38, FieldLineNumber, 45);
-            var serviceAsParameterInCtor = CompilerError(Rules.NoServicesInValueObjectsId)
+            var serviceAsParameterInCtor = CompilerError(Rules.NoLegacyServicesInValueObjectsId)
                 .WithSpan(CtorLineNumber, 47, CtorLineNumber, 52);
-            var serviceAsProperty = CompilerError(Rules.NoServicesInValueObjectsId)
+            var serviceAsProperty = CompilerError(Rules.NoLegacyServicesInValueObjectsId)
                 .WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
-            var serviceAsReturnValue = CompilerError(Rules.NoServicesInValueObjectsId)
+            var serviceAsReturnValue = CompilerError(Rules.NoLegacyServicesInValueObjectsId)
                 .WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
-            var serviceAsParameterInMethod = CompilerError(Rules.NoServicesInValueObjectsId)
+            var serviceAsParameterInMethod = CompilerError(Rules.NoLegacyServicesInValueObjectsId)
                 .WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
-            var serviceUsedInMethodBody = CompilerError(Rules.NoServicesInValueObjectsId)
+            var serviceUsedInMethodBody = CompilerError(Rules.NoLegacyServicesInValueObjectsId)
                 .WithSpan(TypeInMethodBodyLineNumber, 17, TypeInMethodBodyLineNumber, 28);
             await VerifyCS.VerifyAnalyzerAsync(testCode,
                 serviceAsField,
@@ -66,6 +66,20 @@ namespace NMolecules.Analyzers.Test.ValueObjectAnalyzerTests
                 serviceAsReturnValue,
                 serviceAsParameterInMethod,
                 serviceUsedInMethodBody);
+        }
+
+        [Fact]
+        public async Task Analyze_WithValueObjectUsesDomainService_EmitsCompilerError()
+        {
+            var testCode = GenerateClass(DomainService, true);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ExpectedServiceRoleViolations(DomainService, Rules.NoDomainServicesInValueObjectsId));
+        }
+
+        [Fact]
+        public async Task Analyze_WithValueObjectUsesApplicationService_EmitsCompilerError()
+        {
+            var testCode = GenerateClass(ApplicationService, true);
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ExpectedServiceRoleViolations(ApplicationService, Rules.NoApplicationServicesInValueObjectsId));
         }
 
         [Fact]
@@ -143,13 +157,34 @@ namespace NMolecules.Analyzers.Test.ValueObjectAnalyzerTests
                 factoryUsedInMethodBody);
         }
 
-        private static string GenerateClass(string type)
+        private static string GenerateClass(string type, bool appendShims = false)
         {
             var invalidUsageTemplate = new InvalidUsageTemplate
             {
                 Session = new Dictionary<string, object> { { "type", type }, { "name", type.ToLowerInvariant() } }
             };
-            return invalidUsageTemplate.TransformText();
+            var code = invalidUsageTemplate.TransformText();
+            return appendShims ? ServiceRoleShims.AppendIfNeeded(code, type) : code;
+        }
+
+        private static Microsoft.CodeAnalysis.Testing.DiagnosticResult[] ExpectedServiceRoleViolations(string dependencyType, string ruleId)
+        {
+            var roleLength = dependencyType.Length;
+            var fieldStart = 31 + roleLength;
+            var ctorStart = 40 + roleLength;
+            var propertyStart = 21 + roleLength;
+            var methodStart = 21 + roleLength;
+            var methodParameterStart = 37 + 2 * roleLength;
+
+            return new[]
+            {
+                CompilerError(ruleId).WithSpan(FieldLineNumber, fieldStart, FieldLineNumber, fieldStart + roleLength),
+                CompilerError(ruleId).WithSpan(CtorLineNumber, ctorStart, CtorLineNumber, ctorStart + 5),
+                CompilerError(ruleId).WithSpan(PropertyLineNumber, propertyStart, PropertyLineNumber, propertyStart + 5),
+                CompilerError(ruleId).WithSpan(MethodLineNumber, methodStart, MethodLineNumber, methodStart + 10),
+                CompilerError(ruleId).WithSpan(MethodLineNumber, methodParameterStart, MethodLineNumber, methodParameterStart + roleLength),
+                CompilerError(ruleId).WithSpan(TypeInMethodBodyLineNumber, 17, TypeInMethodBodyLineNumber, 21 + roleLength)
+            };
         }
     }
 }

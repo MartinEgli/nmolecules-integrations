@@ -1,6 +1,6 @@
 # nMolecules Service Role Matrix
 
-Status: March 3, 2026
+Status: March 5, 2026
 
 This document describes the functional separation between `Service`, `DomainService`, and `ApplicationService`.
 It is the basis for dedicated analyzer rules.
@@ -56,6 +56,12 @@ Phase 1:
 
 - `DomainService` and `ApplicationService` are included in the general service restrictions
 - plain legacy `Service` now also emits a migration warning
+
+Implemented service-family rule baseline:
+
+- `XMoleculesDomainService0001` to `XMoleculesDomainService0004`
+- `XMoleculesApplicationService0001` to `XMoleculesApplicationService0004`
+- `XMoleculesService0001`
 
 Examples:
 

@@ -19,15 +19,36 @@ namespace NMolecules.Analyzers.EntityAnalyzers
                 yield return symbol.ViolatesAggregateRootUsage();
             }
 
-            if (type.IsService())
+            if (type.IsDomainService())
             {
-                yield return symbol.ViolatesServiceUsage();
+                yield return symbol.ViolatesDomainServiceUsage(type);
+            }
+
+            if (type.IsApplicationService())
+            {
+                yield return symbol.ViolatesApplicationServiceUsage(type);
+            }
+
+            if (type.IsLegacyService())
+            {
+                yield return symbol.ViolatesLegacyServiceUsage(type);
+            }
+
+            if (type.IsFactory())
+            {
+                yield return symbol.ViolatesFactoryUsage(type);
             }
         }
 
         private static Diagnostic ViolatesRepositoryUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.EntitiesShouldNotUseRepositoriesRule);
         private static Diagnostic ViolatesAggregateRootUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.EntitiesShouldNotUseAggregateRootsRule);
-        private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.EntitiesShouldNotUseServicesRule);
+        private static Diagnostic ViolatesDomainServiceUsage(this ISymbol symbol, ITypeSymbol type) =>
+            symbol.Diagnostic(Rules.EntitiesShouldNotUseDomainServicesRule, symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(), type.DisplayName(), symbol.Name);
+        private static Diagnostic ViolatesApplicationServiceUsage(this ISymbol symbol, ITypeSymbol type) =>
+            symbol.Diagnostic(Rules.EntitiesShouldNotUseApplicationServicesRule, symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(), type.DisplayName(), symbol.Name);
+        private static Diagnostic ViolatesLegacyServiceUsage(this ISymbol symbol, ITypeSymbol type) =>
+            symbol.Diagnostic(Rules.EntitiesShouldNotUseLegacyServicesRule, symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(), type.DisplayName(), symbol.Name);
+        private static Diagnostic ViolatesFactoryUsage(this ISymbol symbol, ITypeSymbol type) => symbol.Diagnostic(Rules.EntitiesShouldNotUseFactoriesRule, symbol.DisplayName(), type.DisplayName());
         public static Diagnostic ViolatesMandatoryId(this ISymbol symbol) => symbol.Diagnostic(Rules.EntitiesShouldHaveIdRule);
 
         public static Diagnostic ViolatesMultipleIdentities(this INamedTypeSymbol symbol)

@@ -11,6 +11,12 @@ For the current analyzer expansion work, see:
 - [nmolecules-roslyn/docs/release-tracking-investigation.md](nmolecules-roslyn/docs/release-tracking-investigation.md)
 - [nmolecules-roslyn/docs/visual-studio-support.md](nmolecules-roslyn/docs/visual-studio-support.md)
 
+Current baseline highlights:
+
+- analyzer rule catalog is synchronized through `XMoleculesModule0007` and `XMoleculesBoundedContext0005`
+- analyzer quality and rule-doc sync gates are part of the default validation workflow
+- VSIX and VS Code packaging are delivered from one shared installer script
+
 ## VS Code Extension
 
 The workspace now also contains a first Visual Studio Code extension project:

@@ -62,12 +62,12 @@ namespace NMolecules.Analyzers.Test.EntityAnalyzerTests
         public async Task Analyze_WithEntityUsesService_EmitsCompilerError()
         {
             var entity = GenerateClass(Service);
-            var serviceAsField = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(FieldLineNumber, 38, FieldLineNumber, 45);
-            var serviceAsParameterInCtor = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(CtorLineNumber, 42, CtorLineNumber, 47);
-            var serviceAsReturnValue = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
-            var serviceAsParameterInMethod = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
-            var serviceAsPropertyType = CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
-            var serviceInMethodBody = CompilerError(Rules.EntitiesShouldNotUseServicesId)
+            var serviceAsField = CompilerError(Rules.EntitiesShouldNotUseLegacyServicesId).WithSpan(FieldLineNumber, 38, FieldLineNumber, 45);
+            var serviceAsParameterInCtor = CompilerError(Rules.EntitiesShouldNotUseLegacyServicesId).WithSpan(CtorLineNumber, 42, CtorLineNumber, 47);
+            var serviceAsReturnValue = CompilerError(Rules.EntitiesShouldNotUseLegacyServicesId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
+            var serviceAsParameterInMethod = CompilerError(Rules.EntitiesShouldNotUseLegacyServicesId).WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
+            var serviceAsPropertyType = CompilerError(Rules.EntitiesShouldNotUseLegacyServicesId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
+            var serviceInMethodBody = CompilerError(Rules.EntitiesShouldNotUseLegacyServicesId)
                 .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 28);
             await VerifyCS.VerifyAnalyzerAsync(entity,
                 serviceAsField,
@@ -82,14 +82,34 @@ namespace NMolecules.Analyzers.Test.EntityAnalyzerTests
         public async Task Analyze_WithEntityUsesDomainService_EmitsCompilerError()
         {
             var entity = GenerateClass(DomainService);
-            await VerifyCS.VerifyAnalyzerAsync(entity, ExpectedServiceRoleViolations(DomainService));
+            await VerifyCS.VerifyAnalyzerAsync(entity, ExpectedServiceRoleViolations(DomainService, Rules.EntitiesShouldNotUseDomainServicesId));
         }
 
         [Fact]
         public async Task Analyze_WithEntityUsesApplicationService_EmitsCompilerError()
         {
             var entity = GenerateClass(ApplicationService);
-            await VerifyCS.VerifyAnalyzerAsync(entity, ExpectedServiceRoleViolations(ApplicationService));
+            await VerifyCS.VerifyAnalyzerAsync(entity, ExpectedServiceRoleViolations(ApplicationService, Rules.EntitiesShouldNotUseApplicationServicesId));
+        }
+
+        [Fact]
+        public async Task Analyze_WithEntityUsesFactory_EmitsCompilerError()
+        {
+            var entity = GenerateClass(Factory);
+            var factoryAsField = CompilerError(Rules.EntitiesShouldNotUseFactoriesId).WithSpan(FieldLineNumber, 38, FieldLineNumber, 45);
+            var factoryAsParameterInCtor = CompilerError(Rules.EntitiesShouldNotUseFactoriesId).WithSpan(CtorLineNumber, 42, CtorLineNumber, 47);
+            var factoryAsReturnValue = CompilerError(Rules.EntitiesShouldNotUseFactoriesId).WithSpan(MethodLineNumber, 28, MethodLineNumber, 38);
+            var factoryAsParameterInMethod = CompilerError(Rules.EntitiesShouldNotUseFactoriesId).WithSpan(MethodLineNumber, 51, MethodLineNumber, 58);
+            var factoryAsPropertyType = CompilerError(Rules.EntitiesShouldNotUseFactoriesId).WithSpan(PropertyLineNumber, 28, PropertyLineNumber, 33);
+            var factoryInMethodBody = CompilerError(Rules.EntitiesShouldNotUseFactoriesId)
+                .WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 28);
+            await VerifyCS.VerifyAnalyzerAsync(entity,
+                factoryAsField,
+                factoryAsParameterInCtor,
+                factoryAsParameterInMethod,
+                factoryAsReturnValue,
+                factoryAsPropertyType,
+                factoryInMethodBody);
         }
         
         [Fact]
@@ -108,7 +128,7 @@ namespace NMolecules.Analyzers.Test.EntityAnalyzerTests
             return ServiceRoleShims.AppendIfNeeded(invalidUsageTemplate.TransformText(), type);
         }
 
-        private static DiagnosticResult[] ExpectedServiceRoleViolations(string dependencyType)
+        private static DiagnosticResult[] ExpectedServiceRoleViolations(string dependencyType, string ruleId)
         {
             var roleLength = dependencyType.Length;
             var fieldStart = 31 + roleLength;
@@ -119,12 +139,12 @@ namespace NMolecules.Analyzers.Test.EntityAnalyzerTests
 
             return new[]
             {
-                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(FieldLineNumber, fieldStart, FieldLineNumber, fieldStart + roleLength),
-                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(CtorLineNumber, ctorStart, CtorLineNumber, ctorStart + 5),
-                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, methodStart, MethodLineNumber, methodStart + 10),
-                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(MethodLineNumber, methodParameterStart, MethodLineNumber, methodParameterStart + roleLength),
-                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(PropertyLineNumber, propertyStart, PropertyLineNumber, propertyStart + 5),
-                CompilerError(Rules.EntitiesShouldNotUseServicesId).WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 21 + roleLength)
+                CompilerError(ruleId).WithSpan(FieldLineNumber, fieldStart, FieldLineNumber, fieldStart + roleLength),
+                CompilerError(ruleId).WithSpan(CtorLineNumber, ctorStart, CtorLineNumber, ctorStart + 5),
+                CompilerError(ruleId).WithSpan(MethodLineNumber, methodStart, MethodLineNumber, methodStart + 10),
+                CompilerError(ruleId).WithSpan(MethodLineNumber, methodParameterStart, MethodLineNumber, methodParameterStart + roleLength),
+                CompilerError(ruleId).WithSpan(PropertyLineNumber, propertyStart, PropertyLineNumber, propertyStart + 5),
+                CompilerError(ruleId).WithSpan(TypeViolationInMethodBodyLineNumber, 17, TypeViolationInMethodBodyLineNumber, 21 + roleLength)
             };
         }
     }

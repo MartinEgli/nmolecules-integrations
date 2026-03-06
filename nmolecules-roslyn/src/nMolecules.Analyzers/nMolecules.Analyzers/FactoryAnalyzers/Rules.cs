@@ -11,7 +11,7 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
 
         public static readonly DiagnosticDescriptor FactoriesShouldNotUseApplicationServicesRule = new(
             FactoriesShouldNotUseApplicationServicesId,
-            "Factories should not use application services",
+            "Factories must not depend on application services",
             "Factory '{0}' must not depend on application service '{1}'",
             Category.DDD,
             DiagnosticSeverity.Error,
@@ -20,7 +20,7 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
 
         public static readonly DiagnosticDescriptor FactoriesShouldNotUseRepositoriesRule = new(
             FactoriesShouldNotUseRepositoriesId,
-            "Factories should not use repositories",
+            "Factories must not depend on repositories",
             "Factory '{0}' must not depend on repository '{1}'",
             Category.DDD,
             DiagnosticSeverity.Error,
@@ -38,7 +38,7 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
 
         public static readonly DiagnosticDescriptor FactoriesShouldNotUseFactoriesRule = new(
             FactoriesShouldNotUseFactoriesId,
-            "Factories should not depend on other factories",
+            "Factories must not depend on other factories",
             "Factory '{0}' must not depend on factory '{1}'",
             Category.DDD,
             DiagnosticSeverity.Error,

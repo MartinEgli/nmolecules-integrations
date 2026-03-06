@@ -1,6 +1,6 @@
 # Release Tracking Investigation
 
-Status: March 3, 2026
+Status: March 5, 2026
 
 ## Problem
 
@@ -36,6 +36,11 @@ This matches the current symptom:
 - builds remain readable
 - functional rule work can continue
 - the release tracking files can still be maintained as the semantic inventory
+
+Additional safety net currently used in this workspace:
+
+- analyzer quality tests enforce rule-ID uniqueness and release-catalog coverage
+- `tools/validate-rule-doc-sync.ps1` enforces code/rule-map/release-file synchronization
 
 ## Long-Term Options
 

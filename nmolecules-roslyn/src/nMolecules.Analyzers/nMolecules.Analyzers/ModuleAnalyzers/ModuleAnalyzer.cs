@@ -226,10 +226,23 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
         }
 
         private static bool IsModuleAttribute(AttributeData attribute) =>
-            attribute.AttributeClass?.Name == "ModuleAttribute";
+            InheritsFromAttribute(attribute.AttributeClass, "ModuleAttribute");
 
         private static bool IsBoundedContextAttribute(AttributeData attribute) =>
-            attribute.AttributeClass?.Name == "BoundedContextAttribute";
+            InheritsFromAttribute(attribute.AttributeClass, "BoundedContextAttribute");
+
+        private static bool InheritsFromAttribute(INamedTypeSymbol? attributeClass, string attributeName)
+        {
+            for (var current = attributeClass; current is not null; current = current.BaseType)
+            {
+                if (string.Equals(current.Name, attributeName, System.StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private static bool IsBlank(string? value) => string.IsNullOrWhiteSpace(value);
 

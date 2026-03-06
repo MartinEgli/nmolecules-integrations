@@ -124,13 +124,13 @@
         </value>
     </resheader>
     <data name="ValueObjectShouldBeImmutableDescription" xml:space="preserve">
-    <value>Value objects should be immutable.</value>
+    <value>Value objects must be immutable.</value>
   </data>
     <data name="ValueObjectShouldBeImmutableMessageFormat" xml:space="preserve">
-    <value>ValueObjects should be immutable</value>
+    <value>Value objects must be immutable</value>
   </data>
     <data name="ValueObjectShouldBeImmutableTitle" xml:space="preserve">
-    <value>ValueObjects should be immutable</value>
+    <value>Value objects must be immutable</value>
   </data>
     <data name="ValueObjectShouldBeSealedDescription" xml:space="preserve">
     <value>Value objects should be declared as sealed.</value>
@@ -142,84 +142,84 @@
     <value>Value objects should be declared as sealed</value>
     </data>
     <data name="ValueObjectMustImplementIEquatableDescription" xml:space="preserve">
-    <value>Value objects should implement IEqautable&lt;ValueObject&gt;.</value>
+    <value>Value objects should implement IEquatable&lt;T&gt;.</value>
   </data>
     <data name="ValueObjectMustImplementIEquatableMessageFormat" xml:space="preserve">
-        <value>Value objects should implement IEqautable&lt;ValueObject&gt;</value>
+        <value>Value objects should implement IEquatable&lt;T&gt;</value>
     </data>
     <data name="ValueObjectMustImplementIEquatableTitle" xml:space="preserve">
-    <value>Value objects should implement IEqautable&lt;ValueObject&gt;</value>
+    <value>Value objects should implement IEquatable&lt;T&gt;</value>
   </data>
     <data name="ValueObjectUsesEntityDescription" xml:space="preserve">
-    <value>Value objects should not reference entities.</value>
+    <value>Value objects must not depend on entities.</value>
         <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
     <data name="ValueObjectUsesEntityMessageFormat" xml:space="preserve">
-    <value>ValueObjects should not use entities</value>
+    <value>Value objects must not depend on entities</value>
         <comment>The format-able message the diagnostic displays.</comment>
   </data>
     <data name="ValueObjectUsesEntityTitle" xml:space="preserve">
-    <value>ValueObject uses entities</value>
+    <value>Value objects must not depend on entities</value>
         <comment>The title of the diagnostic.</comment>
   </data>
     <data name="ValueObjectUsesServiceDescription" xml:space="preserve">
-    <value>Value objects should not reference services.</value>
+    <value>Value objects must not depend on services.</value>
         <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
     <data name="ValueObjectUsesServiceMessageFormat" xml:space="preserve">
-    <value>ValueObjects should not use services</value>
+    <value>Value objects must not depend on services</value>
         <comment>The format-able message the diagnostic displays.</comment>
   </data>
     <data name="ValueObjectUsesServiceTitle" xml:space="preserve">
-    <value>ValueObject uses services</value>
+    <value>Value objects must not depend on services</value>
         <comment>The title of the diagnostic.</comment>
   </data>
     <data name="ValueObjectUsesRepositoryDescription" xml:space="preserve">
-    <value>Value objects should not reference repositories.</value>
+    <value>Value objects must not depend on repositories.</value>
         <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
     <data name="ValueObjectUsesRepositoryMessageFormat" xml:space="preserve">
-    <value>ValueObjects should not use repositories</value>
+    <value>Value objects must not depend on repositories</value>
         <comment>The format-able message the diagnostic displays.</comment>
   </data>
     <data name="ValueObjectUsesRepositoryTitle" xml:space="preserve">
-    <value>ValueObject uses repositories</value>
+    <value>Value objects must not depend on repositories</value>
         <comment>The title of the diagnostic.</comment>
   </data>
     <data name="ValueObjectUsesAggregateRootDescription" xml:space="preserve">
-    <value>Value objects should not reference aggregate roots.</value>
+    <value>Value objects must not depend on aggregate roots.</value>
         <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
     <data name="ValueObjectUsesAggregateRootMessageFormat" xml:space="preserve">
-    <value>ValueObjects should not use aggregate roots</value>
+    <value>Value objects must not depend on aggregate roots</value>
         <comment>The format-able message the diagnostic displays.</comment>
   </data>
     <data name="ValueObjectUsesAggregateRootTitle" xml:space="preserve">
-    <value>ValueObject uses aggregate roots</value>
+    <value>Value objects must not depend on aggregate roots</value>
         <comment>The title of the diagnostic.</comment>
   </data>
     <data name="EntityShouldNotUseRepositoryDescription" xml:space="preserve">
-    <value>Entities should not reference repositories.</value>
+    <value>Entities must not depend on repositories.</value>
         <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
     <data name="EntityShouldNotUseRepositoryFormat" xml:space="preserve">
-    <value>Entities should not reference repositories</value>
+    <value>Entities must not depend on repositories</value>
         <comment>The format-able message the diagnostic displays.</comment>
   </data>
     <data name="EntityShouldNotUseRepositoryTitle" xml:space="preserve">
-    <value>Entities should not reference repositories</value>
+    <value>Entities must not depend on repositories</value>
         <comment>The title of the diagnostic.</comment>
   </data>
     <data name="EntityShouldNotUseAggregateRootDescription" xml:space="preserve">
-    <value>Entities should not reference aggregate roots.</value>
+    <value>Entities must not depend on aggregate roots.</value>
         <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
     <data name="EntityShouldNotUseAggregateRootFormat" xml:space="preserve">
-    <value>Entities should not reference aggregate roots</value>
+    <value>Entities must not depend on aggregate roots</value>
         <comment>The format-able message the diagnostic displays.</comment>
   </data>
     <data name="EntityShouldNotUseAggregateRootTitle" xml:space="preserve">
-    <value>Entities should not reference aggregate roots</value>
+    <value>Entities must not depend on aggregate roots</value>
         <comment>The title of the diagnostic.</comment>
   </data>
     <data name="EntityShouldNotUseServiceDescription" xml:space="preserve">
@@ -235,63 +235,63 @@
         <comment>The title of the diagnostic.</comment>
   </data>
     <data name="AggregateRootShouldNotUseRepositoryDescription" xml:space="preserve">
-    <value>AggregateRoots should not reference repositories.</value>
+    <value>Aggregate roots must not depend on repositories.</value>
         <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
     <data name="AggregateRootShouldNotUseRepositoryFormat" xml:space="preserve">
-    <value>AggregateRoots should not reference repositories</value>
+    <value>Aggregate roots must not depend on repositories</value>
         <comment>The format-able message the diagnostic displays.</comment>
   </data>
     <data name="AggregateRootShouldNotUseRepositoryTitle" xml:space="preserve">
-    <value>AggregateRoots should not reference repositories</value>
+    <value>Aggregate roots must not depend on repositories</value>
         <comment>The title of the diagnostic.</comment>
   </data>
     <data name="AggregateRootShouldNotUseServiceDescription" xml:space="preserve">
-    <value>AggregateRoots should not reference services.</value>
+    <value>Aggregate roots must not depend on domain services.</value>
         <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
     <data name="AggregateRootShouldNotUseServiceFormat" xml:space="preserve">
-    <value>AggregateRoots should not reference services</value>
+    <value>Aggregate roots must not depend on domain services</value>
         <comment>The format-able message the diagnostic displays.</comment>
   </data>
     <data name="AggregateRootShouldNotUseServiceTitle" xml:space="preserve">
-    <value>AggregateRoots should not reference services</value>
+    <value>Aggregate roots must not depend on domain services</value>
         <comment>The title of the diagnostic.</comment>
   </data>
     <data name="AggregateRootShouldHaveIdDescription" xml:space="preserve">
-    <value>AggregateRoots should have an id.</value>
+    <value>Aggregate roots must define an identity.</value>
         <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
     <data name="AggregateRootShouldHaveIdFormat" xml:space="preserve">
-    <value>AggregateRoots should have an id</value>
+    <value>Aggregate roots must define an identity</value>
         <comment>The format-able message the diagnostic displays.</comment>
   </data>
     <data name="AggregateRootShouldHaveIdTitle" xml:space="preserve">
-    <value>AggregateRoots should have an id</value>
+    <value>Aggregate roots must define an identity</value>
         <comment>The title of the diagnostic.</comment>
   </data>
     <data name="EntityShouldHaveIdDescription" xml:space="preserve">
-    <value>Entities should have an id.</value>
+    <value>Entities must define an identity.</value>
         <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
     <data name="EntityShouldHaveIdFormat" xml:space="preserve">
-    <value>Entities should have an id</value>
+    <value>Entities must define an identity</value>
         <comment>The format-able message the diagnostic displays.</comment>
   </data>
     <data name="EntityShouldHaveIdTitle" xml:space="preserve">
-    <value>Entities should have an id</value>
+    <value>Entities must define an identity</value>
         <comment>The title of the diagnostic.</comment>
   </data>
     <data name="RepositoryShouldNotUseServiceDescription" xml:space="preserve">
-    <value>Repositories should have an id.</value>
+    <value>Repositories must not depend on services.</value>
         <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
     <data name="RepositoryShouldNotUseServiceFormat" xml:space="preserve">
-    <value>Repositories should not reference services</value>
+    <value>Repositories must not depend on services</value>
         <comment>The format-able message the diagnostic displays.</comment>
   </data>
     <data name="RepositoryShouldNotUseServiceTitle" xml:space="preserve">
-    <value>Repositories should not reference services</value>
+    <value>Repositories must not depend on services</value>
         <comment>The title of the diagnostic.</comment>
   </data>
 </root>

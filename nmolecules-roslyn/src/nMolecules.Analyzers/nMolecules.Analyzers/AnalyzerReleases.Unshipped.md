@@ -2,30 +2,38 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-XMoleculesDomainService0001 | DDD | Error | DomainService should not use application services
-XMoleculesDomainService0002 | DDD | Error | DomainService should only use repository contracts
-XMoleculesDomainService0003 | DDD | Warning | DomainService should not expose infrastructure-layer types in public signatures
-XMoleculesDomainService0004 | DDD | Warning | DomainService should not depend on legacy services
+XMoleculesDomainService0001 | DDD | Error | Domain services must not depend on application services
+XMoleculesDomainService0002 | DDD | Error | Domain services must depend on repository contracts only
+XMoleculesDomainService0003 | DDD | Warning | Domain services should not expose infrastructure-layer types in public signatures
+XMoleculesDomainService0004 | DDD | Warning | Domain services should not depend on legacy services
 XMoleculesIdentity0001 | DDD | Error | Identity members must belong to entities or aggregate roots
-XMoleculesEntity0005 | DDD | Error | Entity should declare exactly one identity member
-XMoleculesAggregateRoot0004 | DDD | Error | Aggregate root should declare exactly one identity member
-XMoleculesApplicationService0001 | DDD | Error | Application service should not also be a domain building block
-XMoleculesApplicationService0002 | DDD | Warning | Application service should depend on explicit domain services
-XMoleculesApplicationService0003 | DDD | Warning | Application service should not depend on other application services
-XMoleculesApplicationService0004 | DDD | Warning | Application service should not expose infrastructure-layer types in public signatures
-XMoleculesAggregateRoot0005 | DDD | Error | Aggregate root should not reference aggregate roots directly
-XMoleculesAggregateRoot0006 | DDD | Error | Aggregate root should not depend on application services
-XMoleculesAggregateRoot0007 | DDD | Error | Aggregate root should not depend on external factories by default
-XMoleculesFactory0001 | DDD | Error | Factory should not use application services
-XMoleculesFactory0002 | DDD | Error | Factory should not use repositories
-XMoleculesFactory0003 | DDD | Error | Factory must not also be a domain building block
-XMoleculesFactory0004 | DDD | Error | Factory should not use other factories
-XMoleculesService0001 | DDD | Warning | Service should use a specific role marker
+XMoleculesEntity0005 | DDD | Error | Entities must declare exactly one identity
+XMoleculesEntity0006 | DDD | Error | Entities must not depend on factories
+XMoleculesEntity0007 | DDD | Error | Entities must not depend on application services
+XMoleculesEntity0008 | DDD | Error | Entities must not depend on legacy services
+XMoleculesAggregateRoot0004 | DDD | Error | Aggregate roots must declare exactly one identity
+XMoleculesApplicationService0001 | DDD | Error | Application services must not also be domain building blocks
+XMoleculesApplicationService0002 | DDD | Warning | Application services should not depend on legacy services
+XMoleculesApplicationService0003 | DDD | Warning | Application services should not depend on other application services directly
+XMoleculesApplicationService0004 | DDD | Warning | Application services should not expose infrastructure-layer types in public signatures
+XMoleculesAggregateRoot0005 | DDD | Error | Aggregate roots must not reference other aggregate roots directly
+XMoleculesAggregateRoot0006 | DDD | Error | Aggregate roots must not depend on application services
+XMoleculesAggregateRoot0007 | DDD | Error | Aggregate roots must not depend on factories
+XMoleculesAggregateRoot0008 | DDD | Error | Aggregate roots must not depend on legacy services
+XMoleculesFactory0001 | DDD | Error | Factories must not depend on application services
+XMoleculesFactory0002 | DDD | Error | Factories must not depend on repositories
+XMoleculesFactory0003 | DDD | Error | Factories must not also be domain building blocks
+XMoleculesFactory0004 | DDD | Error | Factories must not depend on other factories
+XMoleculesService0001 | DDD | Warning | Legacy services should use explicit role markers
 XMoleculesBoundedContext0001 | DDD | Warning | BoundedContext should define stable Id metadata
 XMoleculesBoundedContext0002 | DDD | Warning | BoundedContext should define readable Name metadata
 XMoleculesBoundedContext0003 | DDD | Warning | BoundedContext declarations should use a single Id per compilation
 XMoleculesBoundedContext0004 | DDD | Warning | BoundedContext declarations with same Id should use one Name/Value
 XMoleculesBoundedContext0005 | DDD | Warning | Module ownership should match the bounded context declared on the same metadata scope
+XMoleculesBoundedContext0006 | DDD | Warning | BoundedContext dependencies should reference declared contexts
+XMoleculesBoundedContext0007 | DDD | Warning | BoundedContext dependency direction should be unidirectional per context pair
+XMoleculesBoundedContext0008 | DDD | Warning | BoundedContext should not depend on itself
+XMoleculesBoundedContext0009 | DDD | Warning | BoundedContext dependency targets should be unique
 XMoleculesModule0001 | DDD | Warning | Module should define stable Id metadata
 XMoleculesModule0002 | DDD | Warning | Module should define readable Name metadata
 XMoleculesModule0003 | DDD | Warning | Module should define BoundedContextId metadata
@@ -33,8 +41,10 @@ XMoleculesModule0004 | DDD | Warning | Module should reference a declared bounde
 XMoleculesModule0005 | DDD | Warning | Module declarations with same Id should use one Name/Value
 XMoleculesModule0006 | DDD | Warning | Module declarations with same Id should use one BoundedContextId
 XMoleculesModule0007 | DDD | Warning | Module names should map to one Id inside a bounded context
-XMoleculesValueObject0006 | DDD | Error | Value object should not declare identity members
-XMoleculesValueObject0007 | DDD | Error | Value object should not depend on factories
+XMoleculesValueObject0006 | DDD | Error | Value objects must not declare identities
+XMoleculesValueObject0007 | DDD | Error | Value objects must not depend on factories
+XMoleculesValueObject0008 | DDD | Error | Value objects must not depend on application services
+XMoleculesValueObject0009 | DDD | Error | Value objects must not depend on legacy services
 XMoleculesDomainEvent0001 | Events | Error | Domain events must not reference entities
 XMoleculesDomainEvent0002 | Events | Error | Domain events must not reference aggregate roots
 XMoleculesDomainEvent0003 | Events | Error | Domain events must not reference repositories
@@ -44,33 +54,36 @@ XMoleculesDomainEvent0006 | Events | Error | Repositories and factories must not
 XMoleculesDomainEvent0007 | Events | Error | Domain event handlers must consume domain events
 XMoleculesDomainEvent0008 | Events | Warning | Domain event publishers should expose domain event payloads explicitly
 XMoleculesDomainEvent0009 | Events | Warning | Domain event handlers should consume exactly one domain event payload
-XMoleculesRepository0002 | DDD | Warning | Repositories must not expose infrastructure-layer types in public signatures
+XMoleculesRepository0002 | DDD | Warning | Repositories should not expose infrastructure-layer types in public signatures
 XMoleculesRepository0003 | DDD | Warning | Repositories should not depend on other repositories directly
 XMoleculesRepository0004 | DDD | Warning | Approved repository composition should depend on repository contracts only
+XMoleculesRepository0005 | DDD | Warning | Repositories should not depend on factories
+XMoleculesRepository0006 | DDD | Error | Repositories must not depend on application services
+XMoleculesRepository0007 | DDD | Error | Repositories must not depend on legacy services
 XMoleculesLayered0001 | Architecture | Error | Domain layers must not depend on application layers
 XMoleculesLayered0002 | Architecture | Error | Domain layers must not depend on infrastructure layers
 XMoleculesLayered0003 | Architecture | Error | Domain layers must not depend on interface layers
 XMoleculesLayered0004 | Architecture | Error | Interface layers must not depend on domain layers directly
-XMoleculesLayered0005 | Architecture | Warning | Application to infrastructure dependencies should stay explicit and limited
-XMoleculesLayered0006 | Architecture | Warning | Infrastructure to application dependencies should be wiring-only
+XMoleculesLayered0005 | Architecture | Warning | Application layers should keep infrastructure dependencies explicit and limited
+XMoleculesLayered0006 | Architecture | Warning | Infrastructure layers should keep application dependencies wiring-only
 XMoleculesOnion0001 | Architecture | Error | Onion dependencies must point inward only
 XMoleculesOnion0002 | Architecture | Error | Domain model rings must not depend on outer rings
 XMoleculesOnion0003 | Architecture | Error | Domain service rings must not depend on outer rings
 XMoleculesOnion0004 | Architecture | Error | Application service rings must not depend on infrastructure rings
-XMoleculesOnion0005 | Architecture | Error | Classic and simplified onion styles must not be mixed in one compilation
+XMoleculesOnion0005 | Architecture | Error | Classic and simplified onion styles must not mix in the same compilation
 XMoleculesHexagonal0001 | Architecture | Error | Hexagonal application core must not depend on ports or adapters
 XMoleculesHexagonal0002 | Architecture | Error | Primary ports must not depend on adapters
 XMoleculesHexagonal0003 | Architecture | Error | Secondary ports must not depend on adapters
 XMoleculesHexagonal0004 | Architecture | Warning | Primary adapters should depend on primary ports
 XMoleculesHexagonal0005 | Architecture | Warning | Secondary adapters should depend on secondary ports
-XMoleculesCQRS0001 | Architecture | Error | CQRS support requires both query and query handler markers
+XMoleculesCQRS0001 | Architecture | Error | CQRS queries and query handlers must coexist in the same compilation
 XMoleculesCQRS0002 | Architecture | Error | Command handlers must not depend on query models directly
 XMoleculesCQRS0003 | Architecture | Error | Query handlers must stay on the read side
 XMoleculesCQRS0004 | Architecture | Error | Query models must be read-only
 XMoleculesCQRS0005 | Architecture | Error | Projections may update query models but must not depend on write-side roles directly
 XMoleculesCQRS0006 | Architecture | Error | Command dispatchers must route and must not contain domain rules
 XMoleculesCrossStyle0001 | Architecture | Error | Primary structural styles must follow the compatibility matrix
-XMoleculesCrossStyle0002 | Architecture | Warning | CQRS may overlay a primary structural style
+XMoleculesCrossStyle0002 | Architecture | Warning | CQRS should overlay a primary structural style
 XMoleculesCrossStyle0003 | Architecture | Error | Classic and simplified onion styles must not coexist in the same bounded context
 XMoleculesBricks0001 | Architecture | Error | Brick rules must be honored
 XMoleculesBricks0002 | Architecture | Warning | Brick rule configuration must be valid

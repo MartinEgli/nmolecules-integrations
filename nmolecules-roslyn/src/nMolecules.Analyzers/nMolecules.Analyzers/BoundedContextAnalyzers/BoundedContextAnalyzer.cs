@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -16,7 +17,11 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
                 BoundedContextShouldDefineNameRule,
                 BoundedContextShouldUseSingleIdPerCompilationRule,
                 BoundedContextShouldUseSingleNamePerIdRule,
-                BoundedContextModuleOwnershipShouldMatchScopeIdRule);
+                BoundedContextModuleOwnershipShouldMatchScopeIdRule,
+                BoundedContextDependenciesShouldReferenceDeclaredContextsRule,
+                BoundedContextDependenciesShouldNotBeBidirectionalRule,
+                BoundedContextDependenciesShouldNotReferenceSelfRule,
+                BoundedContextDependenciesShouldNotContainDuplicateTargetsRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -33,6 +38,10 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             AnalyzeIdConsistency(context, declarations);
             AnalyzeNameConsistencyPerId(context, declarations);
             AnalyzeModuleOwnershipConsistency(context, declarations);
+            AnalyzeDependencyConsistency(context, declarations);
+            AnalyzeDependencyTargetUniquenessConsistency(context, declarations);
+            AnalyzeDependencySelfReferenceConsistency(context, declarations);
+            AnalyzeDependencyDirectionConsistency(context, declarations);
         }
 
         private static IEnumerable<BoundedContextDeclaration> AnalyzeScope(CompilationAnalysisContext context, ISymbol symbol)
@@ -56,7 +65,11 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
                     context.Report(attribute, symbol, BoundedContextShouldDefineNameRule, symbol.MetadataScopeLabel());
                 }
 
-                yield return new BoundedContextDeclaration(symbol, attribute, id, name);
+                var dependencies = attribute.SupportsMember("DependsOnContextIds")
+                    ? attribute.GetNamedStringArray("DependsOnContextIds")
+                    : Array.Empty<string>();
+
+                yield return new BoundedContextDeclaration(symbol, attribute, id, name, dependencies);
             }
         }
 
@@ -183,28 +196,207 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             }
         }
 
+        private static void AnalyzeDependencyConsistency(
+            CompilationAnalysisContext context,
+            IEnumerable<BoundedContextDeclaration> declarations)
+        {
+            var declaredIds = declarations
+                .Select(it => it.Id)
+                .Where(it => !IsBlank(it))
+                .Select(it => it!)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            var declaredSet = new HashSet<string>(declaredIds, StringComparer.OrdinalIgnoreCase);
+            var declaredList = declaredIds.Length == 0
+                ? "<none>"
+                : string.Join(", ", declaredIds.OrderBy(it => it));
+
+            foreach (var declaration in declarations.Where(it => !IsBlank(it.Id)))
+            {
+                var sourceId = declaration.Id!;
+                foreach (var targetId in declaration.DependsOnContextIds
+                             .Where(it => !IsBlank(it))
+                             .Distinct(StringComparer.OrdinalIgnoreCase))
+                {
+                    if (!declaredSet.Contains(targetId))
+                    {
+                        context.Report(
+                            declaration.Attribute,
+                            declaration.Symbol,
+                            BoundedContextDependenciesShouldReferenceDeclaredContextsRule,
+                            declaration.Symbol.MetadataScopeLabel(),
+                            sourceId,
+                            targetId,
+                            declaredList);
+                    }
+                }
+            }
+        }
+
+        private static void AnalyzeDependencyDirectionConsistency(
+            CompilationAnalysisContext context,
+            IEnumerable<BoundedContextDeclaration> declarations)
+        {
+            var declaredIds = declarations
+                .Select(it => it.Id)
+                .Where(it => !IsBlank(it))
+                .Select(it => it!)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            if (declaredIds.Length <= 1)
+            {
+                return;
+            }
+
+            var declaredSet = new HashSet<string>(declaredIds, StringComparer.OrdinalIgnoreCase);
+            var dependencies = declarations
+                .Where(it => !IsBlank(it.Id))
+                .SelectMany(it =>
+                {
+                    var sourceId = it.Id!;
+                    return it.DependsOnContextIds
+                        .Where(target => !IsBlank(target))
+                        .Select(target => new DeclaredDependency(it, sourceId, target.Trim()));
+                })
+                .Where(it => declaredSet.Contains(it.TargetId))
+                .ToArray();
+
+            var dependencyPairSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var dependency in dependencies)
+            {
+                dependencyPairSet.Add(ToDependencyPairKey(dependency.SourceId, dependency.TargetId));
+            }
+
+            foreach (var dependency in dependencies)
+            {
+                if (dependency.SourceId.Equals(dependency.TargetId, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var reverseKey = ToDependencyPairKey(dependency.TargetId, dependency.SourceId);
+                if (!dependencyPairSet.Contains(reverseKey))
+                {
+                    continue;
+                }
+
+                context.Report(
+                    dependency.Declaration.Attribute,
+                    dependency.Declaration.Symbol,
+                    BoundedContextDependenciesShouldNotBeBidirectionalRule,
+                    dependency.Declaration.Symbol.MetadataScopeLabel(),
+                    dependency.SourceId,
+                    dependency.TargetId);
+            }
+        }
+
+        private static void AnalyzeDependencySelfReferenceConsistency(
+            CompilationAnalysisContext context,
+            IEnumerable<BoundedContextDeclaration> declarations)
+        {
+            foreach (var declaration in declarations.Where(it => !IsBlank(it.Id)))
+            {
+                var sourceId = declaration.Id!;
+                foreach (var targetId in declaration.DependsOnContextIds
+                             .Where(it => !IsBlank(it))
+                             .Distinct(StringComparer.OrdinalIgnoreCase))
+                {
+                    if (!sourceId.Equals(targetId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    context.Report(
+                        declaration.Attribute,
+                        declaration.Symbol,
+                        BoundedContextDependenciesShouldNotReferenceSelfRule,
+                        declaration.Symbol.MetadataScopeLabel(),
+                        sourceId);
+                }
+            }
+        }
+
+        private static void AnalyzeDependencyTargetUniquenessConsistency(
+            CompilationAnalysisContext context,
+            IEnumerable<BoundedContextDeclaration> declarations)
+        {
+            foreach (var declaration in declarations.Where(it => !IsBlank(it.Id)))
+            {
+                var duplicateTargets = declaration.DependsOnContextIds
+                    .Where(it => !IsBlank(it))
+                    .GroupBy(it => it.Trim(), StringComparer.OrdinalIgnoreCase)
+                    .Where(group => group.Count() > 1)
+                    .Select(group => group.Key)
+                    .OrderBy(it => it, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
+                foreach (var duplicateTarget in duplicateTargets)
+                {
+                    context.Report(
+                        declaration.Attribute,
+                        declaration.Symbol,
+                        BoundedContextDependenciesShouldNotContainDuplicateTargetsRule,
+                        declaration.Symbol.MetadataScopeLabel(),
+                        duplicateTarget);
+                }
+            }
+        }
+
+        private static string ToDependencyPairKey(string sourceId, string targetId) => $"{sourceId}->{targetId}";
+
         private static bool IsBoundedContextAttribute(AttributeData attribute) =>
-            attribute.AttributeClass?.Name == "BoundedContextAttribute";
+            InheritsFromAttribute(attribute.AttributeClass, "BoundedContextAttribute");
 
         private static bool IsModuleAttribute(AttributeData attribute) =>
-            attribute.AttributeClass?.Name == "ModuleAttribute";
+            InheritsFromAttribute(attribute.AttributeClass, "ModuleAttribute");
+
+        private static bool InheritsFromAttribute(INamedTypeSymbol? attributeClass, string attributeName)
+        {
+            for (var current = attributeClass; current is not null; current = current.BaseType)
+            {
+                if (string.Equals(current.Name, attributeName, StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private static bool IsBlank(string? value) => string.IsNullOrWhiteSpace(value);
 
         private sealed class BoundedContextDeclaration
         {
-            public BoundedContextDeclaration(ISymbol symbol, AttributeData attribute, string? id, string? name)
+            public BoundedContextDeclaration(ISymbol symbol, AttributeData attribute, string? id, string? name, string[] dependsOnContextIds)
             {
                 Symbol = symbol;
                 Attribute = attribute;
                 Id = id;
                 Name = name;
+                DependsOnContextIds = dependsOnContextIds;
             }
 
             public ISymbol Symbol { get; }
             public AttributeData Attribute { get; }
             public string? Id { get; }
             public string? Name { get; }
+            public string[] DependsOnContextIds { get; }
+        }
+
+        private sealed class DeclaredDependency
+        {
+            public DeclaredDependency(BoundedContextDeclaration declaration, string sourceId, string targetId)
+            {
+                Declaration = declaration;
+                SourceId = sourceId;
+                TargetId = targetId;
+            }
+
+            public BoundedContextDeclaration Declaration { get; }
+            public string SourceId { get; }
+            public string TargetId { get; }
         }
     }
 
@@ -215,6 +407,20 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
 
         public static string? GetNamedString(this AttributeData attribute, string memberName) =>
             attribute.NamedArguments.FirstOrDefault(it => it.Key == memberName).Value.Value as string;
+
+        public static string[] GetNamedStringArray(this AttributeData attribute, string memberName)
+        {
+            var argument = attribute.NamedArguments.FirstOrDefault(it => it.Key == memberName).Value;
+            if (argument.Kind != TypedConstantKind.Array || argument.Values.IsDefaultOrEmpty)
+            {
+                return Array.Empty<string>();
+            }
+
+            return argument.Values
+                .Where(it => it.Value is string value && !string.IsNullOrWhiteSpace(value))
+                .Select(it => ((string)it.Value!).Trim())
+                .ToArray();
+        }
 
         public static string? GetNameOrAliasValue(this AttributeData attribute)
         {

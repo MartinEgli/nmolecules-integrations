@@ -13,7 +13,7 @@ namespace NMolecules.Analyzers.EventStormingAnalyzers
         public static readonly DiagnosticDescriptor ActorsShouldNotDependOnAggregatesRule = new(
             ActorsShouldNotDependOnAggregatesId,
             "Event Storming actors must not depend on aggregates",
-            "Event Storming actor symbol '{0}' must not depend on aggregate '{1}'",
+            "Event Storming actor '{0}' must not depend on aggregate '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -40,7 +40,7 @@ namespace NMolecules.Analyzers.EventStormingAnalyzers
         public static readonly DiagnosticDescriptor ReadModelsShouldNotDependOnAggregatesRule = new(
             ReadModelsShouldNotDependOnAggregatesId,
             "Event Storming read models must not depend on aggregates",
-            "Event Storming read model symbol '{0}' must not depend on aggregate '{1}'",
+            "Event Storming read model '{0}' must not depend on aggregate '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -49,7 +49,7 @@ namespace NMolecules.Analyzers.EventStormingAnalyzers
         public static readonly DiagnosticDescriptor ExternalSystemsShouldNotDependOnAggregatesRule = new(
             ExternalSystemsShouldNotDependOnAggregatesId,
             "Event Storming external systems must not depend on aggregates",
-            "Event Storming external system symbol '{0}' must not depend on aggregate '{1}'",
+            "Event Storming external system '{0}' must not depend on aggregate '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,

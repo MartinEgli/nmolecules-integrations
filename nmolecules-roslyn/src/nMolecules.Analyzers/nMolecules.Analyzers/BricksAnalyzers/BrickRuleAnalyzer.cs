@@ -11,8 +11,14 @@ namespace NMolecules.Analyzers.BricksAnalyzers
     public class BrickRuleAnalyzer : DiagnosticAnalyzer
     {
         private static readonly string[] RuleAttributeNames = { "RuleAttribute" };
+        private static readonly string[] RuleFilterAttributeNames = { "RuleFilterAttribute" };
         private static readonly string[] RoleAttributeNames = { "RoleAttribute" };
         private static readonly string[] RoleAliasAttributeNames = { "RoleAliasAttribute" };
+        private static readonly string[] ExcludedSourceNameContainsAttributeNames = { "ExcludedSourceNameContainsAttribute" };
+        private static readonly string[] ExcludedTargetNameContainsAttributeNames = { "ExcludedTargetNameContainsAttribute" };
+        private static readonly string[] ExcludedMemberNameContainsAttributeNames = { "ExcludedMemberNameContainsAttribute" };
+        private static readonly string[] RequiredSourceNameContainsAttributeNames = { "RequiredSourceNameContainsAttribute" };
+        private static readonly string[] RequiredTargetNameContainsAttributeNames = { "RequiredTargetNameContainsAttribute" };
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
             Rules.BrickRuleViolationRule,
@@ -72,7 +78,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             {
                 foreach (var observation in CollectDependencyObservations(sourceType))
                 {
-                    if (ContainsAnyToken(observation.MemberSymbol.Name, rule.ExcludedMemberNameContains))
+                    if (ContainsAnyToken(observation.MemberSymbol.Name, rule.GetFilterValue<ExcludedMemberNameContainsRuleFilter>()))
                     {
                         continue;
                     }
@@ -107,7 +113,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             foreach (var sourceType in sourceTypes)
             {
                 var hasRequiredDependency = CollectDependencyObservations(sourceType)
-                    .Where(observation => !ContainsAnyToken(observation.MemberSymbol.Name, rule.ExcludedMemberNameContains))
+                    .Where(observation => !ContainsAnyToken(observation.MemberSymbol.Name, rule.GetFilterValue<ExcludedMemberNameContainsRuleFilter>()))
                     .SelectMany(observation => ExpandType(observation.DependencyType).OfType<INamedTypeSymbol>())
                     .Any(candidateType => HasRole(candidateType, rule.TargetRole, roleMap) && IsTargetCandidate(rule, candidateType));
 
@@ -142,23 +148,23 @@ namespace NMolecules.Analyzers.BricksAnalyzers
         private static bool IsSourceCandidate(BrickRuleDeclaration rule, ITypeSymbol sourceType)
         {
             var sourceName = sourceType.DisplayName();
-            if (ContainsAnyToken(sourceName, rule.ExcludedSourceNameContains))
+            if (ContainsAnyToken(sourceName, rule.GetFilterValue<ExcludedSourceNameContainsRuleFilter>()))
             {
                 return false;
             }
 
-            return MatchesRequiredTokens(sourceName, rule.RequiredSourceNameContains);
+            return MatchesRequiredTokens(sourceName, rule.GetFilterValue<RequiredSourceNameContainsRuleFilter>());
         }
 
         private static bool IsTargetCandidate(BrickRuleDeclaration rule, ITypeSymbol targetType)
         {
             var targetName = targetType.DisplayName();
-            if (ContainsAnyToken(targetName, rule.ExcludedTargetNameContains))
+            if (ContainsAnyToken(targetName, rule.GetFilterValue<ExcludedTargetNameContainsRuleFilter>()))
             {
                 return false;
             }
 
-            return MatchesRequiredTokens(targetName, rule.RequiredTargetNameContains);
+            return MatchesRequiredTokens(targetName, rule.GetFilterValue<RequiredTargetNameContainsRuleFilter>());
         }
 
         private static bool MatchesRequiredTokens(string value, string tokenList)
@@ -250,7 +256,9 @@ namespace NMolecules.Analyzers.BricksAnalyzers
 
         private static IEnumerable<BrickRuleDeclaration> CollectRuleDeclarations(ISymbol symbol)
         {
-            foreach (var attribute in symbol.GetAttributes().Where(attribute => IsBrickRuleAttribute(attribute.AttributeClass)))
+            var attributes = symbol.GetAttributes().ToArray();
+
+            foreach (var attribute in attributes.Where(candidate => IsBrickRuleAttribute(candidate.AttributeClass)))
             {
                 var location = attribute.ApplicationSyntaxReference?.GetSyntax().GetLocation() ?? symbol.Locations.FirstOrDefault();
                 if (location is null)
@@ -263,11 +271,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 var targetRole = GetConstructorString(attribute, 2);
                 var mode = GetRuleMode(attribute);
                 var message = GetConstructorString(attribute, 4);
-                var excludedSource = GetConstructorString(attribute, 5);
-                var excludedTarget = GetConstructorString(attribute, 6);
-                var excludedMember = GetConstructorString(attribute, 7);
-                var requiredSource = GetConstructorString(attribute, 8);
-                var requiredTarget = GetConstructorString(attribute, 9);
+                var filters = CollectRuleFilters(attributes, id);
 
                 yield return new BrickRuleDeclaration(
                     id,
@@ -275,11 +279,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                     targetRole,
                     mode,
                     message,
-                    excludedSource,
-                    excludedTarget,
-                    excludedMember,
-                    requiredSource,
-                    requiredTarget,
+                    filters,
                     location);
             }
         }
@@ -308,6 +308,68 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             }
 
             return attribute.ConstructorArguments[index].Value as string ?? string.Empty;
+        }
+
+        private static string[] GetConstructorStrings(AttributeData attribute, int index)
+        {
+            if (attribute.ConstructorArguments.Length <= index)
+            {
+                return Array.Empty<string>();
+            }
+
+            var argument = attribute.ConstructorArguments[index];
+            if (argument.Kind != TypedConstantKind.Array)
+            {
+                return Array.Empty<string>();
+            }
+
+            return NormalizeTokens(argument.Values
+                .Select(value => value.Value as string)
+                .Where(value => value is not null)
+                .Select(value => value!));
+        }
+
+        private static IReadOnlyList<BrickRuleFilter> CollectRuleFilters(IEnumerable<AttributeData> attributes, string ruleId)
+        {
+            return attributes
+                .Where(attribute => IsBrickRuleFilterAttribute(attribute.AttributeClass))
+                .Where(attribute => string.Equals(GetConstructorString(attribute, 0), ruleId, StringComparison.Ordinal))
+                .Select(CreateFilter)
+                .Where(filter => filter is not null)
+                .Cast<BrickRuleFilter>()
+                .ToArray();
+        }
+
+        private static BrickRuleFilter? CreateFilter(AttributeData attribute)
+        {
+            var tokens = GetConstructorStrings(attribute, 1);
+
+            if (IsExcludedSourceNameContainsAttribute(attribute.AttributeClass))
+            {
+                return new ExcludedSourceNameContainsRuleFilter(tokens);
+            }
+
+            if (IsExcludedTargetNameContainsAttribute(attribute.AttributeClass))
+            {
+                return new ExcludedTargetNameContainsRuleFilter(tokens);
+            }
+
+            if (IsExcludedMemberNameContainsAttribute(attribute.AttributeClass))
+            {
+                return new ExcludedMemberNameContainsRuleFilter(tokens);
+            }
+
+            if (IsRequiredSourceNameContainsAttribute(attribute.AttributeClass))
+            {
+                return new RequiredSourceNameContainsRuleFilter(tokens);
+            }
+
+            if (IsRequiredTargetNameContainsAttribute(attribute.AttributeClass))
+            {
+                return new RequiredTargetNameContainsRuleFilter(tokens);
+            }
+
+            return null;
         }
 
         private static string GetRoleNameFromBrickRole(AttributeData attribute)
@@ -351,11 +413,29 @@ namespace NMolecules.Analyzers.BricksAnalyzers
         private static bool IsBrickRuleAttribute(INamedTypeSymbol? attributeClass) =>
             InheritsFromAnyAttribute(attributeClass, RuleAttributeNames);
 
+        private static bool IsBrickRuleFilterAttribute(INamedTypeSymbol? attributeClass) =>
+            InheritsFromAnyAttribute(attributeClass, RuleFilterAttributeNames);
+
         private static bool IsBrickRoleAttribute(INamedTypeSymbol? attributeClass) =>
             InheritsFromAnyAttribute(attributeClass, RoleAttributeNames);
 
         private static bool IsBrickRoleAliasAttribute(INamedTypeSymbol? attributeClass) =>
             InheritsFromAnyAttribute(attributeClass, RoleAliasAttributeNames);
+
+        private static bool IsExcludedSourceNameContainsAttribute(INamedTypeSymbol? attributeClass) =>
+            InheritsFromAnyAttribute(attributeClass, ExcludedSourceNameContainsAttributeNames);
+
+        private static bool IsExcludedTargetNameContainsAttribute(INamedTypeSymbol? attributeClass) =>
+            InheritsFromAnyAttribute(attributeClass, ExcludedTargetNameContainsAttributeNames);
+
+        private static bool IsExcludedMemberNameContainsAttribute(INamedTypeSymbol? attributeClass) =>
+            InheritsFromAnyAttribute(attributeClass, ExcludedMemberNameContainsAttributeNames);
+
+        private static bool IsRequiredSourceNameContainsAttribute(INamedTypeSymbol? attributeClass) =>
+            InheritsFromAnyAttribute(attributeClass, RequiredSourceNameContainsAttributeNames);
+
+        private static bool IsRequiredTargetNameContainsAttribute(INamedTypeSymbol? attributeClass) =>
+            InheritsFromAnyAttribute(attributeClass, RequiredTargetNameContainsAttributeNames);
 
         private static bool InheritsFromAnyAttribute(INamedTypeSymbol? type, IReadOnlyCollection<string> attributeNames)
         {
@@ -491,11 +571,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 string targetRole,
                 BrickRuleMode mode,
                 string message,
-                string excludedSourceNameContains,
-                string excludedTargetNameContains,
-                string excludedMemberNameContains,
-                string requiredSourceNameContains,
-                string requiredTargetNameContains,
+                IReadOnlyList<BrickRuleFilter> filters,
                 Location location)
             {
                 Id = id;
@@ -503,11 +579,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 TargetRole = targetRole;
                 Mode = mode;
                 Message = message;
-                ExcludedSourceNameContains = excludedSourceNameContains;
-                ExcludedTargetNameContains = excludedTargetNameContains;
-                ExcludedMemberNameContains = excludedMemberNameContains;
-                RequiredSourceNameContains = requiredSourceNameContains;
-                RequiredTargetNameContains = requiredTargetNameContains;
+                Filters = filters;
                 Location = location;
             }
 
@@ -516,17 +588,67 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             public string TargetRole { get; }
             public BrickRuleMode Mode { get; }
             public string Message { get; }
-            public string ExcludedSourceNameContains { get; }
-            public string ExcludedTargetNameContains { get; }
-            public string ExcludedMemberNameContains { get; }
-            public string RequiredSourceNameContains { get; }
-            public string RequiredTargetNameContains { get; }
+            public IReadOnlyList<BrickRuleFilter> Filters { get; }
             public Location Location { get; }
 
             public bool IsValid =>
                 !string.IsNullOrWhiteSpace(Id) &&
                 !string.IsNullOrWhiteSpace(SourceRole) &&
                 !string.IsNullOrWhiteSpace(TargetRole);
+
+            public string GetFilterValue<TFilter>()
+                where TFilter : BrickRuleFilter
+            {
+                return string.Join("|", Filters.OfType<TFilter>().SelectMany(filter => filter.Tokens));
+            }
+        }
+
+        private abstract class BrickRuleFilter
+        {
+            protected BrickRuleFilter(IEnumerable<string> tokens)
+            {
+                Tokens = NormalizeTokens(tokens);
+                Value = string.Join("|", Tokens);
+            }
+
+            public string[] Tokens { get; }
+
+            public string Value { get; }
+        }
+
+        private sealed class ExcludedSourceNameContainsRuleFilter : BrickRuleFilter
+        {
+            public ExcludedSourceNameContainsRuleFilter(IEnumerable<string> tokens) : base(tokens)
+            {
+            }
+        }
+
+        private sealed class ExcludedTargetNameContainsRuleFilter : BrickRuleFilter
+        {
+            public ExcludedTargetNameContainsRuleFilter(IEnumerable<string> tokens) : base(tokens)
+            {
+            }
+        }
+
+        private sealed class ExcludedMemberNameContainsRuleFilter : BrickRuleFilter
+        {
+            public ExcludedMemberNameContainsRuleFilter(IEnumerable<string> tokens) : base(tokens)
+            {
+            }
+        }
+
+        private sealed class RequiredSourceNameContainsRuleFilter : BrickRuleFilter
+        {
+            public RequiredSourceNameContainsRuleFilter(IEnumerable<string> tokens) : base(tokens)
+            {
+            }
+        }
+
+        private sealed class RequiredTargetNameContainsRuleFilter : BrickRuleFilter
+        {
+            public RequiredTargetNameContainsRuleFilter(IEnumerable<string> tokens) : base(tokens)
+            {
+            }
         }
 
         private sealed class DependencyObservation
@@ -545,6 +667,15 @@ namespace NMolecules.Analyzers.BricksAnalyzers
         {
             ForbidDependency = 0,
             RequireDependency = 1
+        }
+
+        private static string[] NormalizeTokens(IEnumerable<string> tokens)
+        {
+            return tokens
+                .Where(token => !string.IsNullOrWhiteSpace(token))
+                .Select(token => token.Trim())
+                .Where(token => token.Length > 0)
+                .ToArray();
         }
     }
 }

@@ -13,7 +13,7 @@ namespace NMolecules.Analyzers.HexagonalAnalyzers
         public static readonly DiagnosticDescriptor ApplicationCoreShouldNotDependOnPortsOrAdaptersRule = new(
             ApplicationCoreShouldNotDependOnPortsOrAdaptersId,
             "Hexagonal application core must not depend on ports or adapters",
-            "Hexagonal application core symbol '{0}' must not depend on port or adapter type '{1}'",
+            "Hexagonal application core '{0}' must not depend on port or adapter '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -22,7 +22,7 @@ namespace NMolecules.Analyzers.HexagonalAnalyzers
         public static readonly DiagnosticDescriptor PrimaryPortsShouldNotDependOnAdaptersRule = new(
             PrimaryPortsShouldNotDependOnAdaptersId,
             "Primary ports must not depend on adapters",
-            "Primary port symbol '{0}' must not depend on adapter type '{1}'",
+            "Primary port '{0}' must not depend on adapter '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -31,7 +31,7 @@ namespace NMolecules.Analyzers.HexagonalAnalyzers
         public static readonly DiagnosticDescriptor SecondaryPortsShouldNotDependOnAdaptersRule = new(
             SecondaryPortsShouldNotDependOnAdaptersId,
             "Secondary ports must not depend on adapters",
-            "Secondary port symbol '{0}' must not depend on adapter type '{1}'",
+            "Secondary port '{0}' must not depend on adapter '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,

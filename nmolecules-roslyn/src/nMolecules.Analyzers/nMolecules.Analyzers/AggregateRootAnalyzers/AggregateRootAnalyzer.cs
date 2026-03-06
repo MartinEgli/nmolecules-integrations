@@ -14,6 +14,7 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             Rules.AggregateRootsShouldNotUseAggregateRootsRule,
             Rules.AggregateRootsShouldNotUseApplicationServicesRule,
             Rules.AggregateRootsShouldNotUseFactoriesRule,
+            Rules.AggregateRootsShouldNotUseLegacyServicesRule,
             Rules.AggregateRootsShouldNotUseRepositoriesRule,
             Rules.AggregateRootsShouldNotUseServicesRule,
             Rules.AggregateRootsShouldHaveIdRule,

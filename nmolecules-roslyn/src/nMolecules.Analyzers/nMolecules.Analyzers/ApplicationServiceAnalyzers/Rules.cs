@@ -11,12 +11,12 @@ namespace NMolecules.Analyzers.ApplicationServiceAnalyzers
 
         public static readonly DiagnosticDescriptor ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksRule = new(
             ApplicationServicesShouldNotAlsoBeDomainBuildingBlocksId,
-            "Application services should not also be domain building blocks",
+            "Application services must not also be domain building blocks",
             "Application service '{0}' must not also be marked as '{1}'",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Application services orchestrate use cases and should not simultaneously model domain building blocks.");
+            "Application services orchestrate use cases and must not simultaneously model domain building blocks.");
 
         public static readonly DiagnosticDescriptor ApplicationServicesShouldNotUseLegacyServicesRule = new(
             ApplicationServicesShouldNotUseLegacyServicesId,
@@ -29,7 +29,7 @@ namespace NMolecules.Analyzers.ApplicationServiceAnalyzers
 
         public static readonly DiagnosticDescriptor ApplicationServicesShouldNotUseApplicationServicesRule = new(
             ApplicationServicesShouldNotUseApplicationServicesId,
-            "Application services should not depend on other application services",
+            "Application services should not depend on other application services directly",
             "Application service '{0}' must not depend on application service '{1}' directly",
             Category.DDD,
             DiagnosticSeverity.Warning,

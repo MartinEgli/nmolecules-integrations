@@ -11,10 +11,13 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
-                Rules.RepositoriesShouldNotUseServicesRule,
+                Rules.RepositoriesShouldNotUseDomainServicesRule,
+                Rules.RepositoriesShouldNotUseApplicationServicesRule,
+                Rules.RepositoriesShouldNotUseLegacyServicesRule,
                 Rules.RepositoriesShouldNotExposeInfrastructureSignaturesRule,
                 Rules.RepositoriesShouldNotDependOnRepositoriesRule,
-                Rules.ApprovedRepositoryCompositionShouldUseContractsRule);
+                Rules.ApprovedRepositoryCompositionShouldUseContractsRule,
+                Rules.RepositoriesShouldNotDependOnFactoriesRule);
 
         protected override void Initialize(AnalysisContext<RepositoryAttribute> context)
         {

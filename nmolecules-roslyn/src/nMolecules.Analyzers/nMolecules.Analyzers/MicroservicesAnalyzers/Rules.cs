@@ -32,7 +32,7 @@ namespace NMolecules.Analyzers.MicroservicesAnalyzers
         public static readonly DiagnosticDescriptor ServiceContractsShouldNotDependOnMicroserviceImplementationsRule = new(
             ServiceContractsShouldNotDependOnMicroserviceImplementationsId,
             "Service contracts must not depend on microservice implementations",
-            "Service contract symbol '{0}' must not depend on microservice type '{1}'",
+            "Service contract '{0}' must not depend on microservice '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -41,7 +41,7 @@ namespace NMolecules.Analyzers.MicroservicesAnalyzers
         public static readonly DiagnosticDescriptor IntegrationEventsShouldNotDependOnMicroserviceImplementationsRule = new(
             IntegrationEventsShouldNotDependOnMicroserviceImplementationsId,
             "Integration events must not depend on microservice implementations",
-            "Integration event symbol '{0}' must not depend on microservice type '{1}'",
+            "Integration event '{0}' must not depend on microservice '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
@@ -59,7 +59,7 @@ namespace NMolecules.Analyzers.MicroservicesAnalyzers
         public static readonly DiagnosticDescriptor SagaParticipantsShouldNotDependOnGatewayOrBffRule = new(
             SagaParticipantsShouldNotDependOnGatewayOrBffId,
             "Saga participants must not depend on gateways or BFF components",
-            "Saga participant symbol '{0}' must not depend on gateway/BFF type '{1}'",
+            "Saga participant '{0}' must not depend on gateway or BFF '{1}'",
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,

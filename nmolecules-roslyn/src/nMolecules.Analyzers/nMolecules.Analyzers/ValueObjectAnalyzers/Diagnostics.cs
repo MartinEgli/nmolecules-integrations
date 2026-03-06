@@ -22,9 +22,19 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
                 yield return symbol.ViolatesEntityUsage();
             }
 
-            if (type.IsService())
+            if (type.IsDomainService())
             {
-                yield return symbol.ViolatesServiceUsage();
+                yield return symbol.ViolatesDomainServiceUsage(type);
+            }
+
+            if (type.IsApplicationService())
+            {
+                yield return symbol.ViolatesApplicationServiceUsage(type);
+            }
+
+            if (type.IsLegacyService())
+            {
+                yield return symbol.ViolatesLegacyServiceUsage(type);
             }
 
             if (type.IsRepository())
@@ -52,7 +62,26 @@ namespace NMolecules.Analyzers.ValueObjectAnalyzers
 
         private static Diagnostic ViolatesEntityUsage(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotUseEntityRule);
 
-        private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotUseServiceRule);
+        private static Diagnostic ViolatesDomainServiceUsage(this ISymbol symbol, ITypeSymbol type) =>
+            symbol.Diagnostic(
+                ValueObjectMustNotUseDomainServiceRule,
+                symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(),
+                type.DisplayName(),
+                symbol.Name);
+
+        private static Diagnostic ViolatesApplicationServiceUsage(this ISymbol symbol, ITypeSymbol type) =>
+            symbol.Diagnostic(
+                ValueObjectMustNotUseApplicationServiceRule,
+                symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(),
+                type.DisplayName(),
+                symbol.Name);
+
+        private static Diagnostic ViolatesLegacyServiceUsage(this ISymbol symbol, ITypeSymbol type) =>
+            symbol.Diagnostic(
+                ValueObjectMustNotUseLegacyServiceRule,
+                symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(),
+                type.DisplayName(),
+                symbol.Name);
 
         private static Diagnostic ViolatesRepositoryUsage(this ISymbol symbol) => symbol.Diagnostic(ValueObjectMustNotUseRepositoryRule);
 

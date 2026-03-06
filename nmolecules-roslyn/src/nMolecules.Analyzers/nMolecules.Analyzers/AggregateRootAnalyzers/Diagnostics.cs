@@ -19,14 +19,19 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
                 yield return symbol.ViolatesRepositoryUsage();
             }
 
-            if (type.IsService() && !type.IsApplicationService())
+            if (type.IsDomainService())
             {
-                yield return symbol.ViolatesServiceUsage();
+                yield return symbol.ViolatesDomainServiceUsage(type);
             }
 
             if (type.IsApplicationService())
             {
                 yield return symbol.ViolatesApplicationServiceUsage(type);
+            }
+
+            if (type.IsLegacyService())
+            {
+                yield return symbol.ViolatesLegacyServiceUsage(type);
             }
 
             if (type.IsFactory())
@@ -37,10 +42,21 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
 
         private static Diagnostic ViolatesAggregateRootUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseAggregateRootsRule);
         private static Diagnostic ViolatesRepositoryUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseRepositoriesRule);
-        private static Diagnostic ViolatesServiceUsage(this ISymbol symbol) => symbol.Diagnostic(Rules.AggregateRootsShouldNotUseServicesRule);
+        private static Diagnostic ViolatesDomainServiceUsage(this ISymbol symbol, ITypeSymbol type) =>
+            symbol.Diagnostic(
+                Rules.AggregateRootsShouldNotUseServicesRule,
+                symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(),
+                type.DisplayName(),
+                symbol.Name);
         private static Diagnostic ViolatesApplicationServiceUsage(this ISymbol symbol, ITypeSymbol type) =>
             symbol.Diagnostic(
                 Rules.AggregateRootsShouldNotUseApplicationServicesRule,
+                symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(),
+                type.DisplayName(),
+                symbol.Name);
+        private static Diagnostic ViolatesLegacyServiceUsage(this ISymbol symbol, ITypeSymbol type) =>
+            symbol.Diagnostic(
+                Rules.AggregateRootsShouldNotUseLegacyServicesRule,
                 symbol.ContainingType?.DisplayName() ?? symbol.DisplayName(),
                 type.DisplayName(),
                 symbol.Name);

@@ -19,7 +19,7 @@ namespace NMolecules.Analyzers.CrossStyleAnalyzers
 
         public static readonly DiagnosticDescriptor CqrsMayOverlayPrimaryStyleRule = new(
             CqrsMayOverlayPrimaryStyleId,
-            "CQRS may overlay a primary structural style",
+            "CQRS should overlay a primary structural style",
             "Scope '{0}' uses CQRS markers without a primary structural style marker (Layered, Onion, or Hexagonal)",
             Category.Architecture,
             DiagnosticSeverity.Warning,
@@ -28,7 +28,7 @@ namespace NMolecules.Analyzers.CrossStyleAnalyzers
 
         public static readonly DiagnosticDescriptor ClassicAndSimplifiedOnionMustNotCoexistInBoundedContextRule = new(
             ClassicAndSimplifiedOnionMustNotCoexistInBoundedContextId,
-            "Classic and simplified Onion styles must not coexist in the same bounded context",
+            "Classic and simplified onion styles must not coexist in the same bounded context",
             "Bounded context '{0}' mixes classic and simplified onion markers",
             Category.Architecture,
             DiagnosticSeverity.Error,

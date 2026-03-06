@@ -17,6 +17,7 @@ Run these checks before any VSIX release candidate:
 ```powershell
 pwsh .\tools\validate-vsix-metadata.ps1
 dotnet test .\test\nMolecules.Analyzers.Test\nMolecules.Analyzers.Test.csproj -v minimal
+pwsh ..\..\tools\validate-rule-doc-sync.ps1
 pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release
 ```
 
@@ -24,6 +25,7 @@ Expected:
 
 - VSIX manifest and project metadata validation passes
 - analyzer suite is green
+- rule-doc sync gate is green
 - installer artifacts are generated under `artifacts/installers/*`
 
 ## Host Smoke Validation (Per VS Major)

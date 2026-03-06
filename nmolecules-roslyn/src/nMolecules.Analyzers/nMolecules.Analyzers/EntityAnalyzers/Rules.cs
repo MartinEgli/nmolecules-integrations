@@ -6,9 +6,12 @@ namespace NMolecules.Analyzers.EntityAnalyzers
     {
         public const string EntitiesShouldNotUseRepositoriesId = "XMoleculesEntity0001";
         public const string EntitiesShouldNotUseAggregateRootsId = "XMoleculesEntity0002";
-        public const string EntitiesShouldNotUseServicesId = "XMoleculesEntity0003";
+        public const string EntitiesShouldNotUseDomainServicesId = "XMoleculesEntity0003";
         public const string EntitiesShouldHaveIdRuleId = "XMoleculesEntity0004";
         public const string EntitiesShouldHaveSingleIdRuleId = "XMoleculesEntity0005";
+        public const string EntitiesShouldNotUseFactoriesId = "XMoleculesEntity0006";
+        public const string EntitiesShouldNotUseApplicationServicesId = "XMoleculesEntity0007";
+        public const string EntitiesShouldNotUseLegacyServicesId = "XMoleculesEntity0008";
 
         public static readonly DiagnosticDescriptor EntitiesShouldNotUseRepositoriesRule = new(
             EntitiesShouldNotUseRepositoriesId,
@@ -40,20 +43,14 @@ namespace NMolecules.Analyzers.EntityAnalyzers
                 Resources.ResourceManager,
                 typeof(Resources)));
         
-        public static readonly DiagnosticDescriptor EntitiesShouldNotUseServicesRule = new(
-            EntitiesShouldNotUseServicesId,
-            new LocalizableResourceString(nameof(Resources.EntityShouldNotUseServiceTitle),
-                Resources.ResourceManager,
-                typeof(Resources)),
-            new LocalizableResourceString(nameof(Resources.EntityShouldNotUseServiceFormat),
-                Resources.ResourceManager,
-                typeof(Resources)),
+        public static readonly DiagnosticDescriptor EntitiesShouldNotUseDomainServicesRule = new(
+            EntitiesShouldNotUseDomainServicesId,
+            "Entities must not depend on domain services",
+            "Entity '{0}' must not depend on domain service '{1}' in member '{2}'",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            new LocalizableResourceString(nameof(Resources.EntityShouldNotUseServiceDescription),
-                Resources.ResourceManager,
-                typeof(Resources)));
+            "Entities should encapsulate domain state and behavior directly instead of depending on separate domain-service collaborators.");
         
         public static readonly DiagnosticDescriptor EntitiesShouldHaveIdRule = new(
             EntitiesShouldHaveIdRuleId,
@@ -72,11 +69,38 @@ namespace NMolecules.Analyzers.EntityAnalyzers
 
         public static readonly DiagnosticDescriptor EntitiesShouldHaveSingleIdRule = new(
             EntitiesShouldHaveSingleIdRuleId,
-            "Entities should declare a single identity",
+            "Entities must declare exactly one identity",
             "Entity '{0}' declares {1} [Identity] members: {2}. Exactly one is allowed",
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
             "Entities represent continuity through a single model identity.");
+
+        public static readonly DiagnosticDescriptor EntitiesShouldNotUseFactoriesRule = new(
+            EntitiesShouldNotUseFactoriesId,
+            "Entities must not depend on factories",
+            "Entity '{0}' must not depend on factory '{1}'",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "Entities should own behavior and identity state, but object creation orchestration belongs to dedicated Factory components.");
+
+        public static readonly DiagnosticDescriptor EntitiesShouldNotUseApplicationServicesRule = new(
+            EntitiesShouldNotUseApplicationServicesId,
+            "Entities must not depend on application services",
+            "Entity '{0}' must not depend on application service '{1}' in member '{2}'",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "Entities are domain building blocks and must not depend on application-service orchestration.");
+
+        public static readonly DiagnosticDescriptor EntitiesShouldNotUseLegacyServicesRule = new(
+            EntitiesShouldNotUseLegacyServicesId,
+            "Entities must not depend on legacy services",
+            "Entity '{0}' must not depend on legacy service '{1}' in member '{2}'",
+            Category.DDD,
+            DiagnosticSeverity.Error,
+            true,
+            "Entities should not depend on the legacy Service marker. Use explicit DomainService or ApplicationService roles instead.");
     }
 }
