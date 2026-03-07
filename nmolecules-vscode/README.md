@@ -1,6 +1,6 @@
 # nMolecules VS Code Extension
 
-This project is the first Visual Studio Code entry point for the nMolecules workspace.
+This project is the Visual Studio Code delivery channel for the nMolecules workspace.
 
 Current scope:
 
@@ -11,6 +11,7 @@ Current scope:
 
 This is intentionally a thin extension project.
 The long-term direction is to reuse the same analyzer rule set that already exists in `nmolecules-roslyn`.
+The current baseline already reuses the shared rule catalog, release-version discipline, and sample parity docs from the integrations repo.
 
 ## Commands
 
@@ -70,6 +71,9 @@ This produces:
 
 - `artifacts/installers/vscode/nMolecules.VSCode.vsix`
 - `artifacts/installers/vscode/setup/nMolecules.Setup.VSCode.exe`
+
+The shipped version is synchronized from `eng/release-version.txt` through `tools/release/sync-release-version.ps1`.
+Validate it before packaging with `pwsh .\tools\release\validate-release-version.ps1`.
 
 Release tags for this channel use `vscode/*` (for example `vscode/v0.2.2`).
 The full release gate is documented in [docs/release-checklist.md](docs/release-checklist.md).

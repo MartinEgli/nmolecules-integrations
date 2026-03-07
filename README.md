@@ -13,13 +13,15 @@ For the current analyzer expansion work, see:
 
 Current baseline highlights:
 
-- analyzer rule catalog is synchronized through `XMoleculesModule0007` and `XMoleculesBoundedContext0005`
+- analyzer rule catalog is synchronized through `XMoleculesModule0007` and `XMoleculesBoundedContext0009`
 - analyzer quality and rule-doc sync gates are part of the default validation workflow
+- release packaging now uses repo-local `eng/release-version.txt` plus sync/validate scripts
 - VSIX and VS Code packaging are delivered from one shared installer script
+- IDE channel parity is tracked through a shared checklist and VS Code host smoke coverage for both healthy and violating workspaces
 
 ## VS Code Extension
 
-The workspace now also contains a first Visual Studio Code extension project:
+The workspace contains the current Visual Studio Code delivery channel:
 
 - [nmolecules-vscode/README.md](nmolecules-vscode/README.md)
 
@@ -27,7 +29,8 @@ Current scope:
 
 - inspect C# workspaces for nMolecules package and project references
 - open the relevant workspace documentation from within VS Code
-- provide a stable starting point for future Roslyn-based diagnostics in VS Code
+- refresh Roslyn analyzer diagnostics into VS Code
+- provide a stable starting point for cross-channel rule-family delivery
 
 ## Installer Build
 
@@ -48,6 +51,12 @@ What it builds:
 - Visual Studio extension package (`.vsix`) and a setup executable (`nMolecules.Setup.VisualStudio.exe`)
 - VS Code extension package (`.vsix`) and a setup executable (`nMolecules.Setup.VSCode.exe`)
 - helper install scripts in the setup folders (`install-visual-studio-extension.cmd`, `install-vscode-extension.cmd`)
+
+Before release packaging, validate version alignment:
+
+```powershell
+pwsh .\tools\release\validate-release-version.ps1
+```
 
 Output path:
 

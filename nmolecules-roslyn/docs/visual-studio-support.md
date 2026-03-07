@@ -1,6 +1,6 @@
 # Visual Studio Support
 
-Status: March 5, 2026
+Status: March 7, 2026
 
 ## Supported Host Matrix
 

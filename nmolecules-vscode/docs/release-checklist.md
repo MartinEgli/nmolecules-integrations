@@ -1,6 +1,6 @@
 # VS Code Release Checklist
 
-Status: March 2026
+Status: March 7, 2026
 
 This checklist defines the release gate for the VS Code delivery path.
 

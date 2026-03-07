@@ -1,10 +1,11 @@
 # IDE Channel Parity Checklist
 
-Status: March 2026
+Status: March 7, 2026
 
 Use this checklist whenever a new analyzer family or rule family is introduced.
 
 The goal is to keep the Visual Studio and VS Code delivery channels aligned enough that a new family is visible, explainable, and testable in both places.
+The current baseline already includes VS Code host smoke coverage for both the healthy and violating workspaces; the remaining parity work is mostly around repeatable Visual Studio and setup-install validation.
 
 ## Required Parity Checks Per New Rule Family
 
@@ -25,6 +26,9 @@ The goal is to keep the Visual Studio and VS Code delivery channels aligned enou
 6. The setup executables still accept the documented command-line shape:
    `nMolecules.Setup.VisualStudio.exe [--vsix <path>] [--installer <path>] [--quiet]`
    `nMolecules.Setup.VSCode.exe [--vsix <path>] [--code <path>] [--no-force]`
+7. The documented release-version source still matches the built channel artifacts:
+   `eng/release-version.txt`
+   `tools/release/validate-release-version.ps1`
 
 ## Smoke Sequence
 
@@ -44,6 +48,7 @@ Then verify manually:
 2. VS Code on `nmolecules-vscode/sample-violations/nmolecules-violations.code-workspace`
 3. Visual Studio on `nmolecules-vscode/sample-workspace/Banking.Sample.sln`
 4. Visual Studio on `nmolecules-vscode/sample-violations/Banking.Sample.Violations.sln`
+5. one installer path per channel (`nMolecules.Setup.VisualStudio.exe`, `nMolecules.Setup.VSCode.exe`) against the freshly built artifact
 
 ## Documentation Links
 

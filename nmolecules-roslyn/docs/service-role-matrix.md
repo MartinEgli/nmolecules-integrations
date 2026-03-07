@@ -1,6 +1,6 @@
 # nMolecules Service Role Matrix
 
-Status: March 5, 2026
+Status: March 7, 2026
 
 This document describes the functional separation between `Service`, `DomainService`, and `ApplicationService`.
 It is the basis for dedicated analyzer rules.
