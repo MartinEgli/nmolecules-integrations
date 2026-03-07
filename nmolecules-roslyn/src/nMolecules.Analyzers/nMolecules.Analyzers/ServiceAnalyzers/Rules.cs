@@ -13,6 +13,9 @@ namespace NMolecules.Analyzers.ServiceAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "The legacy [Service] marker is ambiguous. Prefer an explicit [DomainService] or [ApplicationService] role.");
+            DiagnosticDescriptions.Create(
+                "The type still uses the legacy [Service] marker, which does not reveal whether it belongs to the domain layer or application layer.",
+                "Service roles should be explicit so dependency direction, analyzer semantics, and architectural intent stay unambiguous.",
+                "Replace [Service] with [DomainService] or [ApplicationService] based on the type's real responsibility."));
     }
 }

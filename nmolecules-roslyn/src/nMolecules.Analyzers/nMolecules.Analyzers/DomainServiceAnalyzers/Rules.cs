@@ -16,7 +16,10 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Domain services belong to the domain model and must not depend on application service orchestration.");
+            DiagnosticDescriptions.Create(
+                "A domain service reaches outward to an application-service collaborator.",
+                "Domain services are part of the domain model and must stay independent from use-case orchestration.",
+                "Move orchestration back into the application layer and let the domain service depend only on domain concepts and stable repository contracts."));
 
         public static readonly DiagnosticDescriptor DomainServicesShouldOnlyUseRepositoryContractsRule = new(
             DomainServicesShouldOnlyUseRepositoryContractsId,
@@ -25,7 +28,10 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Domain services may depend on repository contracts, but must not depend on concrete repository implementations.");
+            DiagnosticDescriptions.Create(
+                "The domain service references a concrete repository implementation instead of an abstraction.",
+                "Domain services may rely on persistence capabilities, but only through repository contracts that preserve infrastructure independence.",
+                "Inject an interface or abstract repository contract and keep the concrete implementation on the infrastructure side."));
 
         public static readonly DiagnosticDescriptor DomainServicesShouldNotExposeInfrastructureSignaturesRule = new(
             DomainServicesShouldNotExposeInfrastructureSignaturesId,
@@ -34,7 +40,10 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Domain services should keep their public API independent from infrastructure-layer types.");
+            DiagnosticDescriptions.Create(
+                "A public domain-service signature exposes an infrastructure type as part of its contract.",
+                "Domain-service APIs must express domain intent without coupling callers to technical adapter or persistence types.",
+                "Replace the infrastructure type with a domain abstraction or dedicated DTO and keep the infrastructure mapping outside the domain service."));
 
         public static readonly DiagnosticDescriptor DomainServicesShouldNotUseLegacyServicesRule = new(
             DomainServicesShouldNotUseLegacyServicesId,
@@ -43,6 +52,9 @@ namespace NMolecules.Analyzers.DomainServiceAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Domain services should use explicit domain roles instead of the generic legacy Service marker.");
+            DiagnosticDescriptions.Create(
+                "The domain service depends on a collaborator marked with the generic legacy [Service] attribute.",
+                "Domain dependencies should use explicit role markers so the boundary between domain and application responsibilities remains visible.",
+                "Retype the dependency as [DomainService] or [ApplicationService] and keep the domain service dependent only on domain-level collaborators."));
     }
 }

@@ -2,13 +2,26 @@
   "name": "nmolecules-vscode",
   "displayName": "nMolecules",
   "description": "Workspace inspection and documentation entry points for nMolecules DDD tooling in Visual Studio Code.",
-  "version": "0.1.0",
+  "version": "0.2.2",
   "publisher": "xmolecules",
   "license": "Apache-2.0",
+  "icon": "media/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/xmolecules/nmolecules-integrations.git"
   },
+  "files": [
+    "README.md",
+    "jsconfig.json",
+    "media/**",
+    "package.json",
+    "rule-family-sample-index.md",
+    "sample-violations/**",
+    "sample-workspace/**",
+    "src/**",
+    "test/**",
+    "test-host/**"
+  ],
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -109,3 +122,4 @@
     "@vscode/test-electron": "^2.5.2"
   }
 }
+

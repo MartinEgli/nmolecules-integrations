@@ -8,7 +8,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.DDD\nMolecules.DDD.csproj" />
-    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture\nMolecules.Architecture.csproj" />
+    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture.Cqrs\nMolecules.Architecture.Cqrs.csproj" />
+    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture.Hexagonal\nMolecules.Architecture.Hexagonal.csproj" />
+    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture.Layered\nMolecules.Architecture.Layered.csproj" />
     <ProjectReference Include="..\Banking.Domain\Banking.Domain.csproj" />
     <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.DDD\nMolecules.DDD.csproj"
                       OutputItemType="Analyzer"

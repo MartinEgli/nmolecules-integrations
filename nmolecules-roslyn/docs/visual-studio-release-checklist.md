@@ -4,6 +4,14 @@ Status: March 2026
 
 This checklist defines the release gate for the Visual Studio (VSIX) delivery path.
 
+## Release Source of Truth
+
+- `eng/release-version.txt`
+- `src\nMolecules.Analyzers\nMolecules.Analyzers.Vsix\source.extension.vsixmanifest`
+
+The release version file is the only manually maintained version source.
+The VSIX manifest version is synchronized from it via `tools/release/sync-release-version.ps1`.
+
 ## Scope
 
 - host support: Visual Studio 2022 (`17.x`) and Visual Studio 2026 (`18.x`)
@@ -15,6 +23,7 @@ This checklist defines the release gate for the Visual Studio (VSIX) delivery pa
 Run these checks before any VSIX release candidate:
 
 ```powershell
+pwsh .\tools\release\validate-release-version.ps1
 pwsh .\tools\validate-vsix-metadata.ps1
 dotnet test .\test\nMolecules.Analyzers.Test\nMolecules.Analyzers.Test.csproj -v minimal
 pwsh ..\..\tools\validate-rule-doc-sync.ps1
@@ -23,10 +32,22 @@ pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release
 
 Expected:
 
+- release-version validation passes
 - VSIX manifest and project metadata validation passes
 - analyzer suite is green
 - rule-doc sync gate is green
 - installer artifacts are generated under `artifacts/installers/*`
+
+## Tag Discipline
+
+Visual Studio release tags must use:
+
+- `vs/vX.Y.Z`
+
+The `X.Y.Z` part must match `eng/release-version.txt`.
+This is enforced in `.github/workflows/release-by-tag.yml`.
+
+For analyzer-family parity checks across Visual Studio and VS Code, use `../../docs/ide-channel-parity-checklist.md`.
 
 ## Host Smoke Validation (Per VS Major)
 

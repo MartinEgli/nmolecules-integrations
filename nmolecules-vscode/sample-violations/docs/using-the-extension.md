@@ -13,4 +13,11 @@ Then use the extension in this order:
 7. Run `nMolecules: Open Workspace Docs` to jump back into sample docs.
 8. Use `nMolecules: Inspect Workspace` if you also want the wiring summary in the output channel.
 
-The workspace is configured so that diagnostics target `Banking.Sample.Violations.sln` automatically on activation.
+When a C# or F# file is active, diagnostics refresh prefers a project that explicitly includes that file. If no active-file match is found, the workspace falls back to the configured `Banking.Sample.Violations.sln` target.
+
+Check the `nMolecules` output channel after each refresh:
+
+- `nMolecules target source: active-file exact include.` means the current file selected the build target directly.
+- `nMolecules target source: active-file nearest project.` means no exact include matched, so the extension used the nearest project.
+- `nMolecules target source: configured target.` means the workspace fallback setting was used.
+- `nMolecules target source: workspace fallback.` means the extension scanned the workspace because neither an active-file target nor a configured fallback target resolved.

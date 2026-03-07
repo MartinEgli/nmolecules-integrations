@@ -24,9 +24,10 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            new LocalizableResourceString(nameof(Resources.AggregateRootShouldNotUseRepositoryDescription),
-                Resources.ResourceManager,
-                typeof(Resources)));
+            DiagnosticDescriptions.Create(
+                "The aggregate root reaches directly into a repository dependency from inside its consistency boundary.",
+                "Aggregate roots protect domain invariants and must not depend on persistence access concerns.",
+                "Move repository usage into an application service or domain service that loads the aggregate before invoking aggregate behavior."));
         
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseServicesRule = new(
             AggregateRootsShouldNotUseServicesRuleId,
@@ -39,9 +40,10 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            new LocalizableResourceString(nameof(Resources.AggregateRootShouldNotUseServiceDescription),
-                Resources.ResourceManager,
-                typeof(Resources)));
+            DiagnosticDescriptions.Create(
+                "The aggregate root depends on a domain service to execute behavior inside the aggregate boundary.",
+                "Aggregate roots should enforce their own invariants instead of delegating core boundary behavior to external service collaborators.",
+                "Move invariant-relevant behavior into the aggregate root, or let a domain service coordinate behavior around aggregates from outside the boundary."));
         
         public static readonly DiagnosticDescriptor AggregateRootsShouldHaveIdRule = new(
             AggregateRootsShouldHaveIdRuleId,
@@ -54,9 +56,10 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            new LocalizableResourceString(nameof(Resources.AggregateRootShouldHaveIdDescription),
-                Resources.ResourceManager,
-                typeof(Resources)));
+            DiagnosticDescriptions.Create(
+                "The aggregate root is declared without any [Identity] member.",
+                "Aggregate roots anchor aggregate references and lifecycle through one stable model identity.",
+                "Add exactly one [Identity] member that uniquely represents the aggregate root across transactions."));
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldHaveSingleIdRule = new(
             AggregateRootsShouldHaveSingleIdRuleId,
@@ -65,7 +68,10 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Aggregate roots should expose a single model identity for their consistency boundary.");
+            DiagnosticDescriptions.Create(
+                "The aggregate root declares multiple [Identity] members and therefore multiple competing aggregate identifiers.",
+                "An aggregate root must expose one canonical identity for its boundary and references.",
+                "Keep a single [Identity] member as the aggregate identifier and remodel the rest as ordinary domain attributes."));
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseAggregateRootsRule = new(
             AggregateRootsShouldNotUseAggregateRootsRuleId,
@@ -74,7 +80,10 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Aggregate boundaries should be crossed through identity, not direct object references.");
+            DiagnosticDescriptions.Create(
+                "One aggregate root directly references another aggregate root as a collaborator or field.",
+                "Aggregate boundaries should communicate through identity or higher-level coordination, not direct object graph coupling.",
+                "Replace the direct reference with the other aggregate's identity, a domain event, or application-layer coordination."));
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseApplicationServicesRule = new(
             AggregateRootsShouldNotUseApplicationServicesRuleId,
@@ -83,7 +92,10 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Aggregate roots belong to the domain model and must not depend on application-service orchestration.");
+            DiagnosticDescriptions.Create(
+                "The aggregate root depends on an application-service collaborator from inside the domain model.",
+                "Aggregate roots belong to the domain layer and must stay independent from use-case orchestration concerns.",
+                "Move orchestration back into the application layer and keep the aggregate root focused on invariant-protecting domain behavior."));
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseFactoriesRule = new(
             AggregateRootsShouldNotUseFactoriesRuleId,
@@ -92,7 +104,10 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Aggregate roots should enforce their own consistency boundary and should not depend on external factory components by default.");
+            DiagnosticDescriptions.Create(
+                "The aggregate root depends on a factory to perform behavior inside its lifecycle.",
+                "Factory responsibilities end after creation; aggregate behavior inside the consistency boundary must stay with the aggregate.",
+                "Use the factory only for creation and keep subsequent state transitions and invariant checks inside the aggregate root."));
 
         public static readonly DiagnosticDescriptor AggregateRootsShouldNotUseLegacyServicesRule = new(
             AggregateRootsShouldNotUseLegacyServicesRuleId,
@@ -101,6 +116,9 @@ namespace NMolecules.Analyzers.AggregateRootAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Aggregate roots should not depend on the legacy Service marker. Use explicit DomainService or ApplicationService roles instead.");
+            DiagnosticDescriptions.Create(
+                "The aggregate root depends on a type still marked with the legacy [Service] attribute.",
+                "Aggregate boundaries should only depend on clearly typed domain collaborators, not ambiguous service roles.",
+                "Replace the legacy marker with an explicit role and keep the aggregate root independent from application-service style collaborators."));
     }
 }

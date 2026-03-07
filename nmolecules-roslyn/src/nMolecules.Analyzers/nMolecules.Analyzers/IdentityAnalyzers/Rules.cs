@@ -13,6 +13,9 @@ namespace NMolecules.Analyzers.IdentityAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "DDD identities belong to entities and aggregate roots, not arbitrary model elements.");
+            DiagnosticDescriptions.Create(
+                "An [Identity] member is declared on a type that is not an entity or aggregate root.",
+                "Model identity expresses continuity over time and therefore belongs only to DDD elements with identity semantics.",
+                "Move the [Identity] member onto an [Entity] or [AggregateRoot], or remodel the current type as a value object without identity."));
     }
 }

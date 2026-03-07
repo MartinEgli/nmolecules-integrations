@@ -19,7 +19,10 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Repositories should focus on retrieval and persistence responsibilities instead of depending on domain-service behavior.");
+            DiagnosticDescriptions.Create(
+                "The repository depends on a domain service to complete its persistence or retrieval work.",
+                "Repositories should own persistence access only and must not absorb domain-rule execution responsibilities.",
+                "Move domain logic into the domain service and keep the repository limited to loading and storing aggregates or entities."));
 
         public static readonly DiagnosticDescriptor RepositoriesShouldNotExposeInfrastructureSignaturesRule = new(
             RepositoriesShouldNotExposeInfrastructureSignaturesId,
@@ -28,7 +31,10 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Repository contracts should not expose persistence-specific or infrastructure-layer types in their public API.");
+            DiagnosticDescriptions.Create(
+                "The repository contract leaks an infrastructure-specific type through a public member signature.",
+                "Repository APIs should remain domain-facing contracts instead of exposing persistence technology or adapter details.",
+                "Return domain objects or dedicated abstractions and keep persistence-specific types behind the repository implementation."));
 
         public static readonly DiagnosticDescriptor RepositoriesShouldNotDependOnRepositoriesRule = new(
             RepositoriesShouldNotDependOnRepositoriesId,
@@ -37,7 +43,10 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Repository-to-repository dependencies are only acceptable for explicitly approved technical composition patterns.");
+            DiagnosticDescriptions.Create(
+                "One repository directly uses another repository to complete its own work.",
+                "Repositories should stay focused on one persistence boundary; cross-repository composition is a special-case technical pattern, not the default.",
+                "Remove the direct repository dependency or mark and constrain the composition explicitly through the approved repository-composition pattern."));
 
         public static readonly DiagnosticDescriptor ApprovedRepositoryCompositionShouldUseContractsRule = new(
             ApprovedRepositoryCompositionShouldUseContractsId,
@@ -46,7 +55,10 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "When repository composition is explicitly approved, dependencies should still target repository contracts (interfaces), not concrete repository implementations.");
+            DiagnosticDescriptions.Create(
+                "Approved repository composition is present, but it depends on a concrete repository implementation.",
+                "Even approved composition must preserve inversion of dependencies by targeting repository contracts instead of concrete technical classes.",
+                "Depend on an interface or abstract repository contract and keep concrete repository implementations in the infrastructure wiring layer."));
 
         public static readonly DiagnosticDescriptor RepositoriesShouldNotDependOnFactoriesRule = new(
             RepositoriesShouldNotDependOnFactoriesId,
@@ -55,7 +67,10 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Repository concerns should focus on retrieval/persistence contracts and avoid direct dependencies on object-construction orchestration.");
+            DiagnosticDescriptions.Create(
+                "The repository uses a factory to drive part of its persistence or loading flow.",
+                "Repositories should focus on retrieval and storage boundaries, not on object-creation orchestration.",
+                "Build the object graph in a dedicated factory or mapper and keep the repository contract centered on persistence operations."));
 
         public static readonly DiagnosticDescriptor RepositoriesShouldNotUseApplicationServicesRule = new(
             RepositoriesShouldNotUseApplicationServicesId,
@@ -64,7 +79,10 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Repositories must not depend on application-service orchestration.");
+            DiagnosticDescriptions.Create(
+                "The repository reaches upward into an application-service collaborator.",
+                "Repositories are low-level domain or infrastructure boundaries and must not depend on use-case orchestration components.",
+                "Move orchestration into the application service and let the repository stay a passive persistence boundary."));
 
         public static readonly DiagnosticDescriptor RepositoriesShouldNotUseLegacyServicesRule = new(
             RepositoriesShouldNotUseLegacyServicesId,
@@ -73,6 +91,9 @@ namespace NMolecules.Analyzers.RepositoryAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Repositories should not depend on the legacy Service marker. Use explicit DomainService or ApplicationService roles instead.");
+            DiagnosticDescriptions.Create(
+                "The repository depends on a collaborator marked with the ambiguous legacy [Service] attribute.",
+                "Repository boundaries should depend only on explicitly typed collaborators so architectural intent stays analyzable.",
+                "Retype the dependency as [DomainService] or [ApplicationService] and keep repository boundaries free from ambiguous service roles."));
     }
 }

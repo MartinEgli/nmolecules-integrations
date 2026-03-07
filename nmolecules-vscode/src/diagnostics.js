@@ -2,8 +2,12 @@
 
 const path = require('node:path');
 const { spawn } = require('node:child_process');
+const { TextDecoder } = require('util');
 
 const NMOLECULES_DIAGNOSTIC_PATTERN = /^(.+?)\((\d+),(\d+)(?:,\d+,\d+)?\):\s(error|warning|fehler|warnung)\s(XMolecules[A-Za-z0-9]+):\s(.+?)(?:\s\[(.+)\])?$/i;
+const SEARCH_EXCLUDE_GLOB = '**/{.git,.tmp,node_modules,.vscode-test,bin,obj}/**';
+const PROJECT_INCLUDE_PATTERN = /<Compile\b[^>]*\bInclude\s*=\s*"([^"]+)"/gi;
+const SUPPORTED_SOURCE_EXTENSIONS = new Set(['.cs', '.fs']);
 let lastDiagnosticsReport;
 
 function getDiagnosticsTarget(vscodeApi) {
@@ -14,7 +18,148 @@ function getDiagnosticsBuildArguments(vscodeApi) {
   return vscodeApi.workspace.getConfiguration('nmolecules').get('diagnosticsBuildArguments', ['-v', 'minimal']);
 }
 
-async function resolveBuildTarget(vscodeApi, configuredTarget) {
+function getWorkspaceFolderForPath(vscodeApi, filePath) {
+  const folders = vscodeApi.workspace.workspaceFolders ?? [];
+
+  return folders
+    .filter((folder) => filePath.localeCompare(folder.uri.fsPath, undefined, { sensitivity: 'accent' }) === 0
+      || filePath.startsWith(`${folder.uri.fsPath}${path.sep}`))
+    .sort((left, right) => right.uri.fsPath.length - left.uri.fsPath.length)[0];
+}
+
+function sortTargetsBySpecificity(targetUris) {
+  return [...targetUris].sort((left, right) => {
+    const leftDepth = left.fsPath.split(/[\\/]+/).length;
+    const rightDepth = right.fsPath.split(/[\\/]+/).length;
+
+    if (leftDepth !== rightDepth) {
+      return leftDepth - rightDepth;
+    }
+
+    return left.fsPath.localeCompare(right.fsPath);
+  });
+}
+
+function getActiveSourceDocumentPath(vscodeApi) {
+  const document = vscodeApi.window?.activeTextEditor?.document;
+  const filePath = document?.uri?.fsPath;
+
+  if (!filePath) {
+    return undefined;
+  }
+
+  if (document.languageId === 'csharp' || document.languageId === 'fsharp') {
+    return filePath;
+  }
+
+  return SUPPORTED_SOURCE_EXTENSIONS.has(path.extname(filePath).toLowerCase())
+    ? filePath
+    : undefined;
+}
+
+function normalizeRelativeProjectPath(relativePath) {
+  return path.posix
+    .normalize(relativePath.replace(/[\\/]+/g, '/'))
+    .replace(/^\.\//, '')
+    .toLowerCase();
+}
+
+async function readWorkspaceFile(vscodeApi, uri) {
+  return new TextDecoder('utf8').decode(await vscodeApi.workspace.fs.readFile(uri));
+}
+
+function projectExplicitlyIncludesFile(projectContents, projectFilePath, filePath) {
+  const expectedIncludePath = normalizeRelativeProjectPath(path.relative(path.dirname(projectFilePath), filePath));
+
+  for (const match of projectContents.matchAll(PROJECT_INCLUDE_PATTERN)) {
+    if (normalizeRelativeProjectPath(match[1]) === expectedIncludePath) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+async function findExplicitProjectTargetForFile(vscodeApi, filePath) {
+  const workspaceFolder = getWorkspaceFolderForPath(vscodeApi, filePath);
+
+  if (!workspaceFolder) {
+    return undefined;
+  }
+
+  const workspaceRoot = workspaceFolder.uri.fsPath;
+  let currentDirectory = path.dirname(filePath);
+
+  while (currentDirectory.startsWith(workspaceRoot)) {
+    const relativeDirectory = path.relative(workspaceRoot, currentDirectory).split(path.sep).join('/');
+    const searchPrefix = relativeDirectory ? `${relativeDirectory}/` : '';
+    const projectUris = await vscodeApi.workspace.findFiles(
+      `${searchPrefix}*.{csproj,fsproj}`,
+      SEARCH_EXCLUDE_GLOB
+    );
+
+    const matchingProjects = [];
+
+    for (const projectUri of projectUris) {
+      try {
+        const projectContents = await readWorkspaceFile(vscodeApi, projectUri);
+        if (projectExplicitlyIncludesFile(projectContents, projectUri.fsPath, filePath)) {
+          matchingProjects.push(projectUri);
+        }
+      } catch {
+        // Skip unreadable project files and continue searching.
+      }
+    }
+
+    if (matchingProjects.length > 0) {
+      return [...matchingProjects]
+        .sort((left, right) => left.fsPath.localeCompare(right.fsPath))[0]
+        .fsPath;
+    }
+
+    if (currentDirectory === workspaceRoot) {
+      break;
+    }
+
+    currentDirectory = path.dirname(currentDirectory);
+  }
+
+  return undefined;
+}
+
+async function findNearestProjectTarget(vscodeApi, filePath) {
+  const workspaceFolder = getWorkspaceFolderForPath(vscodeApi, filePath);
+
+  if (!workspaceFolder) {
+    return undefined;
+  }
+
+  const workspaceRoot = workspaceFolder.uri.fsPath;
+  let currentDirectory = path.dirname(filePath);
+
+  while (currentDirectory.startsWith(workspaceRoot)) {
+    const relativeDirectory = path.relative(workspaceRoot, currentDirectory).split(path.sep).join('/');
+    const searchPrefix = relativeDirectory ? `${relativeDirectory}/` : '';
+    const projectUris = await vscodeApi.workspace.findFiles(
+      `${searchPrefix}*.{csproj,fsproj}`,
+      SEARCH_EXCLUDE_GLOB
+    );
+
+    if (projectUris.length > 0) {
+      return sortTargetsBySpecificity(projectUris)[0].fsPath;
+    }
+
+    if (currentDirectory === workspaceRoot) {
+      break;
+    }
+
+    currentDirectory = path.dirname(currentDirectory);
+  }
+
+  return undefined;
+}
+
+async function resolveConfiguredBuildTarget(vscodeApi, configuredTarget) {
   const folders = vscodeApi.workspace.workspaceFolders ?? [];
 
   if (configuredTarget && configuredTarget.trim()) {
@@ -33,18 +178,71 @@ async function resolveBuildTarget(vscodeApi, configuredTarget) {
     }
   }
 
+  return undefined;
+}
+
+async function resolveWorkspaceFallbackTarget(vscodeApi) {
   const [solutionUris, projectUris] = await Promise.all([
-    vscodeApi.workspace.findFiles('**/*.sln'),
-    vscodeApi.workspace.findFiles('**/*.{csproj,fsproj}')
+    vscodeApi.workspace.findFiles('**/*.sln', SEARCH_EXCLUDE_GLOB),
+    vscodeApi.workspace.findFiles('**/*.{csproj,fsproj}', SEARCH_EXCLUDE_GLOB)
   ]);
 
-  const orderedSolutions = [...solutionUris].sort((left, right) => left.fsPath.localeCompare(right.fsPath));
+  const orderedSolutions = sortTargetsBySpecificity(solutionUris);
   if (orderedSolutions.length > 0) {
     return orderedSolutions[0].fsPath;
   }
 
-  const orderedProjects = [...projectUris].sort((left, right) => left.fsPath.localeCompare(right.fsPath));
+  const orderedProjects = sortTargetsBySpecificity(projectUris);
   return orderedProjects[0]?.fsPath;
+}
+
+async function resolveBuildTargetDetails(vscodeApi, configuredTarget) {
+  const activeDocumentPath = getActiveSourceDocumentPath(vscodeApi);
+
+  if (activeDocumentPath) {
+    const explicitProjectTarget = await findExplicitProjectTargetForFile(vscodeApi, activeDocumentPath);
+    if (explicitProjectTarget) {
+      return {
+        buildTarget: explicitProjectTarget,
+        source: 'active-file exact include',
+        activeDocumentPath,
+        exactIncludeMatched: true
+      };
+    }
+
+    const nearestProjectTarget = await findNearestProjectTarget(vscodeApi, activeDocumentPath);
+    if (nearestProjectTarget) {
+      return {
+        buildTarget: nearestProjectTarget,
+        source: 'active-file nearest project',
+        activeDocumentPath,
+        exactIncludeMatched: false
+      };
+    }
+  }
+
+  const configuredBuildTarget = await resolveConfiguredBuildTarget(vscodeApi, configuredTarget);
+  if (configuredBuildTarget) {
+    return {
+      buildTarget: configuredBuildTarget,
+      source: 'configured target',
+      activeDocumentPath,
+      exactIncludeMatched: activeDocumentPath ? false : undefined
+    };
+  }
+
+  const fallbackBuildTarget = await resolveWorkspaceFallbackTarget(vscodeApi);
+  return {
+    buildTarget: fallbackBuildTarget,
+    source: 'workspace fallback',
+    activeDocumentPath,
+    exactIncludeMatched: activeDocumentPath ? false : undefined
+  };
+}
+
+async function resolveBuildTarget(vscodeApi, configuredTarget) {
+  const resolution = await resolveBuildTargetDetails(vscodeApi, configuredTarget);
+  return resolution.buildTarget;
 }
 
 function runDotnetBuild(buildTarget, buildArguments, cwd) {
@@ -171,7 +369,8 @@ function getLastDiagnosticsReport() {
 }
 
 async function refreshDiagnostics(vscodeApi, outputChannel, diagnosticCollection, options = {}) {
-  const buildTarget = await resolveBuildTarget(vscodeApi, options.buildTarget ?? getDiagnosticsTarget(vscodeApi));
+  const resolution = await resolveBuildTargetDetails(vscodeApi, options.buildTarget ?? getDiagnosticsTarget(vscodeApi));
+  const buildTarget = resolution.buildTarget;
 
   if (!buildTarget) {
     const message = 'No solution or project file was found for nMolecules diagnostics.';
@@ -192,6 +391,12 @@ async function refreshDiagnostics(vscodeApi, outputChannel, diagnosticCollection
   const runBuild = options.runBuild ?? runDotnetBuild;
   const workspaceFolderPath = vscodeApi.workspace.workspaceFolders?.[0]?.uri.fsPath ?? path.dirname(buildTarget);
 
+  if (resolution.activeDocumentPath && resolution.exactIncludeMatched === false) {
+    outputChannel.appendLine(
+      `nMolecules target resolution: no exact project include matched ${resolution.activeDocumentPath}; using ${resolution.source}.`
+    );
+  }
+  outputChannel.appendLine(`nMolecules target source: ${resolution.source}.`);
   outputChannel.appendLine(`Refreshing nMolecules diagnostics for ${buildTarget}`);
   const buildResult = await runBuild(buildTarget, buildArguments, workspaceFolderPath);
   const diagnostics = parseDiagnosticsFromBuildOutput(buildResult.output);
@@ -228,12 +433,15 @@ module.exports = {
   getDiagnosticsTarget,
   getDiagnosticsBuildArguments,
   resolveBuildTarget,
+  resolveBuildTargetDetails,
   runDotnetBuild,
   parseDiagnosticLine,
   parseDiagnosticsFromBuildOutput,
   applyDiagnostics,
   summarizeDiagnostics,
   summarizeDiagnosticsByRule,
+  findExplicitProjectTargetForFile,
+  findNearestProjectTarget,
   getLastDiagnosticsReport,
   refreshDiagnostics
 };

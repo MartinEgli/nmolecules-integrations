@@ -19,7 +19,10 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Modules should expose a stable identifier for tooling, reporting, and traceability.");
+            DiagnosticDescriptions.Create(
+                "The module declaration omits a stable Id.",
+                "Module metadata needs a durable identifier so tooling can correlate ownership, naming, and references over time.",
+                "Add a non-empty module Id that remains stable even if the display name changes."));
 
         public static readonly DiagnosticDescriptor ModuleShouldDefineNameRule = new(
             ModuleShouldDefineNameId,
@@ -28,7 +31,10 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Modules should expose readable naming metadata for diagnostics and documentation.");
+            DiagnosticDescriptions.Create(
+                "The module declaration lacks a readable Name or Value.",
+                "Module metadata should remain understandable in diagnostics, catalogs, and ownership documentation.",
+                "Set Name or Value to a readable module label from the domain language."));
 
         public static readonly DiagnosticDescriptor ModuleShouldDefineBoundedContextIdRule = new(
             ModuleShouldDefineBoundedContextIdId,
@@ -37,7 +43,10 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Modules should declare the bounded context they belong to so tooling can derive context-module mappings.");
+            DiagnosticDescriptions.Create(
+                "The module metadata does not declare which bounded context owns the module.",
+                "Module ownership must be explicit so tooling can build a reliable bounded-context to module map.",
+                "Provide a non-empty BoundedContextId that points to the owning bounded context."));
 
         public static readonly DiagnosticDescriptor ModuleShouldReferenceDeclaredBoundedContextRule = new(
             ModuleShouldReferenceDeclaredBoundedContextId,
@@ -46,7 +55,10 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Module BoundedContextId values should reference bounded contexts declared in the same compilation metadata.");
+            DiagnosticDescriptions.Create(
+                "The module references a BoundedContextId that is unknown in the current compilation metadata.",
+                "Module ownership metadata must point to declared bounded contexts so architectural ownership remains verifiable.",
+                "Declare the missing bounded context or correct the module's BoundedContextId to an existing one."));
 
         public static readonly DiagnosticDescriptor ModuleShouldUseSingleNamePerIdRule = new(
             ModuleShouldUseSingleNamePerIdId,
@@ -55,7 +67,10 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Module declarations that share one Id should converge on a single Name/Value for stable diagnostics and reporting.");
+            DiagnosticDescriptions.Create(
+                "The same module Id is associated with different names or values across declarations.",
+                "One module identity should map to one readable name so catalogs and diagnostics stay stable.",
+                "Choose one canonical Name or Value for the shared module Id and align the remaining declarations."));
 
         public static readonly DiagnosticDescriptor ModuleShouldUseSingleBoundedContextIdPerIdRule = new(
             ModuleShouldUseSingleBoundedContextIdPerIdId,
@@ -64,7 +79,10 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Module declarations that share one Id should converge on a single BoundedContextId for stable context ownership semantics.");
+            DiagnosticDescriptions.Create(
+                "The same module Id is assigned to different bounded-context Ids across declarations.",
+                "One module identity should belong to one bounded context so ownership semantics remain unambiguous.",
+                "Keep one bounded-context assignment for the module Id or split the declarations into separate modules with distinct Ids."));
 
         public static readonly DiagnosticDescriptor ModuleNameShouldMapToSingleIdPerBoundedContextRule = new(
             ModuleNameShouldMapToSingleIdPerBoundedContextId,
@@ -73,6 +91,9 @@ namespace NMolecules.Analyzers.ModuleAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Inside one bounded context, each module name should map to one stable module Id for unambiguous ownership metadata.");
+            DiagnosticDescriptions.Create(
+                "Inside one bounded context, the same module name maps to multiple module Ids.",
+                "Within a bounded context, a readable module name should point to one stable module identity.",
+                "Pick one canonical module Id for the name or rename the conflicting modules so name-to-id mapping stays unique."));
     }
 }

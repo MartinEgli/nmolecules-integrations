@@ -54,6 +54,11 @@ Output path:
 - `artifacts/installers/visual-studio/setup`
 - `artifacts/installers/vscode/setup`
 
+Installer note:
+
+- `nMolecules.Setup.VSCode.exe` first checks its own folder, then common sibling artifact folders such as `..\nMolecules.VSCode.vsix` and `artifacts/installers/vscode/**`
+- use `--vsix <path>` when the VS Code package is stored elsewhere
+
 ## CI Artifact Split
 
 The CI pipeline publishes installer artifacts per IDE channel:

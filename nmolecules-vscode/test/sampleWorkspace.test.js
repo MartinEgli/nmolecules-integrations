@@ -91,10 +91,10 @@ test('violations workspace uses local analyzer project references in every proje
   const report = buildWorkspaceReport(enumerateFiles(violationsRoot));
 
   assert.equal(report.totalSolutions, 1);
-  assert.equal(report.totalProjects, 3);
+  assert.equal(report.totalProjects, 7);
   assert.equal(report.analyzerPackageProjects, 0);
-  assert.equal(report.analyzerProjectReferenceProjects, 3);
-  assert.equal(report.coreReferenceProjects, 3);
+  assert.equal(report.analyzerProjectReferenceProjects, 7);
+  assert.equal(report.coreReferenceProjects, 7);
 });
 
 test('sample catalogs include multiple valid and invalid example files', () => {

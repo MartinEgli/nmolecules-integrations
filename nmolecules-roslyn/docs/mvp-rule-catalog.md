@@ -30,12 +30,13 @@ The MVP baseline is complete enough for cross-IDE delivery.
 Current depth work is focused on:
 
 - bounded-context dependency semantics beyond current duplicate-target baseline (`XMoleculesBoundedContext0010+`)
-- continued message quality and severity harmonization
+- later conditional-policy depth and severity refinement where needed
 - keeping rule map, release catalog, tests, and samples synchronized
 
 Recent closure:
 
 - direct DDD dependency-matrix prohibitions are now explicit for Entity, AggregateRoot, ValueObject, and Repository service-role pairs
+- analyzer message quality baseline is complete: diagnostic descriptions now explain why a violation happens, which architectural rule is violated, and which target correction is intended
 
 ## Rule Metadata Requirements
 

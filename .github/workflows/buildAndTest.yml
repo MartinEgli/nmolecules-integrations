@@ -13,6 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Validate release version discipline
+      shell: pwsh
+      run: .\tools\release\validate-release-version.ps1
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
@@ -30,12 +33,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Validate release version discipline
+      shell: pwsh
+      run: .\tools\release\validate-release-version.ps1
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: 24
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Install VS Code extension dependencies
+      run: npm install --prefix nmolecules-vscode
     - name: Test VS Code extension project
       run: npm test --prefix nmolecules-vscode
+    - name: Run VS Code extension host smoke tests
+      run: npm run test:host --prefix nmolecules-vscode
 
   visual-studio-installers:
 
@@ -43,6 +57,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Validate release version discipline
+      shell: pwsh
+      run: .\tools\release\validate-release-version.ps1
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -61,6 +78,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Validate release version discipline
+      shell: pwsh
+      run: .\tools\release\validate-release-version.ps1
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:

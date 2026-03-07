@@ -24,9 +24,10 @@ namespace NMolecules.Analyzers.EntityAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            new LocalizableResourceString(nameof(Resources.EntityShouldNotUseRepositoryDescription),
-                Resources.ResourceManager,
-                typeof(Resources)));
+            DiagnosticDescriptions.Create(
+                "The entity directly references a repository dependency from its model logic or state.",
+                "Entities must protect domain behavior and identity, not reach into persistence access concerns.",
+                "Move repository access into an application service, domain service, or repository boundary and keep the entity persistence-agnostic."));
 
         public static readonly DiagnosticDescriptor EntitiesShouldNotUseAggregateRootsRule = new(
             EntitiesShouldNotUseAggregateRootsId,
@@ -39,9 +40,10 @@ namespace NMolecules.Analyzers.EntityAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            new LocalizableResourceString(nameof(Resources.EntityShouldNotUseAggregateRootDescription),
-                Resources.ResourceManager,
-                typeof(Resources)));
+            DiagnosticDescriptions.Create(
+                "The entity references another aggregate root directly instead of through its identity or a boundary contract.",
+                "Aggregate boundaries must stay explicit so one aggregate does not silently control or couple to another aggregate's consistency rules.",
+                "Store the other aggregate's identity, publish an event, or coordinate the interaction through an application/domain service."));
         
         public static readonly DiagnosticDescriptor EntitiesShouldNotUseDomainServicesRule = new(
             EntitiesShouldNotUseDomainServicesId,
@@ -50,7 +52,10 @@ namespace NMolecules.Analyzers.EntityAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Entities should encapsulate domain state and behavior directly instead of depending on separate domain-service collaborators.");
+            DiagnosticDescriptions.Create(
+                "The entity calls or stores a domain service collaborator to perform part of its behavior.",
+                "Entities should encapsulate state-local behavior directly instead of delegating core model behavior to service dependencies.",
+                "Move the behavior into the entity when it belongs to its own invariants, or orchestrate the interaction from a dedicated domain service outside the entity."));
         
         public static readonly DiagnosticDescriptor EntitiesShouldHaveIdRule = new(
             EntitiesShouldHaveIdRuleId,
@@ -63,9 +68,10 @@ namespace NMolecules.Analyzers.EntityAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            new LocalizableResourceString(nameof(Resources.EntityShouldHaveIdDescription),
-                Resources.ResourceManager,
-                typeof(Resources)));
+            DiagnosticDescriptions.Create(
+                "The entity has been modeled as an identity-bearing concept but no [Identity] member is declared.",
+                "Entities are distinguished by continuity over time, so they require an explicit identity in the model.",
+                "Add exactly one stable [Identity] member that represents the entity's domain identity."));
 
         public static readonly DiagnosticDescriptor EntitiesShouldHaveSingleIdRule = new(
             EntitiesShouldHaveSingleIdRuleId,
@@ -74,7 +80,10 @@ namespace NMolecules.Analyzers.EntityAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Entities represent continuity through a single model identity.");
+            DiagnosticDescriptions.Create(
+                "The entity declares multiple members as [Identity] and therefore exposes more than one model identity.",
+                "An entity has one identity concept that defines its continuity across state changes.",
+                "Keep one [Identity] member as the canonical identifier and remodel the remaining fields as normal attributes or invariants."));
 
         public static readonly DiagnosticDescriptor EntitiesShouldNotUseFactoriesRule = new(
             EntitiesShouldNotUseFactoriesId,
@@ -83,7 +92,10 @@ namespace NMolecules.Analyzers.EntityAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Entities should own behavior and identity state, but object creation orchestration belongs to dedicated Factory components.");
+            DiagnosticDescriptions.Create(
+                "The entity depends on a factory to continue its own behavior or lifecycle.",
+                "Factories own object creation, while entities own domain state and invariant-preserving behavior after creation.",
+                "Move creation concerns out of the entity and let an application service or factory create entities before domain behavior begins."));
 
         public static readonly DiagnosticDescriptor EntitiesShouldNotUseApplicationServicesRule = new(
             EntitiesShouldNotUseApplicationServicesId,
@@ -92,7 +104,10 @@ namespace NMolecules.Analyzers.EntityAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Entities are domain building blocks and must not depend on application-service orchestration.");
+            DiagnosticDescriptions.Create(
+                "The entity reaches out to an application-service collaborator from inside the domain model.",
+                "Entities must stay inside the domain layer and must not depend on use-case orchestration.",
+                "Move the orchestration into the application layer and let the entity expose domain operations without application-service dependencies."));
 
         public static readonly DiagnosticDescriptor EntitiesShouldNotUseLegacyServicesRule = new(
             EntitiesShouldNotUseLegacyServicesId,
@@ -101,6 +116,9 @@ namespace NMolecules.Analyzers.EntityAnalyzers
             Category.DDD,
             DiagnosticSeverity.Error,
             true,
-            "Entities should not depend on the legacy Service marker. Use explicit DomainService or ApplicationService roles instead.");
+            DiagnosticDescriptions.Create(
+                "The entity depends on a type still marked with the ambiguous legacy [Service] attribute.",
+                "Entity dependencies should expose clear architectural roles so the model does not accidentally couple to orchestration concerns.",
+                "Replace the legacy service marker with an explicit role and keep the entity independent from application-service style collaborators."));
     }
 }

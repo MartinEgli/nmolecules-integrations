@@ -21,7 +21,10 @@ namespace NMolecules.Analyzers.EventAnalyzers
             Category.Events,
             DiagnosticSeverity.Error,
             true,
-            "Domain event payloads should remain transport-friendly and must not capture live entity references.");
+            DiagnosticDescriptions.Create(
+                "The domain event payload captures an entity reference.",
+                "Domain events should carry transport-friendly data, not live entity objects with identity and behavior.",
+                "Publish the entity identity or a value snapshot instead of the entity reference itself."));
 
         public static readonly DiagnosticDescriptor DomainEventsMustNotReferenceAggregateRootsRule = new(
             DomainEventsMustNotReferenceAggregateRootsId,
@@ -30,7 +33,10 @@ namespace NMolecules.Analyzers.EventAnalyzers
             Category.Events,
             DiagnosticSeverity.Error,
             true,
-            "Domain event payloads should remain transport-friendly and must not capture live aggregate root references.");
+            DiagnosticDescriptions.Create(
+                "The domain event payload captures an aggregate root reference.",
+                "Domain events should describe something that happened, not retain a live aggregate boundary.",
+                "Publish aggregate identity or copied event data instead of a direct aggregate root reference."));
 
         public static readonly DiagnosticDescriptor DomainEventsMustNotReferenceRepositoriesRule = new(
             DomainEventsMustNotReferenceRepositoriesId,
@@ -39,7 +45,10 @@ namespace NMolecules.Analyzers.EventAnalyzers
             Category.Events,
             DiagnosticSeverity.Error,
             true,
-            "Domain event payloads must not carry repository abstractions.");
+            DiagnosticDescriptions.Create(
+                "The domain event payload references a repository type.",
+                "Domain event payloads are facts and must not embed retrieval or persistence abstractions.",
+                "Remove the repository dependency and publish only the data consumers need to react to the event."));
 
         public static readonly DiagnosticDescriptor DomainEventsMustNotReferenceServicesRule = new(
             DomainEventsMustNotReferenceServicesId,
@@ -48,7 +57,10 @@ namespace NMolecules.Analyzers.EventAnalyzers
             Category.Events,
             DiagnosticSeverity.Error,
             true,
-            "Domain event payloads must not carry service abstractions or orchestration roles.");
+            DiagnosticDescriptions.Create(
+                "The domain event payload references a service role such as a domain service, application service, or legacy service.",
+                "Domain events should remain stable payloads and must not carry orchestration or service abstractions.",
+                "Publish pure event data and let consumers resolve their own collaborators outside the event type."));
 
         public static readonly DiagnosticDescriptor DomainEventPublishersShouldPreferAggregateRootsOrApplicationServicesRule = new(
             DomainEventPublishersShouldPreferAggregateRootsOrApplicationServicesId,
@@ -57,7 +69,10 @@ namespace NMolecules.Analyzers.EventAnalyzers
             Category.Events,
             DiagnosticSeverity.Warning,
             true,
-            "Aggregate roots and application services are the preferred default sources for domain event publication. Other hosts should be a conscious exception.");
+            DiagnosticDescriptions.Create(
+                "A domain event publisher is hosted on a type that is neither an aggregate root nor an application service.",
+                "Domain event publication is usually owned by aggregate roots or application services because they naturally model state changes and use-case orchestration.",
+                "Move publication to an aggregate root or application service unless the alternative host is an intentional, documented exception."));
 
         public static readonly DiagnosticDescriptor RepositoriesAndFactoriesMustNotPublishDomainEventsRule = new(
             RepositoriesAndFactoriesMustNotPublishDomainEventsId,
@@ -66,7 +81,10 @@ namespace NMolecules.Analyzers.EventAnalyzers
             Category.Events,
             DiagnosticSeverity.Error,
             true,
-            "Repository and factory components are forbidden default sources for domain event publication.");
+            DiagnosticDescriptions.Create(
+                "A repository or factory is marked as a domain event publisher.",
+                "Repositories and factories must not publish domain events because persistence and creation concerns are not event-source responsibilities.",
+                "Publish the event from the aggregate root or the application service that owns the state change instead."));
 
         public static readonly DiagnosticDescriptor DomainEventHandlersMustConsumeDomainEventsRule = new(
             DomainEventHandlersMustConsumeDomainEventsId,
@@ -75,7 +93,10 @@ namespace NMolecules.Analyzers.EventAnalyzers
             Category.Events,
             DiagnosticSeverity.Error,
             true,
-            "A domain event handler should explicitly consume a domain event payload instead of being marked without any event input.");
+            DiagnosticDescriptions.Create(
+                "A domain event handler is marked as a handler but has no [DomainEvent] payload parameter.",
+                "Handlers must explicitly consume an event payload so their event contract is visible and analyzable.",
+                "Add exactly one domain-event parameter or remove the handler marker if the method is not an event handler."));
 
         public static readonly DiagnosticDescriptor DomainEventPublishersShouldExposeDomainEventPayloadsRule = new(
             DomainEventPublishersShouldExposeDomainEventPayloadsId,
@@ -84,7 +105,10 @@ namespace NMolecules.Analyzers.EventAnalyzers
             Category.Events,
             DiagnosticSeverity.Warning,
             true,
-            "Method-level domain event publishers should expose their domain event payload explicitly through a parameter or return type.");
+            DiagnosticDescriptions.Create(
+                "A method-level domain event publisher does not expose a [DomainEvent] payload in its parameters or return type.",
+                "Publisher methods should make the published event contract explicit instead of hiding it behind side effects.",
+                "Add a domain-event parameter or return type so the publication contract is visible in the API."));
 
         public static readonly DiagnosticDescriptor DomainEventHandlersShouldHandleSingleDomainEventPayloadRule = new(
             DomainEventHandlersShouldHandleSingleDomainEventPayloadId,
@@ -93,6 +117,9 @@ namespace NMolecules.Analyzers.EventAnalyzers
             Category.Events,
             DiagnosticSeverity.Warning,
             true,
-            "Event handlers should focus on one event payload per handler method or delegate to keep event-flow contracts explicit.");
+            DiagnosticDescriptions.Create(
+                "A domain event handler declares multiple [DomainEvent] payload parameters.",
+                "Handlers should focus on one event contract at a time so event-flow responsibilities stay explicit.",
+                "Split the logic into separate handlers or reduce the signature to one domain-event payload."));
     }
 }

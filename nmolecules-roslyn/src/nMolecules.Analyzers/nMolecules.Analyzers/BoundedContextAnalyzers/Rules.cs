@@ -21,7 +21,10 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Bounded contexts should expose a stable identifier for tooling, reporting, and cross-repository references.");
+            DiagnosticDescriptions.Create(
+                "The bounded-context declaration omits a stable Id.",
+                "Bounded-context metadata needs a durable identifier so tooling can correlate ownership, dependencies, and reports across scopes.",
+                "Add a non-empty Id that remains stable even if the readable display name changes."));
 
         public static readonly DiagnosticDescriptor BoundedContextShouldDefineNameRule = new(
             BoundedContextShouldDefineNameId,
@@ -30,7 +33,10 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Bounded contexts should expose a readable Name (or Value alias) for diagnostics and documentation.");
+            DiagnosticDescriptions.Create(
+                "The bounded-context declaration only provides technical metadata and no readable name.",
+                "Bounded-context metadata should stay understandable in diagnostics, docs, and catalogs.",
+                "Set Name or Value to a readable bounded-context label that matches the model language."));
 
         public static readonly DiagnosticDescriptor BoundedContextShouldUseSingleIdPerCompilationRule = new(
             BoundedContextShouldUseSingleIdPerCompilationId,
@@ -39,7 +45,10 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Bounded context declarations in one compilation should converge on a single context Id for unambiguous tooling semantics.");
+            DiagnosticDescriptions.Create(
+                "Multiple bounded-context Ids are declared in the same compilation scope.",
+                "A compilation that models one bounded-context scope should converge on one bounded-context identity.",
+                "Align the declarations on one canonical Id or split unrelated bounded contexts into separate compilations."));
 
         public static readonly DiagnosticDescriptor BoundedContextShouldUseSingleNamePerIdRule = new(
             BoundedContextShouldUseSingleNamePerIdId,
@@ -48,7 +57,10 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Bounded context declarations that share one Id should also converge on a single Name/Value for stable diagnostics and reporting.");
+            DiagnosticDescriptions.Create(
+                "The same bounded-context Id is associated with different names or values in one compilation.",
+                "One bounded-context identity should map to one readable name so diagnostics and documentation stay stable.",
+                "Choose one canonical Name or Value for the shared Id and update the remaining declarations to match it."));
 
         public static readonly DiagnosticDescriptor BoundedContextModuleOwnershipShouldMatchScopeIdRule = new(
             BoundedContextModuleOwnershipShouldMatchScopeIdId,
@@ -57,7 +69,10 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "When a metadata scope declares a bounded context, module ownership declared on that same scope should use the same context Id.");
+            DiagnosticDescriptions.Create(
+                "A module declaration on the same scope points to a different bounded-context Id than the bounded-context metadata itself.",
+                "Module ownership metadata on one scope must align with the bounded context declared for that same scope.",
+                "Change the module's BoundedContextId or the bounded-context declaration so both describe the same ownership boundary."));
 
         public static readonly DiagnosticDescriptor BoundedContextDependenciesShouldReferenceDeclaredContextsRule = new(
             BoundedContextDependenciesShouldReferenceDeclaredContextsId,
@@ -66,7 +81,10 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Declared bounded-context dependency pairs should reference context identifiers declared in the same compilation metadata.");
+            DiagnosticDescriptions.Create(
+                "A bounded-context dependency points to a target Id that is not declared anywhere in the compilation metadata.",
+                "Context dependency metadata must only reference known bounded contexts so the dependency graph is analyzable and trustworthy.",
+                "Declare the missing target bounded context or fix the dependency Id to reference an existing context."));
 
         public static readonly DiagnosticDescriptor BoundedContextDependenciesShouldNotBeBidirectionalRule = new(
             BoundedContextDependenciesShouldNotBeBidirectionalId,
@@ -75,7 +93,10 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "For one bounded-context pair, dependency direction should remain unidirectional to avoid cyclic context coupling.");
+            DiagnosticDescriptions.Create(
+                "Both directions of the same bounded-context dependency pair are declared.",
+                "Bounded-context dependency metadata should make upstream and downstream direction explicit instead of modeling a cycle as two directed edges.",
+                "Keep the intended direction only, or remodel the relationship if the two contexts actually belong to one larger boundary."));
 
         public static readonly DiagnosticDescriptor BoundedContextDependenciesShouldNotReferenceSelfRule = new(
             BoundedContextDependenciesShouldNotReferenceSelfId,
@@ -84,7 +105,10 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Bounded-context dependency metadata should not contain self-dependencies because they are semantically redundant and usually indicate misconfiguration.");
+            DiagnosticDescriptions.Create(
+                "The bounded-context declaration lists itself as a dependency target.",
+                "A bounded context cannot meaningfully depend on itself; self-dependencies only add noise and usually indicate configuration mistakes.",
+                "Remove the self-reference and keep DependsOnContextIds for external context dependencies only."));
 
         public static readonly DiagnosticDescriptor BoundedContextDependenciesShouldNotContainDuplicateTargetsRule = new(
             BoundedContextDependenciesShouldNotContainDuplicateTargetsId,
@@ -93,6 +117,9 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             Category.DDD,
             DiagnosticSeverity.Warning,
             true,
-            "Bounded-context dependency metadata should not repeat the same target context identifier (case-insensitive) inside one declaration.");
+            DiagnosticDescriptions.Create(
+                "The same dependency target is repeated inside one bounded-context declaration.",
+                "Each outbound bounded-context dependency should appear once so the dependency graph remains clear and deterministic.",
+                "Deduplicate the target list and keep each dependent bounded-context Id only once."));
     }
 }

@@ -17,7 +17,10 @@ namespace NMolecules.Analyzers.OnionAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Inner onion rings must stay independent from outer implementation rings.");
+            DiagnosticDescriptions.Create(
+                "An inner onion ring depends outward on a more external ring.",
+                "Onion architecture requires all dependencies to point inward toward the domain core.",
+                "Invert the dependency through an inward-facing abstraction and keep outer implementation details from leaking inward."));
 
         public static readonly DiagnosticDescriptor DomainModelRingMustNotDependOnOuterRingsRule = new(
             DomainModelRingMustNotDependOnOuterRingsId,
@@ -26,7 +29,10 @@ namespace NMolecules.Analyzers.OnionAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "The domain model ring is the innermost classic onion ring and must stay independent from service and infrastructure rings.");
+            DiagnosticDescriptions.Create(
+                "A domain-model ring type depends on a more external onion ring.",
+                "The domain model ring is the innermost core and must stay free of service, application, and infrastructure concerns.",
+                "Move the dependency into an outer ring or introduce a domain-owned abstraction that the outer ring implements."));
 
         public static readonly DiagnosticDescriptor DomainServiceRingMustNotDependOnOuterRingsRule = new(
             DomainServiceRingMustNotDependOnOuterRingsId,
@@ -35,7 +41,10 @@ namespace NMolecules.Analyzers.OnionAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Classic domain service rings must not depend on application or infrastructure rings.");
+            DiagnosticDescriptions.Create(
+                "A domain-service ring type depends on an outer onion ring.",
+                "Domain services belong close to the model and must not depend on application or infrastructure rings.",
+                "Keep the domain-service ring focused on domain policies and push outward dependencies behind inward-facing abstractions."));
 
         public static readonly DiagnosticDescriptor ApplicationServiceRingMustNotDependOnInfrastructureRingRule = new(
             ApplicationServiceRingMustNotDependOnInfrastructureRingId,
@@ -44,7 +53,10 @@ namespace NMolecules.Analyzers.OnionAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Classic application service rings should orchestrate domain behavior and remain independent from infrastructure ring implementations.");
+            DiagnosticDescriptions.Create(
+                "An application-service ring type depends directly on an infrastructure ring type.",
+                "Application services orchestrate the domain and should not be coupled directly to infrastructure implementations in classic onion architecture.",
+                "Depend on an inward-facing port and let the infrastructure ring implement that port."));
 
         public static readonly DiagnosticDescriptor ClassicAndSimplifiedOnionStylesShouldNotMixRule = new(
             ClassicAndSimplifiedOnionStylesShouldNotMixId,
@@ -53,6 +65,9 @@ namespace NMolecules.Analyzers.OnionAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Use either classic or simplified onion markers in one compilation unit, not both.");
+            DiagnosticDescriptions.Create(
+                "The same compilation mixes classic onion markers and simplified onion markers.",
+                "One compilation should follow one onion style so ring semantics and dependency expectations remain coherent.",
+                "Choose either classic onion or simplified onion markers for the compilation and remove the conflicting style markers."));
     }
 }

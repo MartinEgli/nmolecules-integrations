@@ -17,7 +17,10 @@ namespace NMolecules.Analyzers.EventStormingAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Actors represent external initiators and should not directly depend on aggregate internals.");
+            DiagnosticDescriptions.Create(
+                "An Event Storming actor directly depends on an aggregate.",
+                "Actors represent external initiators and should not couple to aggregate internals.",
+                "Express the interaction through commands, application services, or another boundary contract instead of a direct aggregate dependency."));
 
         public static readonly DiagnosticDescriptor CommandsShouldDependOnAggregatesRule = new(
             CommandsShouldDependOnAggregatesId,
@@ -26,7 +29,10 @@ namespace NMolecules.Analyzers.EventStormingAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Warning,
             true,
-            "Commands should be explicit intent messages for aggregate behavior.");
+            DiagnosticDescriptions.Create(
+                "An Event Storming command does not target any aggregate.",
+                "Commands should express intent toward aggregate behavior in the model.",
+                "Let the command reference or target the responsible aggregate, or remodel it if it is not really a command."));
 
         public static readonly DiagnosticDescriptor PoliciesShouldDependOnDomainEventsRule = new(
             PoliciesShouldDependOnDomainEventsId,
@@ -35,7 +41,10 @@ namespace NMolecules.Analyzers.EventStormingAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Warning,
             true,
-            "Policies are typically triggered by domain events in Event Storming models.");
+            DiagnosticDescriptions.Create(
+                "An Event Storming policy is modeled without depending on any domain event.",
+                "Policies in Event Storming typically react to domain events and coordinate follow-up behavior.",
+                "Drive the policy from one or more domain events or remodel it as another artifact if event reaction is not its purpose."));
 
         public static readonly DiagnosticDescriptor ReadModelsShouldNotDependOnAggregatesRule = new(
             ReadModelsShouldNotDependOnAggregatesId,
@@ -44,7 +53,10 @@ namespace NMolecules.Analyzers.EventStormingAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Read models should stay decoupled from aggregate write-side behavior.");
+            DiagnosticDescriptions.Create(
+                "An Event Storming read model depends directly on an aggregate.",
+                "Read models belong to the read side and should remain decoupled from aggregate write-side behavior.",
+                "Project aggregate changes into a dedicated read model instead of coupling the read model to aggregate internals."));
 
         public static readonly DiagnosticDescriptor ExternalSystemsShouldNotDependOnAggregatesRule = new(
             ExternalSystemsShouldNotDependOnAggregatesId,
@@ -53,6 +65,9 @@ namespace NMolecules.Analyzers.EventStormingAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "External systems should interact via contracts/events instead of aggregate internals.");
+            DiagnosticDescriptions.Create(
+                "An Event Storming external system depends directly on an aggregate.",
+                "External systems should integrate through contracts, commands, or events rather than aggregate internals.",
+                "Introduce an integration boundary and remove the direct aggregate dependency from the external system."));
     }
 }

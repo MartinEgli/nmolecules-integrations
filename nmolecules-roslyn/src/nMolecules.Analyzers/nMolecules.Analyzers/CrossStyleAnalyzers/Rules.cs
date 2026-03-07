@@ -15,7 +15,10 @@ namespace NMolecules.Analyzers.CrossStyleAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Layered and Onion are mutually exclusive as primary structural styles in the same architectural scope.");
+            DiagnosticDescriptions.Create(
+                "The same architectural scope declares multiple incompatible primary structural styles.",
+                "A scope should have one primary structural style so dependency rules and interpretation remain coherent.",
+                "Choose one primary style for the scope or split the conflicting styles into separate scopes or bounded contexts."));
 
         public static readonly DiagnosticDescriptor CqrsMayOverlayPrimaryStyleRule = new(
             CqrsMayOverlayPrimaryStyleId,
@@ -24,7 +27,10 @@ namespace NMolecules.Analyzers.CrossStyleAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Warning,
             true,
-            "CQRS should be used as an overlay on top of a primary structural style.");
+            DiagnosticDescriptions.Create(
+                "CQRS markers are present without any primary structural style marker.",
+                "CQRS is an overlay pattern and should refine an existing structural style instead of replacing one.",
+                "Add a primary structural style marker such as Layered, Onion, or Hexagonal, or remove the incomplete CQRS overlay markers."));
 
         public static readonly DiagnosticDescriptor ClassicAndSimplifiedOnionMustNotCoexistInBoundedContextRule = new(
             ClassicAndSimplifiedOnionMustNotCoexistInBoundedContextId,
@@ -33,6 +39,9 @@ namespace NMolecules.Analyzers.CrossStyleAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Choose either classic onion or simplified onion markers per bounded context.");
+            DiagnosticDescriptions.Create(
+                "One bounded context mixes classic and simplified onion markers.",
+                "A bounded context should follow one onion interpretation so ring semantics stay unambiguous.",
+                "Standardize the bounded context on either classic onion or simplified onion markers and remove the conflicting style."));
     }
 }

@@ -33,6 +33,20 @@ Then run:
 2. `nMolecules: Refresh Diagnostics`
 3. `nMolecules: Open Workspace Docs`
 
+## Open In Visual Studio
+
+Open:
+
+```text
+nmolecules-integrations/nmolecules-vscode/sample-workspace/Banking.Sample.sln
+```
+
+Then confirm:
+
+1. the solution loads without missing project references
+2. the analyzer project references are active in all four sample projects
+3. the healthy sample produces no nMolecules diagnostics in Error List
+
 ## What The Extension Should Report
 
 Expected current result:
@@ -68,3 +82,5 @@ dotnet build Banking.Sample.sln -v minimal
 If you want to demonstrate the Problems view with real nMolecules findings, also open:
 
 - [../sample-violations/README.md](../sample-violations/README.md)
+
+For channel-parity checks across new rule families, use [../../docs/ide-channel-parity-checklist.md](../../docs/ide-channel-parity-checklist.md).

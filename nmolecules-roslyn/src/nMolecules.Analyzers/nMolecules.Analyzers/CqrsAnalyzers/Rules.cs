@@ -18,7 +18,10 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "A CQRS read side is only structurally complete when both query request markers and query handler markers are present.");
+            DiagnosticDescriptions.Create(
+                "The compilation declares only one side of the CQRS query pair: queries without handlers or handlers without queries.",
+                "A CQRS read side is structurally complete only when query requests and query handlers coexist.",
+                "Add the missing query or query-handler markers in the same compilation, or remove the incomplete CQRS read-side markers."));
 
         public static readonly DiagnosticDescriptor CommandHandlersMustNotDependOnQueryModelsRule = new(
             CommandHandlersMustNotDependOnQueryModelsId,
@@ -27,7 +30,10 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Command handlers belong to the write side and should not couple directly to read-model types.");
+            DiagnosticDescriptions.Create(
+                "A command handler directly consumes or stores a query model from the read side.",
+                "CQRS separates write-side command handling from read-side projection models.",
+                "Use domain entities, aggregates, commands, or dedicated contracts on the write side and let projections update query models separately."));
 
         public static readonly DiagnosticDescriptor QueryHandlersMustStayOnReadSideRule = new(
             QueryHandlersMustStayOnReadSideId,
@@ -36,7 +42,10 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Query handlers belong to the read side and should not couple directly to write-side domain roles.");
+            DiagnosticDescriptions.Create(
+                "A query handler directly depends on a write-side domain role such as an entity, aggregate root, repository, or command-side component.",
+                "Read-side query handling should stay isolated from write-side domain behavior in CQRS.",
+                "Query a read model, projection store, or read-oriented port instead of traversing write-side building blocks directly."));
 
         public static readonly DiagnosticDescriptor QueryModelsMustBeReadOnlyRule = new(
             QueryModelsMustBeReadOnlyId,
@@ -45,7 +54,10 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Query models belong to the read side and should not expose writable state for ad-hoc mutation.");
+            DiagnosticDescriptions.Create(
+                "The query model exposes writable members that allow ad-hoc mutation after publication.",
+                "CQRS query models are read-side representations and should be treated as read-only projections.",
+                "Make the query model immutable or expose only initialization paths controlled by projection updates."));
 
         public static readonly DiagnosticDescriptor ProjectionsMustNotDependOnWriteSideRolesRule = new(
             ProjectionsMustNotDependOnWriteSideRolesId,
@@ -54,7 +66,10 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Projections belong to the read-model update path and should operate on query models instead of directly coupling to write-side domain roles.");
+            DiagnosticDescriptions.Create(
+                "A projection directly depends on write-side roles instead of staying on the read-model update path.",
+                "CQRS projections should translate events into read models without coupling back to write-side domain components.",
+                "Feed the projection with events or explicit projection inputs and keep write-side model access out of the projection."));
 
         public static readonly DiagnosticDescriptor CommandDispatchersMustNotContainDomainRulesRule = new(
             CommandDispatchersMustNotContainDomainRulesId,
@@ -63,6 +78,9 @@ namespace NMolecules.Analyzers.CqrsAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Command dispatchers should only route commands and must not couple directly to domain building blocks or orchestration roles.");
+            DiagnosticDescriptions.Create(
+                "The command dispatcher performs direct domain collaboration instead of only routing commands.",
+                "Command dispatchers are transport and routing components, not holders of domain rules or orchestration logic.",
+                "Move domain behavior into handlers or domain services and keep the dispatcher limited to command routing concerns."));
     }
 }

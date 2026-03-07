@@ -20,6 +20,16 @@ The long-term direction is to reuse the same analyzer rule set that already exis
 - `nMolecules: Open Rule Catalog`
 - `nMolecules: Show Diagnostics Summary`
 
+## Diagnostics Targeting
+
+`nMolecules: Refresh Diagnostics` now resolves its build target in this order:
+
+1. the active C# or F# editor file, preferring a project that explicitly includes that file
+2. `nmolecules.diagnosticsTarget` as a fallback target
+3. the shallowest solution or project discovered in the workspace
+
+Each refresh writes the chosen target source into the `nMolecules` output channel. If no exact project include matches the active file, the output also records the fallback path that was used.
+
 ## Sample Workspace
 
 A detailed sample workspace is included in:
@@ -46,6 +56,8 @@ npm install --prefix nmolecules-vscode
 npm run test:host --prefix nmolecules-vscode
 ```
 
+The host smoke path now exercises both the healthy sample workspace and the violations workspace.
+
 ## Packaging
 
 From the integrations repo root:
@@ -59,10 +71,13 @@ This produces:
 - `artifacts/installers/vscode/nMolecules.VSCode.vsix`
 - `artifacts/installers/vscode/setup/nMolecules.Setup.VSCode.exe`
 
-Release tags for this channel use `vscode/*` (for example `vscode/v1.8.0`).
+Release tags for this channel use `vscode/*` (for example `vscode/v0.2.2`).
+The full release gate is documented in [docs/release-checklist.md](docs/release-checklist.md).
+Cross-channel rule-family checks are documented in [../docs/ide-channel-parity-checklist.md](../docs/ide-channel-parity-checklist.md).
 
 ## Current Guidance Surface
 
 - workspace docs and architecture docs can be opened directly from the command palette
 - rule catalog docs are directly discoverable through `Open Rule Catalog`
 - diagnostics summary includes per-rule counts after each refresh
+- diagnostics refresh now reports whether the chosen target came from an active-file match, a nearest-project fallback, an explicit fallback target, or a workspace scan

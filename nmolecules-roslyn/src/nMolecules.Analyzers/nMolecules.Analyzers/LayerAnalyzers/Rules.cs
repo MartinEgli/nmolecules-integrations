@@ -18,7 +18,10 @@ namespace NMolecules.Analyzers.LayerAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "The domain layer must remain independent of application-layer orchestration.");
+            DiagnosticDescriptions.Create(
+                "A domain-layer type depends on an application-layer type.",
+                "In layered architecture, the domain layer must stay independent from use-case orchestration.",
+                "Move the orchestration upward into the application layer and keep domain code free of application-layer dependencies."));
 
         public static readonly DiagnosticDescriptor DomainLayersShouldNotUseUserInterfaceLayersRule = new(
             DomainLayersShouldNotUseUserInterfaceLayersId,
@@ -27,7 +30,10 @@ namespace NMolecules.Analyzers.LayerAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "The domain layer must not depend on presentation concerns.");
+            DiagnosticDescriptions.Create(
+                "A domain-layer type depends on an interface or presentation-layer type.",
+                "Presentation concerns belong at the outer edge of a layered architecture and must not leak into the domain layer.",
+                "Introduce an application-layer contract or DTO and keep interface-layer types outside the domain layer."));
 
         public static readonly DiagnosticDescriptor DomainLayersShouldNotUseInfrastructureLayersRule = new(
             DomainLayersShouldNotUseInfrastructureLayersId,
@@ -36,7 +42,10 @@ namespace NMolecules.Analyzers.LayerAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "The domain layer should depend on abstractions, not infrastructure implementations.");
+            DiagnosticDescriptions.Create(
+                "A domain-layer type depends directly on an infrastructure-layer type.",
+                "The domain layer must remain free of technical implementation details and depend only on abstractions.",
+                "Push the dependency behind a domain-facing port or contract and wire the infrastructure implementation from an outer layer."));
 
         public static readonly DiagnosticDescriptor InterfaceLayersShouldNotUseDomainLayersRule = new(
             InterfaceLayersShouldNotUseDomainLayersId,
@@ -45,7 +54,10 @@ namespace NMolecules.Analyzers.LayerAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "The interface layer must not bypass application orchestration and couple directly to the domain layer.");
+            DiagnosticDescriptions.Create(
+                "An interface-layer type reaches directly into the domain layer.",
+                "The interface layer should hand requests to the application layer instead of bypassing use-case orchestration.",
+                "Route the interaction through an application service or use-case boundary and keep the interface layer thin."));
 
         public static readonly DiagnosticDescriptor ApplicationLayersShouldLimitInfrastructureDependenciesRule = new(
             ApplicationLayersShouldLimitInfrastructureDependenciesId,
@@ -54,7 +66,10 @@ namespace NMolecules.Analyzers.LayerAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Warning,
             true,
-            "Application-layer infrastructure coupling should be explicit and constrained to narrowly scoped integration points.");
+            DiagnosticDescriptions.Create(
+                "An application-layer type depends on infrastructure and the dependency is broader than a narrow integration seam.",
+                "Layered architecture allows application-to-infrastructure references only as explicit, limited integration points.",
+                "Confine the dependency to a small adapter-facing port or move technical concerns into infrastructure wiring code."));
 
         public static readonly DiagnosticDescriptor InfrastructureLayersShouldUseApplicationLayersForWiringOnlyRule = new(
             InfrastructureLayersShouldUseApplicationLayersForWiringOnlyId,
@@ -63,6 +78,9 @@ namespace NMolecules.Analyzers.LayerAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Warning,
             true,
-            "Infrastructure-layer references to application services should stay in composition/wiring boundaries, not business orchestration.");
+            DiagnosticDescriptions.Create(
+                "An infrastructure-layer type depends on the application layer for more than composition or wiring.",
+                "Infrastructure may reference application services only at the composition edge, not to run business orchestration itself.",
+                "Limit the dependency to startup or adapter wiring, or invert the dependency through an interface owned by the application layer."));
     }
 }

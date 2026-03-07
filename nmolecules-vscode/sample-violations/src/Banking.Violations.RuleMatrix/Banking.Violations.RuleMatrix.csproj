@@ -7,7 +7,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.DDD\nMolecules.DDD.csproj" />
-    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture\nMolecules.Architecture.csproj" />
+    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture.Cqrs\nMolecules.Architecture.Cqrs.csproj" />
+    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture.EventStorming\nMolecules.Architecture.EventStorming.csproj" />
+    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture.Hexagonal\nMolecules.Architecture.Hexagonal.csproj" />
+    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture.Layered\nMolecules.Architecture.Layered.csproj" />
+    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture.Microservices\nMolecules.Architecture.Microservices.csproj" />
+    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture.Onion\nMolecules.Architecture.Onion.csproj" />
     <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Events\nMolecules.Events.csproj" />
     <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Bricks\nMolecules.Bricks.csproj" />
     <ProjectReference Include="..\..\..\..\nmolecules-roslyn\src\nMolecules.Analyzers\nMolecules.Analyzers\nMolecules.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />

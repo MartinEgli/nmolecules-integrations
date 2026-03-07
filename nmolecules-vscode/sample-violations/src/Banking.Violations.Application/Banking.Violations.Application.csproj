@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.DDD\nMolecules.DDD.csproj" />
-    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture\nMolecules.Architecture.csproj" />
+    <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.Architecture.Layered\nMolecules.Architecture.Layered.csproj" />
     <ProjectReference Include="..\..\..\..\nmolecules-roslyn\src\nMolecules.Analyzers\nMolecules.Analyzers\nMolecules.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\..\..\..\..\nmolecules\src\nMolecules.DDD\nMolecules.DDD.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>

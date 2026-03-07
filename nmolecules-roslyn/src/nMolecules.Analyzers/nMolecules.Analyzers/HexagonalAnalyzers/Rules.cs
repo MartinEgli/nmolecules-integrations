@@ -17,7 +17,10 @@ namespace NMolecules.Analyzers.HexagonalAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "The hexagonal application core should stay independent from boundary contracts and adapter technology details.");
+            DiagnosticDescriptions.Create(
+                "The application core depends on ports or adapters instead of remaining at the center of the hexagon.",
+                "Hexagonal architecture keeps the application core independent from boundary contracts and adapter technology details.",
+                "Move the dependency behind a core-owned abstraction or let adapters and ports depend on the application core instead."));
 
         public static readonly DiagnosticDescriptor PrimaryPortsShouldNotDependOnAdaptersRule = new(
             PrimaryPortsShouldNotDependOnAdaptersId,
@@ -26,7 +29,10 @@ namespace NMolecules.Analyzers.HexagonalAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Primary ports are inbound abstractions and must stay independent from adapter implementations.");
+            DiagnosticDescriptions.Create(
+                "A primary port depends on an adapter implementation.",
+                "Primary ports are inbound contracts and must remain independent from concrete delivery mechanisms.",
+                "Keep the port as a pure contract and move adapter details into the primary adapter layer."));
 
         public static readonly DiagnosticDescriptor SecondaryPortsShouldNotDependOnAdaptersRule = new(
             SecondaryPortsShouldNotDependOnAdaptersId,
@@ -35,7 +41,10 @@ namespace NMolecules.Analyzers.HexagonalAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Error,
             true,
-            "Secondary ports are outbound abstractions and must stay independent from adapter implementations.");
+            DiagnosticDescriptions.Create(
+                "A secondary port depends on an adapter implementation.",
+                "Secondary ports are outbound contracts and must stay independent from concrete adapter technology.",
+                "Leave the port as an abstraction and let the secondary adapter implement it from the outer edge."));
 
         public static readonly DiagnosticDescriptor PrimaryAdaptersShouldDependOnPrimaryPortsRule = new(
             PrimaryAdaptersShouldDependOnPrimaryPortsId,
@@ -44,7 +53,10 @@ namespace NMolecules.Analyzers.HexagonalAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Warning,
             true,
-            "Primary adapters should expose their boundary via primary port contracts instead of direct implementation coupling.");
+            DiagnosticDescriptions.Create(
+                "A primary adapter does not depend on any primary port contract.",
+                "Primary adapters should expose the inbound boundary through primary ports, not by coupling directly to internal implementations.",
+                "Introduce or depend on a primary port contract and let the adapter invoke the application core through that boundary."));
 
         public static readonly DiagnosticDescriptor SecondaryAdaptersShouldDependOnSecondaryPortsRule = new(
             SecondaryAdaptersShouldDependOnSecondaryPortsId,
@@ -53,6 +65,9 @@ namespace NMolecules.Analyzers.HexagonalAnalyzers
             Category.Architecture,
             DiagnosticSeverity.Warning,
             true,
-            "Secondary adapters should expose outbound boundaries via secondary port contracts.");
+            DiagnosticDescriptions.Create(
+                "A secondary adapter does not depend on any secondary port contract.",
+                "Secondary adapters should plug into the application core through outbound port contracts.",
+                "Implement and depend on a secondary port contract instead of reaching the application core through concrete classes alone."));
     }
 }

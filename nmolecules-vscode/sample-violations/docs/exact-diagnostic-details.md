@@ -2,6 +2,28 @@
 
 These are the intended example messages for the isolated samples. They are written against the current analyzer message templates.
 
+## Description Shape
+
+Every current analyzer rule is expected to ship a diagnostic description with the same structure:
+
+- `Why it happens: ...`
+- `Violated rule: ...`
+- `Target solution: ...`
+
+Read the message and description together:
+
+- the message tells you which symbol triggered the diagnostic
+- `Why it happens` explains the concrete coupling, metadata mismatch, or completeness gap
+- `Violated rule` names the architectural principle behind the warning or error
+- `Target solution` tells you the intended refactoring direction
+
+Example interpretation:
+
+- message:
+  `Domain service 'PolicyDependingOnApplicationService' must not depend on application service 'ApplicationOrchestrator'`
+- description summary:
+  the dependency appears because domain logic reaches into orchestration code; this breaks the domain-to-application boundary; the intended fix is to move orchestration back into the application layer
+
 - `IdentityValueObject.ExternalId`
   `Value object 'IdentityValueObject' must not declare [Identity] member 'ExternalId'`
 

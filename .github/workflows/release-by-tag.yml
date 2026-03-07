@@ -13,6 +13,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Validate release version discipline
+      shell: pwsh
+      run: .\tools\release\validate-release-version.ps1
+    - name: Validate tag version
+      shell: pwsh
+      run: |
+        $tag = '${{ github.ref_name }}'
+        if ($tag -notmatch '^vs/v(?<version>\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)$') {
+            throw "Visual Studio release tag '$tag' does not match the expected pattern 'vs/vX.Y.Z'."
+        }
+
+        .\tools\release\validate-release-version.ps1 -ExpectedVersion $Matches.version
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -31,6 +43,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Validate release version discipline
+      shell: pwsh
+      run: .\tools\release\validate-release-version.ps1
+    - name: Validate tag version
+      shell: pwsh
+      run: |
+        $tag = '${{ github.ref_name }}'
+        if ($tag -notmatch '^vscode/v(?<version>\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)$') {
+            throw "VS Code release tag '$tag' does not match the expected pattern 'vscode/vX.Y.Z'."
+        }
+
+        .\tools\release\validate-release-version.ps1 -ExpectedVersion $Matches.version
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:

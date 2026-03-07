@@ -47,6 +47,49 @@ function Get-VsixArtifactPath([string]$RootPath, [string]$ConfigurationName) {
     return $candidate.FullName
 }
 
+function Repair-VsCodeVsixReadmeCase([string]$VsixPath) {
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+    $stagingRoot = Join-Path ([System.IO.Path]::GetTempPath()) ([System.Guid]::NewGuid().ToString("N"))
+
+    try {
+        Expand-Archive -Path $VsixPath -DestinationPath $stagingRoot -Force
+
+        $readmeLowerPath = Join-Path $stagingRoot "extension\readme.md"
+        $readmeUpperPath = Join-Path $stagingRoot "extension\README.md"
+
+        if (-not (Test-Path $readmeLowerPath)) {
+            return
+        }
+
+        if (Test-Path $readmeUpperPath) {
+            Remove-Item -Path $readmeLowerPath -Force
+        }
+        else {
+            $readmeTempPath = Join-Path $stagingRoot "extension\__nmolecules_readme__.md"
+            Copy-Item -Path $readmeLowerPath -Destination $readmeTempPath -Force
+            Remove-Item -Path $readmeLowerPath -Force
+            Move-Item -Path $readmeTempPath -Destination $readmeUpperPath -Force
+        }
+
+        $vsixManifestPath = Join-Path $stagingRoot "extension.vsixmanifest"
+
+        if (Test-Path $vsixManifestPath) {
+            $vsixManifest = Get-Content -Path $vsixManifestPath -Raw
+            $vsixManifest = $vsixManifest.Replace("extension/readme.md", "extension/README.md")
+            Set-Content -Path $vsixManifestPath -Value $vsixManifest -Encoding UTF8NoBOM
+        }
+
+        Remove-Item -Path $VsixPath -Force
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($stagingRoot, $VsixPath)
+    }
+    finally {
+        if (Test-Path $stagingRoot) {
+            Remove-Item -Path $stagingRoot -Recurse -Force
+        }
+    }
+}
+
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = (Resolve-Path (Join-Path $scriptRoot "..\..")).Path
 $roslynRoot = Join-Path $repoRoot "nmolecules-roslyn"
@@ -117,6 +160,8 @@ if (-not $SkipVsCodePackage) {
         Invoke-Checked "VS Code VSIX package build" {
             & npm exec --yes --package @vscode/vsce -- vsce package --out $vsCodeVsixPath
         }
+
+        Repair-VsCodeVsixReadmeCase -VsixPath $vsCodeVsixPath
     }
     finally {
         Pop-Location

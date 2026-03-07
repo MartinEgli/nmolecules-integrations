@@ -16,7 +16,12 @@ The violation workspace is now configured to trigger every currently implemented
 - `XMoleculesBoundedContext0001` to `XMoleculesBoundedContext0009`
 - `XMoleculesModule0001` to `XMoleculesModule0007`
 - `XMoleculesDomainEvent0001` to `XMoleculesDomainEvent0009`
-- `XMoleculesLayered0001` to `XMoleculesLayered0006`
+- `XMoleculesLayered0001`
+- `XMoleculesLayered0002`
+- `XMoleculesLayered0003`
+- `XMoleculesLayered0004`
+- `XMoleculesLayered0005`
+- `XMoleculesLayered0006`
 - `XMoleculesOnion0001` to `XMoleculesOnion0005`
 - `XMoleculesHexagonal0001` to `XMoleculesHexagonal0005`
 - `XMoleculesCQRS0001` to `XMoleculesCQRS0006`
@@ -39,6 +44,15 @@ The violation workspace is now configured to trigger every currently implemented
 
 - `src/Banking.Violations.CqrsOnly`
   Covers `XMoleculesCrossStyle0002` in a CQRS-only compilation without a primary structural style marker.
+
+- `src/Banking.Violations.Application`
+  Covers application-service boundary violations in an application-only sample.
+
+- `src/Banking.Violations.Domain`
+  Covers domain-model, event, and cross-style violations in a domain-heavy sample.
+
+- `src/Banking.Violations.Infrastructure`
+  Covers infrastructure, factory, and layered-boundary violations.
 
 ## Verification
 

@@ -24,6 +24,9 @@ test('package manifest exposes the expected commands and activation events', () 
 
 test('package manifest exposes configuration and scripts for testing', () => {
   assert.equal(manifest.engines.vscode, '^1.96.0');
+  assert.equal(manifest.icon, 'media/icon.png');
+  assert.ok(manifest.files.includes('README.md'));
+  assert.ok(manifest.files.includes('media/**'));
   assert.equal(manifest.scripts.test, 'node --test ./test/*.test.js');
   assert.equal(manifest.scripts.smoke, 'node ./test/package-manifest.test.js');
   assert.equal(manifest.scripts['test:host'], 'node ./test-host/runTest.js');
