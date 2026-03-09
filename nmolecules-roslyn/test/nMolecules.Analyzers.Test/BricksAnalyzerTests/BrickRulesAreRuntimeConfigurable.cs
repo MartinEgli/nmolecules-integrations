@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Testing;
 using NMolecules.Analyzers.BricksAnalyzers;
 using Xunit;
 using static NMolecules.Analyzers.Test.ExpectedResults;
-using VerifyCS = NMolecules.Analyzers.Test.Verifiers.CSharpAnalyzerVerifier<NMolecules.Analyzers.BricksAnalyzers.BrickRuleAnalyzer>;
+using VerifyCS = NMolecules.Analyzers.Test.Verifiers.CSharpAnalyzerVerifier<NMolecules.Analyzers.BricksAnalyzers.BricksDependencyAnalyzer>;
 
 namespace NMolecules.Analyzers.Test.BricksAnalyzerTests
 {

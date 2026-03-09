@@ -6,8 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace NMolecules.Analyzers.BricksAnalyzers
 {
-    [Obsolete("Legacy compatibility placeholder. Active Bricks analyzers now use BricksAnalyzerInternals, BricksDependencyAnalyzer, and BricksMemberContractAnalyzer.")]
-    internal static class BrickRuleAnalyzerLegacy
+    internal static class BricksAnalyzerInternals
     {
         private static readonly string[] RuleAttributeNames = { "RuleAttribute" };
         private static readonly string[] RuleFilterAttributeNames = { "RuleFilterAttribute" };

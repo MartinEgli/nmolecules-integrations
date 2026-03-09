@@ -87,6 +87,10 @@ XMoleculesCrossStyle0002 | Architecture | Warning | CQRS should overlay a primar
 XMoleculesCrossStyle0003 | Architecture | Error | Classic and simplified onion styles must not coexist in the same bounded context
 XMoleculesBricks0001 | Architecture | Error | Brick rules must be honored
 XMoleculesBricks0002 | Architecture | Warning | Brick rule configuration must be valid
+XMoleculesBricks0003 | Architecture | Error | Brick member contracts must declare exactly one required marker
+XMoleculesBricks0004 | Architecture | Error | Brick member contracts must include all required markers
+XMoleculesBricks0005 | Architecture | Error | Brick member contracts must use the configured marker count
+XMoleculesBricks0006 | Architecture | Error | Brick member contracts must satisfy an exclusive choice
 XMoleculesEventStorming0001 | Architecture | Error | Event Storming actors must not depend on aggregates
 XMoleculesEventStorming0002 | Architecture | Warning | Event Storming commands should target aggregates
 XMoleculesEventStorming0003 | Architecture | Warning | Event Storming policies should react to domain events

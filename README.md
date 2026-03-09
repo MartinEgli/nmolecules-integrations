@@ -9,7 +9,7 @@ For the current analyzer expansion work, see:
 - [nmolecules-roslyn/docs/mvp-rule-catalog.md](nmolecules-roslyn/docs/mvp-rule-catalog.md)
 - [nmolecules-roslyn/docs/service-role-matrix.md](nmolecules-roslyn/docs/service-role-matrix.md)
 - [nmolecules-roslyn/docs/release-tracking-investigation.md](nmolecules-roslyn/docs/release-tracking-investigation.md)
-- [nmolecules-roslyn/docs/visual-studio-support.md](nmolecules-roslyn/docs/visual-studio-support.md)
+- [nmolecules-visualstudio/docs/visual-studio-support.md](nmolecules-visualstudio/docs/visual-studio-support.md)
 
 Current baseline highlights:
 
@@ -18,6 +18,29 @@ Current baseline highlights:
 - release packaging now uses repo-local `eng/release-version.txt` plus sync/validate scripts
 - VSIX and VS Code packaging are delivered from one shared installer script
 - IDE channel parity is tracked through a shared checklist and VS Code host smoke coverage for both healthy and violating workspaces
+- a dedicated `nmolecules-visualstudio` product surface now exists as the migration target for Visual Studio host concerns
+
+## Product Surfaces
+
+- [nmolecules-roslyn](nmolecules-roslyn): analyzer core, code fixes, and shared analyzer tests
+- [nmolecules-vscode](nmolecules-vscode/README.md): VS Code host, packaging, samples, and docs
+- [nmolecules-visualstudio](nmolecules-visualstudio/README.md): Visual Studio host, packaging, release, and sample surface
+
+## Visual Studio
+
+The Visual Studio delivery surface is now documented under:
+
+- [nmolecules-visualstudio/README.md](nmolecules-visualstudio/README.md)
+- [nmolecules-visualstudio/docs/visual-studio-support.md](nmolecules-visualstudio/docs/visual-studio-support.md)
+- [nmolecules-visualstudio/docs/release-checklist.md](nmolecules-visualstudio/docs/release-checklist.md)
+- [nmolecules-visualstudio/sample-workspace/Banking.VisualStudio.Sample.sln](nmolecules-visualstudio/sample-workspace/Banking.VisualStudio.Sample.sln)
+- [nmolecules-visualstudio/sample-violations/Banking.VisualStudio.Violations.sln](nmolecules-visualstudio/sample-violations/Banking.VisualStudio.Violations.sln)
+
+Current migration note:
+
+- the canonical Visual Studio docs live under `nmolecules-visualstudio`
+- dedicated Visual Studio sample solutions now live under `nmolecules-visualstudio`
+- the physical VSIX project still lives under `nmolecules-roslyn` in this first migration slice
 
 ## VS Code Extension
 

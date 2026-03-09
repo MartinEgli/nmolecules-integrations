@@ -52,5 +52,5 @@ Then verify manually:
 
 ## Documentation Links
 
-- Visual Studio release gate: `nmolecules-roslyn/docs/visual-studio-release-checklist.md`
+- Visual Studio release gate: `nmolecules-visualstudio/docs/release-checklist.md`
 - VS Code release gate: `nmolecules-vscode/docs/release-checklist.md`
