@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace NMolecules.Analyzers.BricksAnalyzers
@@ -73,7 +74,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
 
             foreach (var sourceType in sourceTypes)
             {
-                foreach (var observation in CollectDependencyObservations(sourceType))
+                foreach (var observation in CollectDependencyObservations(sourceType, context.Compilation))
                 {
                     if (ContainsAnyToken(observation.MemberSymbol.Name, rule.GetFilterValue<ExcludedMemberNameContainsRuleFilter>()))
                     {
@@ -94,7 +95,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
 
                         context.ReportDiagnostic(Diagnostic.Create(
                             Rules.BrickRuleViolationRule,
-                            observation.MemberSymbol.Locations.FirstOrDefault() ?? sourceType.Locations.FirstOrDefault() ?? Location.None,
+                            observation.Location ?? observation.MemberSymbol.Locations.FirstOrDefault() ?? sourceType.Locations.FirstOrDefault() ?? Location.None,
                             FormatViolationMessage(rule, sourceType, candidateType.DisplayName(), observation.MemberSymbol.Name)));
                     }
                 }
@@ -109,7 +110,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
         {
             foreach (var sourceType in sourceTypes)
             {
-                var hasRequiredDependency = CollectDependencyObservations(sourceType)
+                var hasRequiredDependency = CollectDependencyObservations(sourceType, context.Compilation)
                     .Where(observation => !ContainsAnyToken(observation.MemberSymbol.Name, rule.GetFilterValue<ExcludedMemberNameContainsRuleFilter>()))
                     .SelectMany(observation => ExpandType(observation.DependencyType).OfType<INamedTypeSymbol>())
                     .Any(candidateType => HasRole(candidateType, rule.TargetRole, roleMap) && IsTargetCandidate(rule, candidateType));
@@ -158,12 +159,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             BrickMemberContractDeclaration contract,
             CompilationAnalysisContext context)
         {
-            if (contract.PrimaryMarkerType is null)
-            {
-                return;
-            }
-
-            var count = CountMarkedMembers(type, contract.PrimaryMarkerType);
+            var count = CountMarkedMembers(type, contract.PrimaryMarkerType!);
             if (count == 1)
             {
                 return;
@@ -172,7 +168,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             context.ReportDiagnostic(Diagnostic.Create(
                 Rules.BrickExactlyOneMemberContractRule,
                 type.Locations.FirstOrDefault() ?? Location.None,
-                $"Brick contract '{contract.ContractAttributeName}' requires exactly one member marked with '{contract.PrimaryMarkerType.DisplayName()}', but '{type.DisplayName()}' declares {count}."));
+                $"Brick contract '{contract.ContractAttributeName}' requires exactly one member marked with '{contract.PrimaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' declares {count}."));
         }
 
         private static void AnalyzeAllRequiredMembersContract(
@@ -180,11 +176,6 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             BrickMemberContractDeclaration contract,
             CompilationAnalysisContext context)
         {
-            if (contract.MarkerTypes.Count == 0)
-            {
-                return;
-            }
-
             var missing = contract.MarkerTypes
                 .Where(markerType => CountMarkedMembers(type, markerType) == 0)
                 .Select(markerType => markerType.DisplayName())
@@ -206,12 +197,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             BrickMemberContractDeclaration contract,
             CompilationAnalysisContext context)
         {
-            if (contract.PrimaryMarkerType is null)
-            {
-                return;
-            }
-
-            var count = CountMarkedMembers(type, contract.PrimaryMarkerType);
+            var count = CountMarkedMembers(type, contract.PrimaryMarkerType!);
             if (count == contract.Count)
             {
                 return;
@@ -220,7 +206,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             context.ReportDiagnostic(Diagnostic.Create(
                 Rules.BrickMemberCountContractRule,
                 type.Locations.FirstOrDefault() ?? Location.None,
-                $"Brick contract '{contract.ContractAttributeName}' requires exactly {contract.Count} members marked with '{contract.PrimaryMarkerType.DisplayName()}', but '{type.DisplayName()}' declares {count}."));
+                $"Brick contract '{contract.ContractAttributeName}' requires exactly {contract.Count} members marked with '{contract.PrimaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' declares {count}."));
         }
 
         private static void AnalyzeExclusiveChoiceContract(
@@ -228,13 +214,8 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             BrickMemberContractDeclaration contract,
             CompilationAnalysisContext context)
         {
-            if (contract.PrimaryMarkerType is null || contract.SecondaryMarkerType is null)
-            {
-                return;
-            }
-
-            var leftCount = CountMarkedMembers(type, contract.PrimaryMarkerType);
-            var rightCount = CountMarkedMembers(type, contract.SecondaryMarkerType);
+            var leftCount = CountMarkedMembers(type, contract.PrimaryMarkerType!);
+            var rightCount = CountMarkedMembers(type, contract.SecondaryMarkerType!);
             var satisfied = (leftCount > 0 && rightCount == 0) || (leftCount == 0 && rightCount > 0);
 
             if (satisfied)
@@ -245,19 +226,16 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             context.ReportDiagnostic(Diagnostic.Create(
                 Rules.BrickExclusiveChoiceContractRule,
                 type.Locations.FirstOrDefault() ?? Location.None,
-                $"Brick contract '{contract.ContractAttributeName}' requires exactly one of '{contract.PrimaryMarkerType.DisplayName()}' or '{contract.SecondaryMarkerType.DisplayName()}', but '{type.DisplayName()}' declares {leftCount} and {rightCount}."));
+                $"Brick contract '{contract.ContractAttributeName}' requires exactly one of '{contract.PrimaryMarkerType!.DisplayName()}' or '{contract.SecondaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' declares {leftCount} and {rightCount}."));
         }
 
         private static IEnumerable<BrickMemberContractDeclaration> CollectMemberContracts(INamedTypeSymbol type)
         {
-            foreach (var appliedAttribute in type.GetAttributes())
+            foreach (var attributeClass in type.GetAttributes()
+                         .Select(attribute => attribute.AttributeClass)
+                         .OfType<INamedTypeSymbol>())
             {
-                if (appliedAttribute.AttributeClass is null)
-                {
-                    continue;
-                }
-
-                foreach (var contract in CollectMemberContractsFromAttributeClass(appliedAttribute.AttributeClass))
+                foreach (var contract in CollectMemberContractsFromAttributeClass(attributeClass))
                 {
                     yield return contract;
                 }
@@ -433,12 +411,8 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                         }
                     }
 
-                    if (attribute.AttributeClass is null)
-                    {
-                        continue;
-                    }
-
-                    foreach (var alias in attribute.AttributeClass.GetAttributes().Where(alias => IsBrickRoleAliasAttribute(alias.AttributeClass)))
+                    foreach (var alias in (attribute.AttributeClass?.GetAttributes() ?? Enumerable.Empty<AttributeData>())
+                                 .Where(alias => IsBrickRoleAliasAttribute(alias.AttributeClass)))
                     {
                         var role = GetRoleNameFromBrickRoleAlias(alias);
                         if (!string.IsNullOrWhiteSpace(role))
@@ -484,11 +458,9 @@ namespace NMolecules.Analyzers.BricksAnalyzers
 
             foreach (var attribute in attributes.Where(candidate => IsBrickRuleAttribute(candidate.AttributeClass)))
             {
-                var location = attribute.ApplicationSyntaxReference?.GetSyntax().GetLocation() ?? symbol.Locations.FirstOrDefault();
-                if (location is null)
-                {
-                    continue;
-                }
+                var location = attribute.ApplicationSyntaxReference?.GetSyntax().GetLocation()
+                    ?? symbol.Locations.FirstOrDefault()
+                    ?? Location.None;
 
                 var id = GetConstructorString(attribute, 0);
                 var sourceRole = GetConstructorString(attribute, 1);
@@ -726,7 +698,9 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             return false;
         }
 
-        private static IEnumerable<DependencyObservation> CollectDependencyObservations(INamedTypeSymbol sourceType)
+        private static IEnumerable<DependencyObservation> CollectDependencyObservations(
+            INamedTypeSymbol sourceType,
+            Compilation compilation)
         {
             if (sourceType.BaseType is { SpecialType: not SpecialType.System_Object } baseType)
             {
@@ -742,7 +716,7 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             {
                 switch (member)
                 {
-                    case IFieldSymbol field:
+                    case IFieldSymbol { IsImplicitlyDeclared: false } field:
                         yield return new DependencyObservation(field, field.Type);
                         break;
                     case IPropertySymbol property:
@@ -761,6 +735,53 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                         }
 
                         break;
+                    }
+                }
+            }
+
+            foreach (var observation in CollectSyntaxDependencyObservations(sourceType, compilation))
+            {
+                yield return observation;
+            }
+        }
+
+        private static IEnumerable<DependencyObservation> CollectSyntaxDependencyObservations(
+            INamedTypeSymbol sourceType,
+            Compilation compilation)
+        {
+            foreach (var syntaxReference in sourceType.DeclaringSyntaxReferences)
+            {
+                if (syntaxReference.GetSyntax() is not TypeDeclarationSyntax typeDeclaration)
+                {
+                    continue;
+                }
+
+                var semanticModel = compilation.GetSemanticModel(typeDeclaration.SyntaxTree);
+                var descendants = typeDeclaration.DescendantNodes(node =>
+                    ReferenceEquals(node, typeDeclaration) || node is not TypeDeclarationSyntax);
+
+                foreach (var localDeclaration in descendants.OfType<LocalDeclarationStatementSyntax>())
+                {
+                    var type = semanticModel.GetTypeInfo(localDeclaration.Declaration.Type).Type;
+                    if (type is not null)
+                    {
+                        yield return new DependencyObservation(
+                            sourceType,
+                            type,
+                            localDeclaration.Declaration.Type.GetLocation());
+                    }
+                }
+
+                foreach (var objectCreation in descendants.OfType<ObjectCreationExpressionSyntax>())
+                {
+                    var type = semanticModel.GetTypeInfo(objectCreation).Type
+                        ?? semanticModel.GetTypeInfo(objectCreation.Type).Type;
+                    if (type is not null)
+                    {
+                        yield return new DependencyObservation(
+                            sourceType,
+                            type,
+                            objectCreation.Type.GetLocation());
                     }
                 }
             }
@@ -850,7 +871,6 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 int count)
             {
                 Kind = kind;
-                ContractAttributeType = contractAttributeType;
                 ContractAttributeName = contractAttributeType.DisplayName();
                 PrimaryMarkerType = primaryMarkerType;
                 SecondaryMarkerType = secondaryMarkerType;
@@ -859,8 +879,6 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             }
 
             public BrickMemberContractKind Kind { get; }
-
-            public INamedTypeSymbol ContractAttributeType { get; }
 
             public string ContractAttributeName { get; }
 
@@ -954,12 +972,9 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             protected BrickRuleFilter(IEnumerable<string> tokens)
             {
                 Tokens = NormalizeTokens(tokens);
-                Value = string.Join("|", Tokens);
             }
 
             public string[] Tokens { get; }
-
-            public string Value { get; }
         }
 
         private sealed class ExcludedSourceNameContainsRuleFilter : BrickRuleFilter
@@ -999,14 +1014,16 @@ namespace NMolecules.Analyzers.BricksAnalyzers
 
         private sealed class DependencyObservation
         {
-            public DependencyObservation(ISymbol memberSymbol, ITypeSymbol dependencyType)
+            public DependencyObservation(ISymbol memberSymbol, ITypeSymbol dependencyType, Location? location = null)
             {
                 MemberSymbol = memberSymbol;
                 DependencyType = dependencyType;
+                Location = location;
             }
 
             public ISymbol MemberSymbol { get; }
             public ITypeSymbol DependencyType { get; }
+            public Location? Location { get; }
         }
 
         private enum BrickRuleMode

@@ -24,9 +24,11 @@ namespace NMolecules.Analyzers.Test.Verifiers
                     var parseOptions = (CSharpParseOptions)solution.GetProject(projectId)!.ParseOptions!;
                     solution = solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(LanguageVersion.Latest));
 
-                    var compilationOptions = solution.GetProject(projectId)!.CompilationOptions;
-                    compilationOptions = compilationOptions!.WithSpecificDiagnosticOptions(
-                        compilationOptions.SpecificDiagnosticOptions.SetItems(CSharpVerifierHelper.NullableWarnings));
+                    var compilationOptions = (CSharpCompilationOptions)solution.GetProject(projectId)!.CompilationOptions!;
+                    compilationOptions = compilationOptions
+                        .WithAllowUnsafe(true)
+                        .WithSpecificDiagnosticOptions(
+                            compilationOptions.SpecificDiagnosticOptions.SetItems(CSharpVerifierHelper.NullableWarnings));
                     solution = solution.WithProjectCompilationOptions(projectId, compilationOptions);
 
                     return solution;

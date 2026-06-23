@@ -258,6 +258,186 @@ namespace SampleData
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
         }
 
+        [Fact]
+        public async Task Analyze_WithInheritedMemberMarker_SatisfiesContract()
+        {
+            var testCode = @"using System;
+
+namespace SampleData
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public class IdMarkerAttribute : Attribute
+    {
+    }
+
+    public sealed class PublicIdMarkerAttribute : IdMarkerAttribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireExactlyOneMember(typeof(IdMarkerAttribute))]
+    public sealed class ExactlyOneIdContractAttribute : Attribute
+    {
+    }
+
+    [ExactlyOneIdContract]
+    public sealed class OrderDocument
+    {
+        [PublicIdMarker]
+        public string Id { get; } = ""id"";
+    }
+}
+" + ContractShims;
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
+        }
+
+        [Fact]
+        public async Task Analyze_WithInheritedBaseMember_SatisfiesContract()
+        {
+            var testCode = @"using System;
+
+namespace SampleData
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class IdMarkerAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireExactlyOneMember(typeof(IdMarkerAttribute))]
+    public sealed class ExactlyOneIdContractAttribute : Attribute
+    {
+    }
+
+    public abstract class DocumentBase
+    {
+        [IdMarker]
+        public string Id { get; } = ""id"";
+    }
+
+    [ExactlyOneIdContract]
+    public sealed class OrderDocument : DocumentBase
+    {
+    }
+}
+" + ContractShims;
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
+        }
+
+        [Fact]
+        public async Task Analyze_WithMethodAndEventMembers_SatisfiesAllMembersContract()
+        {
+            var testCode = @"using System;
+
+namespace SampleData
+{
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed class PublishMarkerAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Event)]
+    public sealed class EventMarkerAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireAllMembers(typeof(PublishMarkerAttribute), typeof(EventMarkerAttribute))]
+    public sealed class EventContractAttribute : Attribute
+    {
+    }
+
+    [EventContract]
+    public sealed class DomainEvents
+    {
+        [EventMarker]
+        public event EventHandler Published;
+
+        [PublishMarker]
+        public void Publish()
+        {
+        }
+    }
+}
+" + ContractShims;
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
+        }
+
+        [Fact]
+        public async Task Analyze_WithMalformedContractAttributes_IgnoresInvalidContracts()
+        {
+            var testCode = @"using System;
+
+namespace SampleData
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class MarkerAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireExactlyOneMember]
+    [NMolecules.Bricks.RequireAllMembers]
+    [NMolecules.Bricks.RequireAllMembers(typeof(MarkerAttribute))]
+    [NMolecules.Bricks.RequireMemberCount(typeof(MarkerAttribute))]
+    [NMolecules.Bricks.RequireExclusiveChoice(typeof(MarkerAttribute))]
+    public sealed class MalformedContractAttribute : Attribute
+    {
+    }
+
+    [MalformedContract]
+    public sealed class Document
+    {
+    }
+}
+
+namespace NMolecules.Bricks
+{
+    using System;
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RequireExactlyOneMemberAttribute : Attribute
+    {
+        public RequireExactlyOneMemberAttribute()
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RequireAllMembersAttribute : Attribute
+    {
+        public RequireAllMembersAttribute()
+        {
+        }
+
+        public RequireAllMembersAttribute(Type memberAttributeType)
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RequireMemberCountAttribute : Attribute
+    {
+        public RequireMemberCountAttribute(Type memberAttributeType)
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RequireExclusiveChoiceAttribute : Attribute
+    {
+        public RequireExclusiveChoiceAttribute(Type leftMemberAttributeType)
+        {
+        }
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
+        }
+
         private const string ContractShims = @"
 namespace NMolecules.Bricks
 {
