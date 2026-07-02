@@ -1,6 +1,6 @@
 # Visual Studio Release Checklist
 
-Status: March 7, 2026
+Status: June 29, 2026
 
 This checklist defines the release gate for the Visual Studio delivery channel.
 
@@ -24,6 +24,7 @@ Run these checks before any VSIX release candidate:
 
 ```powershell
 pwsh .\tools\release\validate-release-version.ps1
+pwsh ..\tools\validate-ide-channel-hardening.ps1 -Configuration Release
 pwsh .\nmolecules-roslyn\tools\validate-vsix-metadata.ps1
 dotnet test .\nmolecules-roslyn\test\nMolecules.Analyzers.Test\nMolecules.Analyzers.Test.csproj -v minimal
 pwsh .\tools\validate-rule-doc-sync.ps1
@@ -33,6 +34,7 @@ pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release
 Expected:
 
 - release-version validation passes
+- IDE channel hardening validation passes
 - VSIX metadata validation passes
 - analyzer suite is green
 - rule-doc sync is green

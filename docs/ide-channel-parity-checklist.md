@@ -1,11 +1,11 @@
 # IDE Channel Parity Checklist
 
-Status: March 7, 2026
+Status: June 29, 2026
 
 Use this checklist whenever a new analyzer family or rule family is introduced.
 
 The goal is to keep the Visual Studio and VS Code delivery channels aligned enough that a new family is visible, explainable, and testable in both places.
-The current baseline already includes VS Code host smoke coverage for both the healthy and violating workspaces; the remaining parity work is mostly around repeatable Visual Studio and setup-install validation.
+The current baseline includes VS Code host smoke coverage for both the healthy and violating workspaces plus a repeatable superproject gate for Visual Studio metadata, setup CLI contracts, stable installer paths, release tags, and cross-channel sample entry points.
 
 ## Required Parity Checks Per New Rule Family
 
@@ -39,16 +39,23 @@ npm install --prefix nmolecules-vscode
 npm test --prefix nmolecules-vscode
 npm run test:host --prefix nmolecules-vscode
 pwsh .\tools\release\validate-release-version.ps1
+pwsh ..\tools\validate-ide-channel-hardening.ps1 -Configuration Release
 pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release
 ```
 
-Then verify manually:
+Then verify host behavior on a machine with the target IDE installed:
 
 1. VS Code on `nmolecules-vscode/sample-workspace/nmolecules-sample.code-workspace`
 2. VS Code on `nmolecules-vscode/sample-violations/nmolecules-violations.code-workspace`
 3. Visual Studio on `nmolecules-vscode/sample-workspace/Banking.Sample.sln`
 4. Visual Studio on `nmolecules-vscode/sample-violations/Banking.Sample.Violations.sln`
 5. one installer path per channel (`nMolecules.Setup.VisualStudio.exe`, `nMolecules.Setup.VSCode.exe`) against the freshly built artifact
+
+The static part of these checks is executable from the superproject root:
+
+```powershell
+.\tools\validate-ide-channel-hardening.ps1
+```
 
 ## Documentation Links
 

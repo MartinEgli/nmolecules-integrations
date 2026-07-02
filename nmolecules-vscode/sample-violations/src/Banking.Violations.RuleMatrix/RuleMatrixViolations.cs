@@ -891,3 +891,91 @@ public sealed class BrickApiComponent
         this.domainComponent = domainComponent;
     }
 }
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class BrickOnlyOneMarkerAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class BrickAllLeftMarkerAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class BrickAllRightMarkerAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class BrickRepeatedMarkerAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class BrickXorLeftMarkerAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class BrickXorRightMarkerAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Class)]
+[RequireExactlyOneMember(typeof(BrickOnlyOneMarkerAttribute))]
+public sealed class BrickExactlyOneContractAttribute : Attribute
+{
+}
+
+[BrickExactlyOneContract]
+public sealed class BrickExactlyOneContractViolation
+{
+    [BrickOnlyOneMarker]
+    public string Primary { get; } = string.Empty;
+
+    [BrickOnlyOneMarker]
+    public string Duplicate { get; } = string.Empty;
+}
+
+[AttributeUsage(AttributeTargets.Class)]
+[RequireAllMembers(typeof(BrickAllLeftMarkerAttribute), typeof(BrickAllRightMarkerAttribute))]
+public sealed class BrickAllMembersContractAttribute : Attribute
+{
+}
+
+[BrickAllMembersContract]
+public sealed class BrickAllMembersContractViolation
+{
+    [BrickAllLeftMarker]
+    public string OnlyLeft { get; } = string.Empty;
+}
+
+[AttributeUsage(AttributeTargets.Class)]
+[RequireMemberCount(typeof(BrickRepeatedMarkerAttribute), 2)]
+public sealed class BrickMemberCountContractAttribute : Attribute
+{
+}
+
+[BrickMemberCountContract]
+public sealed class BrickMemberCountContractViolation
+{
+    [BrickRepeatedMarker]
+    public string OnlyOne { get; } = string.Empty;
+}
+
+[AttributeUsage(AttributeTargets.Class)]
+[RequireExclusiveChoice(typeof(BrickXorLeftMarkerAttribute), typeof(BrickXorRightMarkerAttribute))]
+public sealed class BrickExclusiveChoiceContractAttribute : Attribute
+{
+}
+
+[BrickExclusiveChoiceContract]
+public sealed class BrickExclusiveChoiceContractViolation
+{
+    [BrickXorLeftMarker]
+    public string Left { get; } = string.Empty;
+
+    [BrickXorRightMarker]
+    public string Right { get; } = string.Empty;
+}

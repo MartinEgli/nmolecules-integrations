@@ -21,7 +21,8 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
                 BoundedContextDependenciesShouldReferenceDeclaredContextsRule,
                 BoundedContextDependenciesShouldNotBeBidirectionalRule,
                 BoundedContextDependenciesShouldNotReferenceSelfRule,
-                BoundedContextDependenciesShouldNotContainDuplicateTargetsRule);
+                BoundedContextDependenciesShouldNotContainDuplicateTargetsRule,
+                BoundedContextDependenciesShouldBeAcyclicRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -42,6 +43,7 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             AnalyzeDependencyTargetUniquenessConsistency(context, declarations);
             AnalyzeDependencySelfReferenceConsistency(context, declarations);
             AnalyzeDependencyDirectionConsistency(context, declarations);
+            AnalyzeDependencyCycleConsistency(context, declarations);
         }
 
         private static IEnumerable<BoundedContextDeclaration> AnalyzeScope(CompilationAnalysisContext context, ISymbol symbol)
@@ -342,6 +344,116 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
                         duplicateTarget);
                 }
             }
+        }
+
+        private static void AnalyzeDependencyCycleConsistency(
+            CompilationAnalysisContext context,
+            IEnumerable<BoundedContextDeclaration> declarations)
+        {
+            var declaredIds = declarations
+                .Select(it => it.Id)
+                .Where(it => !IsBlank(it))
+                .Select(it => it!)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            if (declaredIds.Length <= 2)
+            {
+                return;
+            }
+
+            var declaredSet = new HashSet<string>(declaredIds, StringComparer.OrdinalIgnoreCase);
+            var dependencies = declarations
+                .Where(it => !IsBlank(it.Id))
+                .SelectMany(it =>
+                {
+                    var sourceId = it.Id!;
+                    return it.DependsOnContextIds
+                        .Where(target => !IsBlank(target))
+                        .Select(target => new DeclaredDependency(it, sourceId, target.Trim()));
+                })
+                .Where(it => declaredSet.Contains(it.TargetId))
+                .Where(it => !it.SourceId.Equals(it.TargetId, StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+
+            if (dependencies.Length == 0)
+            {
+                return;
+            }
+
+            var adjacency = dependencies
+                .GroupBy(it => it.SourceId, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group
+                        .Select(it => it.TargetId)
+                        .Distinct(StringComparer.OrdinalIgnoreCase)
+                        .OrderBy(it => it, StringComparer.OrdinalIgnoreCase)
+                        .ToArray(),
+                    StringComparer.OrdinalIgnoreCase);
+
+            foreach (var dependency in dependencies)
+            {
+                if (!TryFindPath(
+                        adjacency,
+                        dependency.TargetId,
+                        dependency.SourceId,
+                        minimumEdges: 2,
+                        out var pathBackToSource))
+                {
+                    continue;
+                }
+
+                var cycle = string.Join(" -> ", new[] { dependency.SourceId, dependency.TargetId }.Concat(pathBackToSource.Skip(1)));
+                context.Report(
+                    dependency.Declaration.Attribute,
+                    dependency.Declaration.Symbol,
+                    BoundedContextDependenciesShouldBeAcyclicRule,
+                    dependency.Declaration.Symbol.MetadataScopeLabel(),
+                    cycle);
+            }
+        }
+
+        private static bool TryFindPath(
+            IReadOnlyDictionary<string, string[]> adjacency,
+            string start,
+            string target,
+            int minimumEdges,
+            out string[] path)
+        {
+            var queue = new Queue<string[]>();
+            queue.Enqueue(new[] { start });
+            var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { start };
+
+            while (queue.Count > 0)
+            {
+                var currentPath = queue.Dequeue();
+                var current = currentPath[currentPath.Length - 1];
+
+                if (!adjacency.TryGetValue(current, out var nextTargets))
+                {
+                    continue;
+                }
+
+                foreach (var next in nextTargets)
+                {
+                    var nextPath = currentPath.Concat(new[] { next }).ToArray();
+                    if (next.Equals(target, StringComparison.OrdinalIgnoreCase) &&
+                        nextPath.Length - 1 >= minimumEdges)
+                    {
+                        path = nextPath;
+                        return true;
+                    }
+
+                    if (visited.Add(next))
+                    {
+                        queue.Enqueue(nextPath);
+                    }
+                }
+            }
+
+            path = Array.Empty<string>();
+            return false;
         }
 
         private static string ToDependencyPairKey(string sourceId, string targetId) => $"{sourceId}->{targetId}";

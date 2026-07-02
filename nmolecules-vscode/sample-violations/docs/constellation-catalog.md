@@ -79,7 +79,7 @@ This workspace is split into isolated violations and combined violations.
 
 - assembly/module metadata in `ArchitectureFamilyViolations.cs`
   File: `src/Banking.Violations.Domain/ArchitectureFamilyViolations.cs`
-  Expected primary diagnostics: `XMoleculesBoundedContext0003`, `XMoleculesBoundedContext0006`, `XMoleculesBoundedContext0007`, `XMoleculesBoundedContext0008`, `XMoleculesBoundedContext0009`, `XMoleculesModule0004`
+  Expected primary diagnostics: `XMoleculesBoundedContext0003`, `XMoleculesBoundedContext0006`, `XMoleculesBoundedContext0007`, `XMoleculesBoundedContext0008`, `XMoleculesBoundedContext0009`, `XMoleculesBoundedContext0010`, `XMoleculesModule0004`
 
 - onion/cross-style mix in one bounded context
   File: `src/Banking.Violations.Domain/ArchitectureFamilyViolations.cs`
@@ -87,7 +87,7 @@ This workspace is split into isolated violations and combined violations.
 
 - comprehensive rule-matrix coverage
   File: `src/Banking.Violations.RuleMatrix/RuleMatrixViolations.cs`
-  Expected primary diagnostics: remaining DDD, Events, Layered, Onion (`0001`-`0004`), Hexagonal, CQRS (`0002`-`0006`), EventStorming, Microservices, and Bricks family gaps
+  Expected primary diagnostics: remaining DDD, Events, Layered, Onion (`0001`-`0004`), Hexagonal, CQRS (`0002`-`0006`), EventStorming, Microservices, and Bricks family coverage (`XMoleculesBricks0001` to `XMoleculesBricks0006`)
 
 - metadata-missing rule coverage
   File: `src/Banking.Violations.MetadataMissing/MetadataMissingViolations.cs`

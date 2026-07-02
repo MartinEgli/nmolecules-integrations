@@ -13,6 +13,7 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
         public const string BoundedContextDependenciesShouldNotBeBidirectionalId = "XMoleculesBoundedContext0007";
         public const string BoundedContextDependenciesShouldNotReferenceSelfId = "XMoleculesBoundedContext0008";
         public const string BoundedContextDependenciesShouldNotContainDuplicateTargetsId = "XMoleculesBoundedContext0009";
+        public const string BoundedContextDependenciesShouldBeAcyclicId = "XMoleculesBoundedContext0010";
 
         public static readonly DiagnosticDescriptor BoundedContextShouldDefineIdRule = new(
             BoundedContextShouldDefineIdId,
@@ -121,5 +122,17 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
                 "The same dependency target is repeated inside one bounded-context declaration.",
                 "Each outbound bounded-context dependency should appear once so the dependency graph remains clear and deterministic.",
                 "Deduplicate the target list and keep each dependent bounded-context Id only once."));
+
+        public static readonly DiagnosticDescriptor BoundedContextDependenciesShouldBeAcyclicRule = new(
+            BoundedContextDependenciesShouldBeAcyclicId,
+            "BoundedContext dependency graph should be acyclic",
+            "BoundedContext on {0} declares dependency cycle '{1}'",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            DiagnosticDescriptions.Create(
+                "The declared bounded-context dependency graph contains a transitive cycle.",
+                "Context dependencies should describe a clear upstream/downstream direction. Cycles make ownership, integration direction, and deployment impact unclear.",
+                "Break the cycle by extracting a shared upstream context, reversing the incorrect dependency, or merging contexts that actually form one boundary."));
     }
 }

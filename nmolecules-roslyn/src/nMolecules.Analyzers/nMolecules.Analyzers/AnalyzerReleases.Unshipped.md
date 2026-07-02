@@ -34,6 +34,7 @@ XMoleculesBoundedContext0006 | DDD | Warning | BoundedContext dependencies shoul
 XMoleculesBoundedContext0007 | DDD | Warning | BoundedContext dependency direction should be unidirectional per context pair
 XMoleculesBoundedContext0008 | DDD | Warning | BoundedContext should not depend on itself
 XMoleculesBoundedContext0009 | DDD | Warning | BoundedContext dependency targets should be unique
+XMoleculesBoundedContext0010 | DDD | Warning | BoundedContext dependency graph should be acyclic
 XMoleculesModule0001 | DDD | Warning | Module should define stable Id metadata
 XMoleculesModule0002 | DDD | Warning | Module should define readable Name metadata
 XMoleculesModule0003 | DDD | Warning | Module should define BoundedContextId metadata

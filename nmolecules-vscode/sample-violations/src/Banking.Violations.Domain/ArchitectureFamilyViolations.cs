@@ -6,8 +6,9 @@ using NMolecules.DDD;
 using NMolecules.Events;
 
 [assembly: BoundedContext(Id = "Billing", Name = "Billing", DependsOnContextIds = new[] { "Billing", "SharedKernel", "Sales", "sales" })]
+[assembly: BoundedContext(Id = "Shipping", Name = "Shipping", DependsOnContextIds = new[] { "Billing" })]
 [assembly: Module(Id = "Accounts.Core", Name = "Accounts", BoundedContextId = "UnknownContext")]
-[module: BoundedContext(Id = "Sales", Name = "Sales", DependsOnContextIds = new[] { "Billing" })]
+[module: BoundedContext(Id = "Sales", Name = "Sales", DependsOnContextIds = new[] { "Billing", "Shipping" })]
 [module: Module(Id = "Accounts.Api", Name = "Accounts", BoundedContextId = "UnknownContext")]
 
 namespace Banking.Violations.Domain;

@@ -82,16 +82,29 @@ Example interpretation:
   `Domain event handler 'HandleTooMany' declares multiple [DomainEvent] parameters`
 
 - module metadata in `ArchitectureFamilyViolations.cs`
-  `Module on module 'Banking.Violations.Domain.dll' references unknown BoundedContextId 'UnknownContext'. Declared bounded contexts: Billing, Sales`
+  `Module on module 'Banking.Violations.Domain.dll' references unknown BoundedContextId 'UnknownContext'. Declared bounded contexts: Billing, Sales, Shipping`
   `Module on assembly 'Banking.Violations.Domain' declares Name/Value 'Accounts' in BoundedContextId 'UnknownContext' with Id 'Accounts.Core', but this name maps to multiple Ids in that context: Accounts.Api, Accounts.Core`
 
 - bounded-context metadata in `ArchitectureFamilyViolations.cs`
-  `BoundedContext on module 'Banking.Violations.Domain.dll' declares Id 'Sales', but compilation contains multiple BoundedContext Ids: Billing, Sales`
-  `BoundedContext on assembly 'Banking.Violations.Domain' declares dependency 'Billing -> SharedKernel', but target context is not declared in compilation metadata. Declared bounded contexts: Billing, Sales`
+  `BoundedContext on assembly 'Banking.Violations.Domain' declares Id 'Billing', but compilation contains multiple BoundedContext Ids: Billing, Sales, Shipping`
+  `BoundedContext on assembly 'Banking.Violations.Domain' declares Id 'Shipping', but compilation contains multiple BoundedContext Ids: Billing, Sales, Shipping`
+  `BoundedContext on module 'Banking.Violations.Domain.dll' declares Id 'Sales', but compilation contains multiple BoundedContext Ids: Billing, Sales, Shipping`
+  `BoundedContext on assembly 'Banking.Violations.Domain' declares dependency 'Billing -> SharedKernel', but target context is not declared in compilation metadata. Declared bounded contexts: Billing, Sales, Shipping`
   `BoundedContext on assembly 'Banking.Violations.Domain' declares dependency 'Billing -> Sales', but reverse dependency 'Sales -> Billing' is also declared`
   `BoundedContext on module 'Banking.Violations.Domain.dll' declares dependency 'Sales -> Billing', but reverse dependency 'Billing -> Sales' is also declared`
   `BoundedContext on assembly 'Banking.Violations.Domain' declares self dependency 'Billing -> Billing'`
   `BoundedContext on assembly 'Banking.Violations.Domain' declares duplicate dependency target 'Sales' in DependsOnContextIds`
+  `BoundedContext on assembly 'Banking.Violations.Domain' declares dependency cycle 'Billing -> Sales -> Shipping -> Billing'`
+  `BoundedContext on module 'Banking.Violations.Domain.dll' declares dependency cycle 'Sales -> Shipping -> Billing -> Sales'`
+  `BoundedContext on assembly 'Banking.Violations.Domain' declares dependency cycle 'Shipping -> Billing -> Sales -> Shipping'`
+
+- Bricks rules and member contracts in `RuleMatrixViolations.cs`
+  `Brick rule 'BRK001': 'BrickApiComponent' must not depend on 'BrickDomainComponent' via member 'domainComponent'`
+  `Brick rule declaration is invalid. Id='', SourceRole='ApiRole', TargetRole='DomainRole'`
+  `Brick contract 'BrickExactlyOneContractAttribute' requires exactly one member marked with 'BrickOnlyOneMarkerAttribute', but 'BrickExactlyOneContractViolation' declares 2.`
+  `Brick contract 'BrickAllMembersContractAttribute' requires members marked with all configured marker attributes, but 'BrickAllMembersContractViolation' is missing: BrickAllRightMarkerAttribute.`
+  `Brick contract 'BrickMemberCountContractAttribute' requires exactly 2 members marked with 'BrickRepeatedMarkerAttribute', but 'BrickMemberCountContractViolation' declares 1.`
+  `Brick contract 'BrickExclusiveChoiceContractAttribute' requires exactly one of 'BrickXorLeftMarkerAttribute' or 'BrickXorRightMarkerAttribute', but 'BrickExclusiveChoiceContractViolation' declares 1 and 1.`
 
 - onion/cross-style mix in `ArchitectureFamilyViolations.cs`
   `Onion declaration on type 'ClassicDomainRing' mixes classic and simplified markers in the same compilation`

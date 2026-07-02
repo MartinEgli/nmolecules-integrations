@@ -1,6 +1,6 @@
 # VS Code Release Checklist
 
-Status: March 7, 2026
+Status: June 29, 2026
 
 This checklist defines the release gate for the VS Code delivery path.
 
@@ -19,6 +19,7 @@ Run these checks before any VS Code release candidate:
 
 ```powershell
 pwsh .\tools\release\validate-release-version.ps1
+pwsh ..\tools\validate-ide-channel-hardening.ps1 -Configuration Release
 npm test --prefix nmolecules-vscode
 pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release -SkipAnalyzerTests -SkipVsCodeTests -SkipVisualStudioVsix
 ```
@@ -26,6 +27,7 @@ pwsh .\tools\packaging\build-ide-installers.ps1 -Configuration Release -SkipAnal
 Expected:
 
 - release-version validation passes
+- IDE channel hardening validation passes
 - VS Code extension tests are green
 - `artifacts/installers/vscode/nMolecules.VSCode.vsix` is generated
 - `artifacts/installers/vscode/setup/nMolecules.Setup.VSCode.exe` is generated

@@ -1,6 +1,6 @@
 # nMolecules DDD Rule Catalog
 
-Status: March 7, 2026
+Status: June 29, 2026
 
 This document defines the shared DDD rule baseline for all integrations.
 
@@ -17,7 +17,7 @@ The DDD analyzer baseline includes:
 - aggregate root, entity, value object, repository, factory, domain-service, and application-service dependency boundaries
 - migration warning for legacy `Service`
 - module metadata and boundary consistency through `XMoleculesModule0007`
-- bounded-context metadata and dependency-boundary consistency through `XMoleculesBoundedContext0009`
+- bounded-context metadata and dependency-boundary consistency through `XMoleculesBoundedContext0010`
 
 For exact IDs and wording, the canonical source is:
 
@@ -29,7 +29,7 @@ For exact IDs and wording, the canonical source is:
 The MVP baseline is complete enough for cross-IDE delivery.
 Current depth work is focused on:
 
-- bounded-context dependency semantics beyond current duplicate-target baseline (`XMoleculesBoundedContext0010+`)
+- bounded-context dependency semantics beyond the current acyclic graph baseline (`XMoleculesBoundedContext0011+`)
 - later conditional-policy depth and severity refinement where needed
 - keeping rule map, release catalog, tests, and samples synchronized
 

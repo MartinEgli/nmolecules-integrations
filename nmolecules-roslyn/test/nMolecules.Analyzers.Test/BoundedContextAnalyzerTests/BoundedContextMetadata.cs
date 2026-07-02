@@ -407,6 +407,81 @@ namespace DomainModel
         }
 
         [Fact]
+        public async Task Analyze_WithTransitiveDependencyCycle_EmitsWarnings()
+        {
+            var testCode = @"using System;
+[assembly: {|#0:DomainModel.BoundedContext(Id = ""Billing"", Name = ""Billing"", DependsOnContextIds = new[] { ""Sales"" })|}]
+[assembly: {|#1:DomainModel.BoundedContext(Id = ""Sales"", Name = ""Sales"", DependsOnContextIds = new[] { ""Shipping"" })|}]
+[assembly: {|#2:DomainModel.BoundedContext(Id = ""Shipping"", Name = ""Shipping"", DependsOnContextIds = new[] { ""Billing"" })|}]
+
+namespace DomainModel
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
+    public sealed class BoundedContextAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+        public string[] DependsOnContextIds { get; set; } = Array.Empty<string>();
+    }
+}";
+
+            var billingIdConsistencyExpected = new DiagnosticResult(Rules.BoundedContextShouldUseSingleIdPerCompilationId, DiagnosticSeverity.Warning)
+                .WithLocation(0);
+            var salesIdConsistencyExpected = new DiagnosticResult(Rules.BoundedContextShouldUseSingleIdPerCompilationId, DiagnosticSeverity.Warning)
+                .WithLocation(1);
+            var shippingIdConsistencyExpected = new DiagnosticResult(Rules.BoundedContextShouldUseSingleIdPerCompilationId, DiagnosticSeverity.Warning)
+                .WithLocation(2);
+            var billingCycleExpected = new DiagnosticResult(Rules.BoundedContextDependenciesShouldBeAcyclicId, DiagnosticSeverity.Warning)
+                .WithLocation(0);
+            var salesCycleExpected = new DiagnosticResult(Rules.BoundedContextDependenciesShouldBeAcyclicId, DiagnosticSeverity.Warning)
+                .WithLocation(1);
+            var shippingCycleExpected = new DiagnosticResult(Rules.BoundedContextDependenciesShouldBeAcyclicId, DiagnosticSeverity.Warning)
+                .WithLocation(2);
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(
+                billingIdConsistencyExpected,
+                salesIdConsistencyExpected,
+                shippingIdConsistencyExpected,
+                billingCycleExpected,
+                salesCycleExpected,
+                shippingCycleExpected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithAcyclicTransitiveDependencies_DoesNotEmitCycleWarnings()
+        {
+            var testCode = @"using System;
+[assembly: {|#0:DomainModel.BoundedContext(Id = ""Billing"", Name = ""Billing"", DependsOnContextIds = new[] { ""Sales"" })|}]
+[assembly: {|#1:DomainModel.BoundedContext(Id = ""Sales"", Name = ""Sales"", DependsOnContextIds = new[] { ""SharedKernel"" })|}]
+[assembly: {|#2:DomainModel.BoundedContext(Id = ""SharedKernel"", Name = ""Shared Kernel"")|}]
+
+namespace DomainModel
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
+    public sealed class BoundedContextAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+        public string[] DependsOnContextIds { get; set; } = Array.Empty<string>();
+    }
+}";
+
+            var billingIdConsistencyExpected = new DiagnosticResult(Rules.BoundedContextShouldUseSingleIdPerCompilationId, DiagnosticSeverity.Warning)
+                .WithLocation(0);
+            var salesIdConsistencyExpected = new DiagnosticResult(Rules.BoundedContextShouldUseSingleIdPerCompilationId, DiagnosticSeverity.Warning)
+                .WithLocation(1);
+            var sharedKernelIdConsistencyExpected = new DiagnosticResult(Rules.BoundedContextShouldUseSingleIdPerCompilationId, DiagnosticSeverity.Warning)
+                .WithLocation(2);
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(
+                billingIdConsistencyExpected,
+                salesIdConsistencyExpected,
+                sharedKernelIdConsistencyExpected));
+        }
+
+        [Fact]
         public async Task Analyze_WithLegacyAttributeShape_DoesNotEmitViolations()
         {
             var testCode = @"using System;
