@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -22,6 +23,10 @@ namespace NMolecules.Analyzers.BricksAnalyzers
         private static readonly string[] RequireAllMembersAttributeNames = { "RequireAllMembersAttribute" };
         private static readonly string[] RequireMemberCountAttributeNames = { "RequireMemberCountAttribute" };
         private static readonly string[] RequireExclusiveChoiceAttributeNames = { "RequireExclusiveChoiceAttribute" };
+        private static readonly string[] RequireMemberRangeAttributeNames = { "RequireMemberRangeAttribute" };
+        private static readonly string[] ForbidMemberAttributeNames = { "ForbidMemberAttribute" };
+        private static readonly string[] RequireUniqueNamedMemberAttributeNames = { "RequireUniqueNamedMemberAttribute" };
+        private static readonly string[] RequireNamedMembersAttributeNames = { "RequireNamedMembersAttribute" };
 
         internal static IReadOnlyList<INamedTypeSymbol> GetAllTypesInCompilation(Compilation compilation)
         {
@@ -44,10 +49,14 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             {
                 if (!rule.IsValid)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(
+                    context.ReportDiagnostic(BricksDiagnosticProperties.Create(
                         Rules.BrickRuleConfigurationRule,
                         rule.Location,
-                        $"Brick rule declaration is invalid. Id='{rule.Id}', SourceRole='{rule.SourceRole}', TargetRole='{rule.TargetRole}'"));
+                        $"Brick rule declaration is invalid. Id='{rule.Id}', SourceRole='{rule.SourceRole}', TargetRole='{rule.TargetRole}'",
+                        configurationKind: "Rule",
+                        ruleId: rule.Id,
+                        sourceRole: rule.SourceRole,
+                        targetRole: rule.TargetRole));
                     continue;
                 }
 
@@ -93,10 +102,16 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                             continue;
                         }
 
-                        context.ReportDiagnostic(Diagnostic.Create(
+                        context.ReportDiagnostic(BricksDiagnosticProperties.Create(
                             Rules.BrickRuleViolationRule,
                             observation.Location ?? observation.MemberSymbol.Locations.FirstOrDefault() ?? sourceType.Locations.FirstOrDefault() ?? Location.None,
-                            FormatViolationMessage(rule, sourceType, candidateType.DisplayName(), observation.MemberSymbol.Name)));
+                            FormatViolationMessage(rule, sourceType, candidateType.DisplayName(), observation.MemberSymbol.Name),
+                            violationKind: "ForbiddenDependency",
+                            ruleId: rule.Id,
+                            sourceRole: rule.SourceRole,
+                            targetRole: rule.TargetRole,
+                            source: sourceType.DisplayName(),
+                            target: candidateType.DisplayName()));
                     }
                 }
             }
@@ -120,10 +135,16 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                     continue;
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(
+                context.ReportDiagnostic(BricksDiagnosticProperties.Create(
                     Rules.BrickRuleViolationRule,
                     sourceType.Locations.FirstOrDefault() ?? Location.None,
-                    FormatViolationMessage(rule, sourceType, rule.TargetRole, "<none>")));
+                    FormatViolationMessage(rule, sourceType, rule.TargetRole, "<none>"),
+                    violationKind: "RequiredDependencyMissing",
+                    ruleId: rule.Id,
+                    sourceRole: rule.SourceRole,
+                    targetRole: rule.TargetRole,
+                    source: sourceType.DisplayName(),
+                    target: rule.TargetRole));
             }
         }
 
@@ -149,6 +170,18 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                         case BrickMemberContractKind.ExclusiveChoice:
                             AnalyzeExclusiveChoiceContract(type, contract, context);
                             break;
+                        case BrickMemberContractKind.MemberRange:
+                            AnalyzeMemberRangeContract(type, contract, context);
+                            break;
+                        case BrickMemberContractKind.ForbiddenMember:
+                            AnalyzeForbiddenMemberContract(type, contract, context);
+                            break;
+                        case BrickMemberContractKind.UniqueNamedMember:
+                            AnalyzeUniqueNamedMemberContract(type, contract, context);
+                            break;
+                        case BrickMemberContractKind.RequiredNamedMembers:
+                            AnalyzeRequiredNamedMembersContract(type, contract, context);
+                            break;
                     }
                 }
             }
@@ -165,10 +198,13 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(
+            ReportMemberContractViolation(
+                context,
+                type,
+                contract,
                 Rules.BrickExactlyOneMemberContractRule,
-                type.Locations.FirstOrDefault() ?? Location.None,
-                $"Brick contract '{contract.ContractAttributeName}' requires exactly one member marked with '{contract.PrimaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' declares {count}."));
+                $"Brick contract '{contract.ContractAttributeName}' requires exactly one member marked with '{contract.PrimaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' declares {count}.",
+                "ExactlyOneMember");
         }
 
         private static void AnalyzeAllRequiredMembersContract(
@@ -186,10 +222,13 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(
+            ReportMemberContractViolation(
+                context,
+                type,
+                contract,
                 Rules.BrickRequireAllMembersContractRule,
-                type.Locations.FirstOrDefault() ?? Location.None,
-                $"Brick contract '{contract.ContractAttributeName}' requires members marked with all configured marker attributes, but '{type.DisplayName()}' is missing: {string.Join(", ", missing)}."));
+                $"Brick contract '{contract.ContractAttributeName}' requires members marked with all configured marker attributes, but '{type.DisplayName()}' is missing: {string.Join(", ", missing)}.",
+                "RequireAllMembers");
         }
 
         private static void AnalyzeExactMemberCountContract(
@@ -203,10 +242,13 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(
+            ReportMemberContractViolation(
+                context,
+                type,
+                contract,
                 Rules.BrickMemberCountContractRule,
-                type.Locations.FirstOrDefault() ?? Location.None,
-                $"Brick contract '{contract.ContractAttributeName}' requires exactly {contract.Count} members marked with '{contract.PrimaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' declares {count}."));
+                $"Brick contract '{contract.ContractAttributeName}' requires exactly {contract.Count} members marked with '{contract.PrimaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' declares {count}.",
+                "RequireMemberCount");
         }
 
         private static void AnalyzeExclusiveChoiceContract(
@@ -223,10 +265,125 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(
+            ReportMemberContractViolation(
+                context,
+                type,
+                contract,
                 Rules.BrickExclusiveChoiceContractRule,
+                $"Brick contract '{contract.ContractAttributeName}' requires exactly one of '{contract.PrimaryMarkerType!.DisplayName()}' or '{contract.SecondaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' declares {leftCount} and {rightCount}.",
+                "ExclusiveChoice");
+        }
+
+        private static void AnalyzeMemberRangeContract(
+            INamedTypeSymbol type,
+            BrickMemberContractDeclaration contract,
+            CompilationAnalysisContext context)
+        {
+            var count = CountMarkedMembers(type, contract.PrimaryMarkerType!);
+            if (count >= contract.MinimumCount && count <= contract.MaximumCount)
+            {
+                return;
+            }
+
+            ReportMemberContractViolation(
+                context,
+                type,
+                contract,
+                Rules.BrickMemberRangeContractRule,
+                $"Brick contract '{contract.ContractAttributeName}' requires between {contract.MinimumCount} and {contract.MaximumCount} members marked with '{contract.PrimaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' declares {count}.",
+                "MemberRange");
+        }
+
+        private static void AnalyzeForbiddenMemberContract(
+            INamedTypeSymbol type,
+            BrickMemberContractDeclaration contract,
+            CompilationAnalysisContext context)
+        {
+            var count = CountMarkedMembers(type, contract.PrimaryMarkerType!);
+            if (count == 0)
+            {
+                return;
+            }
+
+            ReportMemberContractViolation(
+                context,
+                type,
+                contract,
+                Rules.BrickForbiddenMemberContractRule,
+                $"Brick contract '{contract.ContractAttributeName}' forbids members marked with '{contract.PrimaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' declares {count}.",
+                "ForbiddenMember");
+        }
+
+        private static void AnalyzeUniqueNamedMemberContract(
+            INamedTypeSymbol type,
+            BrickMemberContractDeclaration contract,
+            CompilationAnalysisContext context)
+        {
+            var duplicateNames = CollectMarkerNameObservations(type, contract.PrimaryMarkerType!, contract.NameArgument)
+                .GroupBy(observation => observation.Name, StringComparer.OrdinalIgnoreCase)
+                .Where(group => group.Count() > 1)
+                .Select(group => FormatMarkerName(group.Key))
+                .ToArray();
+
+            if (duplicateNames.Length == 0)
+            {
+                return;
+            }
+
+            ReportMemberContractViolation(
+                context,
+                type,
+                contract,
+                Rules.BrickUniqueNamedMemberContractRule,
+                $"Brick contract '{contract.ContractAttributeName}' requires unique '{contract.NameArgument}' marker names for '{contract.PrimaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' duplicates: {string.Join(", ", duplicateNames)}.",
+                "UniqueNamedMember");
+        }
+
+        private static void AnalyzeRequiredNamedMembersContract(
+            INamedTypeSymbol type,
+            BrickMemberContractDeclaration contract,
+            CompilationAnalysisContext context)
+        {
+            var observedNames = new HashSet<string>(
+                CollectMarkerNameObservations(type, contract.PrimaryMarkerType!, contract.NameArgument)
+                    .Select(observation => observation.Name),
+                StringComparer.OrdinalIgnoreCase);
+
+            var missingNames = contract.RequiredNames
+                .Where(requiredName => !observedNames.Contains(requiredName))
+                .Select(FormatMarkerName)
+                .ToArray();
+
+            if (missingNames.Length == 0)
+            {
+                return;
+            }
+
+            ReportMemberContractViolation(
+                context,
+                type,
+                contract,
+                Rules.BrickRequiredNamedMembersContractRule,
+                $"Brick contract '{contract.ContractAttributeName}' requires marker names on '{contract.PrimaryMarkerType!.DisplayName()}' via '{contract.NameArgument}', but '{type.DisplayName()}' is missing: {string.Join(", ", missingNames)}.",
+                "RequiredNamedMembers");
+        }
+
+        private static void ReportMemberContractViolation(
+            CompilationAnalysisContext context,
+            INamedTypeSymbol type,
+            BrickMemberContractDeclaration contract,
+            DiagnosticDescriptor descriptor,
+            string message,
+            string contractKind)
+        {
+            context.ReportDiagnostic(BricksDiagnosticProperties.Create(
+                descriptor,
                 type.Locations.FirstOrDefault() ?? Location.None,
-                $"Brick contract '{contract.ContractAttributeName}' requires exactly one of '{contract.PrimaryMarkerType!.DisplayName()}' or '{contract.SecondaryMarkerType!.DisplayName()}', but '{type.DisplayName()}' declares {leftCount} and {rightCount}."));
+                message,
+                violationKind: "MemberContractViolation",
+                source: type.DisplayName(),
+                target: contract.ContractAttributeName,
+                contractKind: contractKind));
         }
 
         private static IEnumerable<BrickMemberContractDeclaration> CollectMemberContracts(INamedTypeSymbol type)
@@ -281,6 +438,48 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                             yield return BrickMemberContractDeclaration.ExclusiveChoice(attributeClass, leftType, rightType);
                         }
                     }
+                    else if (IsRequireMemberRangeAttribute(attribute.AttributeClass))
+                    {
+                        var markerType = GetConstructorType(attribute, 0);
+                        var minimumCount = GetConstructorInt(attribute, 1);
+                        var maximumCount = GetConstructorInt(attribute, 2);
+                        if (markerType is not null && minimumCount >= 0 && maximumCount >= minimumCount)
+                        {
+                            yield return BrickMemberContractDeclaration.MemberRange(attributeClass, markerType, minimumCount, maximumCount);
+                        }
+                    }
+                    else if (IsForbidMemberAttribute(attribute.AttributeClass))
+                    {
+                        var markerType = GetConstructorType(attribute, 0);
+                        if (markerType is not null)
+                        {
+                            yield return BrickMemberContractDeclaration.ForbiddenMember(attributeClass, markerType);
+                        }
+                    }
+                    else if (IsRequireUniqueNamedMemberAttribute(attribute.AttributeClass))
+                    {
+                        var markerType = GetConstructorType(attribute, 0);
+                        if (markerType is not null)
+                        {
+                            yield return BrickMemberContractDeclaration.UniqueNamedMember(
+                                attributeClass,
+                                markerType,
+                                GetNameArgument(attribute, 1));
+                        }
+                    }
+                    else if (IsRequireNamedMembersAttribute(attribute.AttributeClass))
+                    {
+                        var markerType = GetConstructorType(attribute, 0);
+                        var requiredNames = GetConstructorNames(attribute, 1);
+                        if (markerType is not null && requiredNames.Length > 0)
+                        {
+                            yield return BrickMemberContractDeclaration.RequiredNamedMembers(
+                                attributeClass,
+                                markerType,
+                                requiredNames,
+                                GetNameArgument(attribute, -1));
+                        }
+                    }
                 }
             }
         }
@@ -290,6 +489,68 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             return GetMembersInHierarchy(type)
                 .Where(IsEligibleContractMember)
                 .Count(member => member.GetAttributes().Any(attribute => MatchesMarkerAttribute(attribute.AttributeClass, markerAttributeType)));
+        }
+
+        private static IReadOnlyList<MarkerNameObservation> CollectMarkerNameObservations(
+            INamedTypeSymbol type,
+            ITypeSymbol markerAttributeType,
+            string nameArgument)
+        {
+            return GetMembersInHierarchy(type)
+                .Where(IsEligibleContractMember)
+                .SelectMany(member => member.GetAttributes()
+                    .Where(attribute => MatchesMarkerAttribute(attribute.AttributeClass, markerAttributeType))
+                    .Select(attribute => new MarkerNameObservation(member, GetMarkerName(attribute, nameArgument))))
+                .ToArray();
+        }
+
+        private static string GetMarkerName(AttributeData attribute, string nameArgument)
+        {
+            var normalizedNameArgument = NormalizeNameArgument(nameArgument);
+
+            foreach (var namedArgument in attribute.NamedArguments)
+            {
+                if (string.Equals(namedArgument.Key, normalizedNameArgument, StringComparison.Ordinal)
+                    && namedArgument.Value.Value is string namedValue)
+                {
+                    return NormalizeMarkerName(namedValue);
+                }
+            }
+
+            var parameters = attribute.AttributeConstructor?.Parameters ?? ImmutableArray<IParameterSymbol>.Empty;
+            for (var index = 0; index < parameters.Length && index < attribute.ConstructorArguments.Length; index++)
+            {
+                if (string.Equals(parameters[index].Name, normalizedNameArgument, StringComparison.OrdinalIgnoreCase)
+                    && attribute.ConstructorArguments[index].Value is string parameterValue)
+                {
+                    return NormalizeMarkerName(parameterValue);
+                }
+            }
+
+            if (string.Equals(normalizedNameArgument, "Name", StringComparison.Ordinal))
+            {
+                foreach (var constructorArgument in attribute.ConstructorArguments)
+                {
+                    if (constructorArgument.Value is string constructorValue)
+                    {
+                        return NormalizeMarkerName(constructorValue);
+                    }
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private static string FormatMarkerName(string name) =>
+            string.IsNullOrWhiteSpace(name) ? "<unnamed>" : $"'{name}'";
+
+        private static string NormalizeMarkerName(string? value) =>
+            value?.Trim() ?? string.Empty;
+
+        private static string NormalizeNameArgument(string? nameArgument)
+        {
+            var trimmed = nameArgument?.Trim();
+            return string.IsNullOrWhiteSpace(trimmed) ? "Name" : trimmed!;
         }
 
         private static IEnumerable<ISymbol> GetMembersInHierarchy(INamedTypeSymbol type)
@@ -525,6 +786,49 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 .Select(value => value!));
         }
 
+        private static string[] GetConstructorNames(AttributeData attribute, int index)
+        {
+            if (attribute.ConstructorArguments.Length <= index)
+            {
+                return Array.Empty<string>();
+            }
+
+            var argument = attribute.ConstructorArguments[index];
+            if (argument.Kind != TypedConstantKind.Array)
+            {
+                return Array.Empty<string>();
+            }
+
+            return argument.Values
+                .Where(value => value.Value is string)
+                .Select(value => NormalizeMarkerName(value.Value as string))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+
+        private static string GetNameArgument(AttributeData attribute, int constructorIndex)
+        {
+            foreach (var namedArgument in attribute.NamedArguments)
+            {
+                if (string.Equals(namedArgument.Key, "NameArgument", StringComparison.Ordinal)
+                    && namedArgument.Value.Value is string namedValue)
+                {
+                    return NormalizeNameArgument(namedValue);
+                }
+            }
+
+            if (constructorIndex >= 0)
+            {
+                var constructorValue = GetConstructorString(attribute, constructorIndex);
+                if (!string.IsNullOrWhiteSpace(constructorValue))
+                {
+                    return NormalizeNameArgument(constructorValue);
+                }
+            }
+
+            return "Name";
+        }
+
         private static ITypeSymbol? GetConstructorType(AttributeData attribute, int index)
         {
             if (attribute.ConstructorArguments.Length <= index)
@@ -684,6 +988,18 @@ namespace NMolecules.Analyzers.BricksAnalyzers
 
         private static bool IsRequireExclusiveChoiceAttribute(INamedTypeSymbol? attributeClass) =>
             InheritsFromAnyAttribute(attributeClass, RequireExclusiveChoiceAttributeNames);
+
+        private static bool IsRequireMemberRangeAttribute(INamedTypeSymbol? attributeClass) =>
+            InheritsFromAnyAttribute(attributeClass, RequireMemberRangeAttributeNames);
+
+        private static bool IsForbidMemberAttribute(INamedTypeSymbol? attributeClass) =>
+            InheritsFromAnyAttribute(attributeClass, ForbidMemberAttributeNames);
+
+        private static bool IsRequireUniqueNamedMemberAttribute(INamedTypeSymbol? attributeClass) =>
+            InheritsFromAnyAttribute(attributeClass, RequireUniqueNamedMemberAttributeNames);
+
+        private static bool IsRequireNamedMembersAttribute(INamedTypeSymbol? attributeClass) =>
+            InheritsFromAnyAttribute(attributeClass, RequireNamedMembersAttributeNames);
 
         private static bool InheritsFromAnyAttribute(INamedTypeSymbol? type, IReadOnlyCollection<string> attributeNames)
         {
@@ -868,7 +1184,11 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 ITypeSymbol? primaryMarkerType,
                 ITypeSymbol? secondaryMarkerType,
                 IReadOnlyList<ITypeSymbol> markerTypes,
-                int count)
+                int count,
+                int minimumCount,
+                int maximumCount,
+                IReadOnlyList<string> requiredNames,
+                string nameArgument)
             {
                 Kind = kind;
                 ContractAttributeName = contractAttributeType.DisplayName();
@@ -876,6 +1196,10 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 SecondaryMarkerType = secondaryMarkerType;
                 MarkerTypes = markerTypes;
                 Count = count;
+                MinimumCount = minimumCount;
+                MaximumCount = maximumCount;
+                RequiredNames = requiredNames;
+                NameArgument = NormalizeNameArgument(nameArgument);
             }
 
             public BrickMemberContractKind Kind { get; }
@@ -890,6 +1214,14 @@ namespace NMolecules.Analyzers.BricksAnalyzers
 
             public int Count { get; }
 
+            public int MinimumCount { get; }
+
+            public int MaximumCount { get; }
+
+            public IReadOnlyList<string> RequiredNames { get; }
+
+            public string NameArgument { get; }
+
             public static BrickMemberContractDeclaration ExactlyOne(INamedTypeSymbol contractAttributeType, ITypeSymbol markerType) =>
                 new BrickMemberContractDeclaration(
                     BrickMemberContractKind.ExactlyOne,
@@ -897,7 +1229,11 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                     markerType,
                     null,
                     Array.Empty<ITypeSymbol>(),
-                    1);
+                    1,
+                    0,
+                    0,
+                    Array.Empty<string>(),
+                    "Name");
 
             public static BrickMemberContractDeclaration AllRequired(INamedTypeSymbol contractAttributeType, IReadOnlyList<ITypeSymbol> markerTypes) =>
                 new BrickMemberContractDeclaration(
@@ -906,7 +1242,11 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                     null,
                     null,
                     markerTypes,
-                    0);
+                    0,
+                    0,
+                    0,
+                    Array.Empty<string>(),
+                    "Name");
 
             public static BrickMemberContractDeclaration ExactCount(INamedTypeSymbol contractAttributeType, ITypeSymbol markerType, int count) =>
                 new BrickMemberContractDeclaration(
@@ -915,7 +1255,11 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                     markerType,
                     null,
                     Array.Empty<ITypeSymbol>(),
-                    count);
+                    count,
+                    0,
+                    0,
+                    Array.Empty<string>(),
+                    "Name");
 
             public static BrickMemberContractDeclaration ExclusiveChoice(INamedTypeSymbol contractAttributeType, ITypeSymbol leftType, ITypeSymbol rightType) =>
                 new BrickMemberContractDeclaration(
@@ -924,7 +1268,63 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                     leftType,
                     rightType,
                     Array.Empty<ITypeSymbol>(),
-                    0);
+                    0,
+                    0,
+                    0,
+                    Array.Empty<string>(),
+                    "Name");
+
+            public static BrickMemberContractDeclaration MemberRange(INamedTypeSymbol contractAttributeType, ITypeSymbol markerType, int minimumCount, int maximumCount) =>
+                new BrickMemberContractDeclaration(
+                    BrickMemberContractKind.MemberRange,
+                    contractAttributeType,
+                    markerType,
+                    null,
+                    Array.Empty<ITypeSymbol>(),
+                    0,
+                    minimumCount,
+                    maximumCount,
+                    Array.Empty<string>(),
+                    "Name");
+
+            public static BrickMemberContractDeclaration ForbiddenMember(INamedTypeSymbol contractAttributeType, ITypeSymbol markerType) =>
+                new BrickMemberContractDeclaration(
+                    BrickMemberContractKind.ForbiddenMember,
+                    contractAttributeType,
+                    markerType,
+                    null,
+                    Array.Empty<ITypeSymbol>(),
+                    0,
+                    0,
+                    0,
+                    Array.Empty<string>(),
+                    "Name");
+
+            public static BrickMemberContractDeclaration UniqueNamedMember(INamedTypeSymbol contractAttributeType, ITypeSymbol markerType, string nameArgument) =>
+                new BrickMemberContractDeclaration(
+                    BrickMemberContractKind.UniqueNamedMember,
+                    contractAttributeType,
+                    markerType,
+                    null,
+                    Array.Empty<ITypeSymbol>(),
+                    0,
+                    0,
+                    0,
+                    Array.Empty<string>(),
+                    nameArgument);
+
+            public static BrickMemberContractDeclaration RequiredNamedMembers(INamedTypeSymbol contractAttributeType, ITypeSymbol markerType, IReadOnlyList<string> requiredNames, string nameArgument) =>
+                new BrickMemberContractDeclaration(
+                    BrickMemberContractKind.RequiredNamedMembers,
+                    contractAttributeType,
+                    markerType,
+                    null,
+                    Array.Empty<ITypeSymbol>(),
+                    0,
+                    0,
+                    0,
+                    requiredNames,
+                    nameArgument);
         }
 
         private sealed class BrickRuleDeclaration
@@ -1026,6 +1426,19 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             public Location? Location { get; }
         }
 
+        private sealed class MarkerNameObservation
+        {
+            public MarkerNameObservation(ISymbol memberSymbol, string name)
+            {
+                MemberSymbol = memberSymbol;
+                Name = name;
+            }
+
+            public ISymbol MemberSymbol { get; }
+
+            public string Name { get; }
+        }
+
         private enum BrickRuleMode
         {
             ForbidDependency = 0,
@@ -1037,7 +1450,11 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             ExactlyOne = 0,
             AllRequired = 1,
             ExactCount = 2,
-            ExclusiveChoice = 3
+            ExclusiveChoice = 3,
+            MemberRange = 4,
+            ForbiddenMember = 5,
+            UniqueNamedMember = 6,
+            RequiredNamedMembers = 7
         }
 
         private static string[] NormalizeTokens(IEnumerable<string> tokens)

@@ -1,5 +1,11 @@
+using System;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using NMolecules.Analyzers.BricksAnalyzers;
 using Xunit;
@@ -1120,6 +1126,31 @@ namespace SampleData
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
         }
 
+        [Fact]
+        public async Task Analyze_WithInvalidRuleConfiguration_KeepsLegacyIdAndAddsProperties()
+        {
+            var testCode = @"using System;
+[assembly: NMolecules.Bricks.Rule(""BILL-ARCH-005"", """", ""Infrastructure"")]
+
+namespace SampleData
+{
+    using NMolecules.Bricks;
+
+    [Role(""Infrastructure"")]
+    public class SqlGateway
+    {
+    }
+}
+" + BricksShims;
+
+            var diagnostic = Assert.Single(await AnalyzeDependencyDiagnosticsAsync(testCode));
+
+            Assert.Equal(Rules.BrickRuleConfigurationId, diagnostic.Id);
+            Assert.Equal("Rule", diagnostic.Properties["BrickConfigurationKind"]);
+            Assert.Equal("BILL-ARCH-005", diagnostic.Properties["RuleId"]);
+            Assert.Equal("Infrastructure", diagnostic.Properties["TargetRole"]);
+        }
+
         private const string BricksShims = @"
 
 namespace NMolecules.Bricks
@@ -1220,5 +1251,23 @@ namespace NMolecules.Bricks
         }
     }
 }";
+
+        private static async Task<ImmutableArray<Diagnostic>> AnalyzeDependencyDiagnosticsAsync(string source)
+        {
+            var syntaxTree = CSharpSyntaxTree.ParseText(source);
+            var references = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
+                .Split(Path.PathSeparator)
+                .Select(path => MetadataReference.CreateFromFile(path))
+                .ToArray();
+            var compilation = CSharpCompilation.Create(
+                "BricksDependencyPropertyFixture",
+                new[] { syntaxTree },
+                references,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            return await compilation
+                .WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new BricksDependencyAnalyzer()))
+                .GetAnalyzerDiagnosticsAsync();
+        }
     }
 }

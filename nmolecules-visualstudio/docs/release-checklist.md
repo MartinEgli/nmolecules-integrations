@@ -68,10 +68,16 @@ MSBuild.exe .\nmolecules-roslyn\src\nMolecules.Analyzers\nMolecules.Analyzers.Vs
 devenv.exe /rootsuffix Exp /log
 ```
 
-4. Open a valid or invalid sample solution once the Visual Studio sample surfaces exist under `nmolecules-visualstudio`.
-5. Confirm diagnostics in Error List.
-6. Confirm at least one code fix is available for a fixable rule.
-7. Verify no extension load errors in `ActivityLog.xml`.
+4. Open the healthy sample solution:
+   `nmolecules-visualstudio/sample-workspace/Banking.VisualStudio.Sample.sln`.
+5. Build once and confirm the Error List is empty for the healthy sample.
+6. Open the violation sample solution:
+   `nmolecules-visualstudio/sample-violations/Banking.VisualStudio.Violations.sln`.
+7. Build once and confirm expected diagnostics appear in Error List.
+8. Confirm at least one code fix is available for a fixable rule.
+9. Verify no extension load errors in `ActivityLog.xml`.
+10. Record the Visual Studio version, VSIX version, sample solution, and
+    observed diagnostic count in the release notes.
 
 ## Migration Note
 

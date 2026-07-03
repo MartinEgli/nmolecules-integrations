@@ -297,6 +297,38 @@ namespace DomainModel
         }
 
         [Fact]
+        public async Task Analyze_WithDependencyTargetDifferentCasing_EmitsWarning()
+        {
+            var testCode = @"using System;
+[assembly: {|#0:DomainModel.BoundedContext(Id = ""Billing"", Name = ""Billing"", DependsOnContextIds = new[] { ""sales"" })|}]
+[module: {|#1:DomainModel.BoundedContext(Id = ""Sales"", Name = ""Sales"")|}]
+
+namespace DomainModel
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
+    public sealed class BoundedContextAttribute : Attribute
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+        public string[] DependsOnContextIds { get; set; } = Array.Empty<string>();
+    }
+}";
+
+            var dependencyCasingExpected = new DiagnosticResult(Rules.BoundedContextDependenciesShouldUseCanonicalTargetCasingId, DiagnosticSeverity.Warning)
+                .WithLocation(0);
+            var assemblyIdConsistencyExpected = new DiagnosticResult(Rules.BoundedContextShouldUseSingleIdPerCompilationId, DiagnosticSeverity.Warning)
+                .WithLocation(0);
+            var moduleIdConsistencyExpected = new DiagnosticResult(Rules.BoundedContextShouldUseSingleIdPerCompilationId, DiagnosticSeverity.Warning)
+                .WithLocation(1);
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(
+                dependencyCasingExpected,
+                assemblyIdConsistencyExpected,
+                moduleIdConsistencyExpected));
+        }
+
+        [Fact]
         public async Task Analyze_WithBidirectionalDependencies_EmitsWarnings()
         {
             var testCode = @"using System;

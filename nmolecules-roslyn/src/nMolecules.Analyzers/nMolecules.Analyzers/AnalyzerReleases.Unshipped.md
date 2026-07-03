@@ -22,8 +22,14 @@ XMoleculesAggregateRoot0007 | DDD | Error | Aggregate roots must not depend on f
 XMoleculesAggregateRoot0008 | DDD | Error | Aggregate roots must not depend on legacy services
 XMoleculesFactory0001 | DDD | Error | Factories must not depend on application services
 XMoleculesFactory0002 | DDD | Error | Factories must not depend on repositories
-XMoleculesFactory0003 | DDD | Error | Factories must not also be domain building blocks
+XMoleculesFactory0003 | DDD | Error | Factories must not also be entities
 XMoleculesFactory0004 | DDD | Error | Factories must not depend on other factories
+XMoleculesFactory0005 | DDD | Error | Factories must not also be aggregate roots
+XMoleculesFactory0006 | DDD | Error | Factories must not also be value objects
+XMoleculesFactory0007 | DDD | Error | Factories must not also be repositories
+XMoleculesFactory0008 | DDD | Error | Factories must not also be legacy services
+XMoleculesFactory0009 | DDD | Error | Factories must not also be domain services
+XMoleculesFactory0010 | DDD | Error | Factories must not also be application services
 XMoleculesService0001 | DDD | Warning | Legacy services should use explicit role markers
 XMoleculesBoundedContext0001 | DDD | Warning | BoundedContext should define stable Id metadata
 XMoleculesBoundedContext0002 | DDD | Warning | BoundedContext should define readable Name metadata
@@ -35,6 +41,7 @@ XMoleculesBoundedContext0007 | DDD | Warning | BoundedContext dependency directi
 XMoleculesBoundedContext0008 | DDD | Warning | BoundedContext should not depend on itself
 XMoleculesBoundedContext0009 | DDD | Warning | BoundedContext dependency targets should be unique
 XMoleculesBoundedContext0010 | DDD | Warning | BoundedContext dependency graph should be acyclic
+XMoleculesBoundedContext0011 | DDD | Warning | BoundedContext dependency targets should use canonical Id casing
 XMoleculesModule0001 | DDD | Warning | Module should define stable Id metadata
 XMoleculesModule0002 | DDD | Warning | Module should define readable Name metadata
 XMoleculesModule0003 | DDD | Warning | Module should define BoundedContextId metadata
@@ -92,6 +99,10 @@ XMoleculesBricks0003 | Architecture | Error | Brick member contracts must declar
 XMoleculesBricks0004 | Architecture | Error | Brick member contracts must include all required markers
 XMoleculesBricks0005 | Architecture | Error | Brick member contracts must use the configured marker count
 XMoleculesBricks0006 | Architecture | Error | Brick member contracts must satisfy an exclusive choice
+XMoleculesBricks0007 | Architecture | Error | Brick member contracts must use the configured marker range
+XMoleculesBricks0008 | Architecture | Error | Brick member contracts must not declare forbidden markers
+XMoleculesBricks0009 | Architecture | Error | Brick member contracts must use unique marker names
+XMoleculesBricks0010 | Architecture | Error | Brick member contracts must include required marker names
 XMoleculesEventStorming0001 | Architecture | Error | Event Storming actors must not depend on aggregates
 XMoleculesEventStorming0002 | Architecture | Warning | Event Storming commands should target aggregates
 XMoleculesEventStorming0003 | Architecture | Warning | Event Storming policies should react to domain events

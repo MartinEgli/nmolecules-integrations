@@ -4,6 +4,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$PSNativeCommandUseErrorActionPreference = $false
 
 $workspacePath = if ([string]::IsNullOrWhiteSpace($WorkspaceRoot)) {
     Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")

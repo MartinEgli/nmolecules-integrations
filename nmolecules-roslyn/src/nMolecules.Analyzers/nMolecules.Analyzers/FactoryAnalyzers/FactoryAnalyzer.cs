@@ -13,8 +13,14 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
             ImmutableArray.Create(
                 Rules.FactoriesShouldNotUseApplicationServicesRule,
                 Rules.FactoriesShouldNotUseRepositoriesRule,
-                Rules.FactoriesShouldNotAlsoBeDomainBuildingBlocksRule,
-                Rules.FactoriesShouldNotUseFactoriesRule);
+                Rules.FactoriesShouldNotAlsoBeEntitiesRule,
+                Rules.FactoriesShouldNotUseFactoriesRule,
+                Rules.FactoriesShouldNotAlsoBeAggregateRootsRule,
+                Rules.FactoriesShouldNotAlsoBeValueObjectsRule,
+                Rules.FactoriesShouldNotAlsoBeRepositoriesRule,
+                Rules.FactoriesShouldNotAlsoBeLegacyServicesRule,
+                Rules.FactoriesShouldNotAlsoBeDomainServicesRule,
+                Rules.FactoriesShouldNotAlsoBeApplicationServicesRule);
 
         protected override void Initialize(AnalysisContext<FactoryAttribute> context)
         {

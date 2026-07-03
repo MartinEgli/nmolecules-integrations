@@ -133,9 +133,65 @@ namespace SampleData
     {
     }
 
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class EndpointMarkerAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class LegacyMarkerAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class SlotMarkerAttribute : Attribute
+    {
+        public SlotMarkerAttribute(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class ChannelMarkerAttribute : Attribute
+    {
+        public ChannelMarkerAttribute(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
     [AttributeUsage(AttributeTargets.Class)]
     [NMolecules.Bricks.RequireExclusiveChoice(typeof(OptionAAttribute), typeof(OptionBAttribute))]
     public sealed class ExclusiveChoiceContractAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireMemberRange(typeof(EndpointMarkerAttribute), 2, 3)]
+    public sealed class EndpointRangeContractAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.ForbidMember(typeof(LegacyMarkerAttribute))]
+    public sealed class NoLegacyMemberContractAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireUniqueNamedMember(typeof(SlotMarkerAttribute))]
+    public sealed class UniqueSlotContractAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireNamedMembers(typeof(ChannelMarkerAttribute), ""X"", ""Y"")]
+    public sealed class RequiredChannelsContractAttribute : Attribute
     {
     }
 
@@ -154,6 +210,157 @@ namespace SampleData
             var expected = new DiagnosticResult(Rules.BrickExclusiveChoiceContractId, DiagnosticSeverity.Error)
                 .WithLocation(0)
                 .WithMessage("Brick contract 'ExclusiveChoiceContractAttribute' requires exactly one of 'OptionAAttribute' or 'OptionBAttribute', but 'DeliveryOptions' declares 1 and 1.");
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithMemberRangeContract_EmitsErrorWhenTooFewMarkersExist()
+        {
+            var testCode = @"using System;
+
+namespace SampleData
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class EndpointMarkerAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireMemberRange(typeof(EndpointMarkerAttribute), 2, 3)]
+    public sealed class EndpointRangeContractAttribute : Attribute
+    {
+    }
+
+    [EndpointRangeContract]
+    public sealed class {|#0:EndpointSet|}
+    {
+        [EndpointMarker]
+        public string Primary { get; } = ""primary"";
+    }
+}
+" + ContractShims;
+
+            var expected = new DiagnosticResult(Rules.BrickMemberRangeContractId, DiagnosticSeverity.Error)
+                .WithLocation(0)
+                .WithMessage("Brick contract 'EndpointRangeContractAttribute' requires between 2 and 3 members marked with 'EndpointMarkerAttribute', but 'EndpointSet' declares 1.");
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithForbiddenMemberContract_EmitsErrorWhenMarkerExists()
+        {
+            var testCode = @"using System;
+
+namespace SampleData
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class LegacyMarkerAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.ForbidMember(typeof(LegacyMarkerAttribute))]
+    public sealed class NoLegacyMemberContractAttribute : Attribute
+    {
+    }
+
+    [NoLegacyMemberContract]
+    public sealed class {|#0:ModernRoute|}
+    {
+        [LegacyMarker]
+        public string LegacyBridge { get; } = ""legacy"";
+    }
+}
+" + ContractShims;
+
+            var expected = new DiagnosticResult(Rules.BrickForbiddenMemberContractId, DiagnosticSeverity.Error)
+                .WithLocation(0)
+                .WithMessage("Brick contract 'NoLegacyMemberContractAttribute' forbids members marked with 'LegacyMarkerAttribute', but 'ModernRoute' declares 1.");
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithUniqueNamedMemberContract_EmitsErrorWhenNameIsDuplicated()
+        {
+            var testCode = @"using System;
+
+namespace SampleData
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class SlotMarkerAttribute : Attribute
+    {
+        public SlotMarkerAttribute(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireUniqueNamedMember(typeof(SlotMarkerAttribute))]
+    public sealed class UniqueSlotContractAttribute : Attribute
+    {
+    }
+
+    [UniqueSlotContract]
+    public sealed class {|#0:DuplicatedSlots|}
+    {
+        [SlotMarker(""X"")]
+        public string First { get; } = ""first"";
+
+        [SlotMarker(""X"")]
+        public string Second { get; } = ""second"";
+    }
+}
+" + ContractShims;
+
+            var expected = new DiagnosticResult(Rules.BrickUniqueNamedMemberContractId, DiagnosticSeverity.Error)
+                .WithLocation(0)
+                .WithMessage("Brick contract 'UniqueSlotContractAttribute' requires unique 'Name' marker names for 'SlotMarkerAttribute', but 'DuplicatedSlots' duplicates: 'X'.");
+
+            await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
+        }
+
+        [Fact]
+        public async Task Analyze_WithRequiredNamedMembersContract_EmitsErrorWhenNameIsMissing()
+        {
+            var testCode = @"using System;
+
+namespace SampleData
+{
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class ChannelMarkerAttribute : Attribute
+    {
+        public ChannelMarkerAttribute(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireNamedMembers(typeof(ChannelMarkerAttribute), ""X"", ""Y"")]
+    public sealed class RequiredChannelsContractAttribute : Attribute
+    {
+    }
+
+    [RequiredChannelsContract]
+    public sealed class {|#0:PartialChannels|}
+    {
+        [ChannelMarker(""X"")]
+        public string Left { get; } = ""left"";
+    }
+}
+" + ContractShims;
+
+            var expected = new DiagnosticResult(Rules.BrickRequiredNamedMembersContractId, DiagnosticSeverity.Error)
+                .WithLocation(0)
+                .WithMessage("Brick contract 'RequiredChannelsContractAttribute' requires marker names on 'ChannelMarkerAttribute' via 'Name', but 'PartialChannels' is missing: 'Y'.");
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldEmitIssues(expected));
         }
@@ -195,6 +402,38 @@ namespace SampleData
     {
     }
 
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class EndpointMarkerAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class LegacyMarkerAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class SlotMarkerAttribute : Attribute
+    {
+        public SlotMarkerAttribute(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class ChannelMarkerAttribute : Attribute
+    {
+        public ChannelMarkerAttribute(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
     [AttributeUsage(AttributeTargets.Class)]
     [NMolecules.Bricks.RequireExactlyOneMember(typeof(IdMarkerAttribute))]
     public sealed class ExactlyOneIdContractAttribute : Attribute
@@ -216,6 +455,30 @@ namespace SampleData
     [AttributeUsage(AttributeTargets.Class)]
     [NMolecules.Bricks.RequireExclusiveChoice(typeof(OptionAAttribute), typeof(OptionBAttribute))]
     public sealed class ExclusiveChoiceContractAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireMemberRange(typeof(EndpointMarkerAttribute), 2, 3)]
+    public sealed class EndpointRangeContractAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.ForbidMember(typeof(LegacyMarkerAttribute))]
+    public sealed class NoLegacyMemberContractAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireUniqueNamedMember(typeof(SlotMarkerAttribute))]
+    public sealed class UniqueSlotContractAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    [NMolecules.Bricks.RequireNamedMembers(typeof(ChannelMarkerAttribute), ""X"", ""Y"")]
+    public sealed class RequiredChannelsContractAttribute : Attribute
     {
     }
 
@@ -251,6 +514,42 @@ namespace SampleData
     {
         [OptionA]
         public string A { get; } = ""a"";
+    }
+
+    [EndpointRangeContract]
+    public sealed class EndpointSet
+    {
+        [EndpointMarker]
+        public string Primary { get; } = ""primary"";
+
+        [EndpointMarker]
+        public string Secondary { get; } = ""secondary"";
+    }
+
+    [NoLegacyMemberContract]
+    public sealed class ModernRoute
+    {
+        public string CurrentBridge { get; } = ""current"";
+    }
+
+    [UniqueSlotContract]
+    public sealed class DistinctSlots
+    {
+        [SlotMarker(""X"")]
+        public string Left { get; } = ""left"";
+
+        [SlotMarker(""Y"")]
+        public string Right { get; } = ""right"";
+    }
+
+    [RequiredChannelsContract]
+    public sealed class CompleteChannels
+    {
+        [ChannelMarker(""X"")]
+        public string Left { get; } = ""left"";
+
+        [ChannelMarker(""Y"")]
+        public string Right { get; } = ""right"";
     }
 }
 " + ContractShims;
@@ -384,6 +683,10 @@ namespace SampleData
     [NMolecules.Bricks.RequireAllMembers(typeof(MarkerAttribute))]
     [NMolecules.Bricks.RequireMemberCount(typeof(MarkerAttribute))]
     [NMolecules.Bricks.RequireExclusiveChoice(typeof(MarkerAttribute))]
+    [NMolecules.Bricks.RequireMemberRange(typeof(MarkerAttribute), 1)]
+    [NMolecules.Bricks.ForbidMember]
+    [NMolecules.Bricks.RequireUniqueNamedMember]
+    [NMolecules.Bricks.RequireNamedMembers(typeof(MarkerAttribute))]
     public sealed class MalformedContractAttribute : Attribute
     {
     }
@@ -433,6 +736,38 @@ namespace NMolecules.Bricks
         {
         }
     }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RequireMemberRangeAttribute : Attribute
+    {
+        public RequireMemberRangeAttribute(Type memberAttributeType, int minimumCount)
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class ForbidMemberAttribute : Attribute
+    {
+        public ForbidMemberAttribute()
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RequireUniqueNamedMemberAttribute : Attribute
+    {
+        public RequireUniqueNamedMemberAttribute()
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RequireNamedMembersAttribute : Attribute
+    {
+        public RequireNamedMembersAttribute(Type memberAttributeType)
+        {
+        }
+    }
 }";
 
             await VerifyCS.VerifyAnalyzerAsync(testCode, ShouldNotEmitAnyIssues());
@@ -473,6 +808,49 @@ namespace NMolecules.Bricks
         public RequireExclusiveChoiceAttribute(Type leftMemberAttributeType, Type rightMemberAttributeType)
         {
         }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RequireMemberRangeAttribute : Attribute
+    {
+        public RequireMemberRangeAttribute(Type memberAttributeType, int minimumCount, int maximumCount)
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class ForbidMemberAttribute : Attribute
+    {
+        public ForbidMemberAttribute(Type memberAttributeType)
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RequireUniqueNamedMemberAttribute : Attribute
+    {
+        public RequireUniqueNamedMemberAttribute(Type memberAttributeType)
+        {
+            NameArgument = ""Name"";
+        }
+
+        public RequireUniqueNamedMemberAttribute(Type memberAttributeType, string nameArgument)
+        {
+            NameArgument = nameArgument;
+        }
+
+        public string NameArgument { get; set; }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RequireNamedMembersAttribute : Attribute
+    {
+        public RequireNamedMembersAttribute(Type memberAttributeType, params string[] requiredNames)
+        {
+            NameArgument = ""Name"";
+        }
+
+        public string NameArgument { get; set; }
     }
 }";
     }

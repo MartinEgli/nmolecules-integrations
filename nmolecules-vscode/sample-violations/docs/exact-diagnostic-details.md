@@ -95,6 +95,7 @@ Example interpretation:
   `BoundedContext on assembly 'Banking.Violations.Domain' declares self dependency 'Billing -> Billing'`
   `BoundedContext on assembly 'Banking.Violations.Domain' declares duplicate dependency target 'Sales' in DependsOnContextIds`
   `BoundedContext on assembly 'Banking.Violations.Domain' declares dependency cycle 'Billing -> Sales -> Shipping -> Billing'`
+  `BoundedContext on assembly 'Banking.Violations.Domain' declares dependency 'Billing -> sales', but declared context Id is 'Sales'`
   `BoundedContext on module 'Banking.Violations.Domain.dll' declares dependency cycle 'Sales -> Shipping -> Billing -> Sales'`
   `BoundedContext on assembly 'Banking.Violations.Domain' declares dependency cycle 'Shipping -> Billing -> Sales -> Shipping'`
 
@@ -105,6 +106,10 @@ Example interpretation:
   `Brick contract 'BrickAllMembersContractAttribute' requires members marked with all configured marker attributes, but 'BrickAllMembersContractViolation' is missing: BrickAllRightMarkerAttribute.`
   `Brick contract 'BrickMemberCountContractAttribute' requires exactly 2 members marked with 'BrickRepeatedMarkerAttribute', but 'BrickMemberCountContractViolation' declares 1.`
   `Brick contract 'BrickExclusiveChoiceContractAttribute' requires exactly one of 'BrickXorLeftMarkerAttribute' or 'BrickXorRightMarkerAttribute', but 'BrickExclusiveChoiceContractViolation' declares 1 and 1.`
+  `Brick contract 'BrickMemberRangeContractAttribute' requires between 2 and 3 members marked with 'BrickRangeMarkerAttribute', but 'BrickMemberRangeContractViolation' declares 1.`
+  `Brick contract 'BrickForbiddenMemberContractAttribute' forbids members marked with 'BrickForbiddenMarkerAttribute', but 'BrickForbiddenMemberContractViolation' declares 1.`
+  `Brick contract 'BrickUniqueNamedMemberContractAttribute' requires unique 'Name' marker names for 'BrickNamedSlotMarkerAttribute', but 'BrickUniqueNamedMemberContractViolation' duplicates: 'X'.`
+  `Brick contract 'BrickRequiredNamedMembersContractAttribute' requires marker names on 'BrickNamedChannelMarkerAttribute' via 'Name', but 'BrickRequiredNamedMembersContractViolation' is missing: 'Y'.`
 
 - onion/cross-style mix in `ArchitectureFamilyViolations.cs`
   `Onion declaration on type 'ClassicDomainRing' mixes classic and simplified markers in the same compilation`

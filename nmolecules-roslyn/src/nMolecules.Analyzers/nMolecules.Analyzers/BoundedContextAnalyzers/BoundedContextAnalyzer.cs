@@ -22,7 +22,8 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
                 BoundedContextDependenciesShouldNotBeBidirectionalRule,
                 BoundedContextDependenciesShouldNotReferenceSelfRule,
                 BoundedContextDependenciesShouldNotContainDuplicateTargetsRule,
-                BoundedContextDependenciesShouldBeAcyclicRule);
+                BoundedContextDependenciesShouldBeAcyclicRule,
+                BoundedContextDependenciesShouldUseCanonicalTargetCasingRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -40,6 +41,7 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
             AnalyzeNameConsistencyPerId(context, declarations);
             AnalyzeModuleOwnershipConsistency(context, declarations);
             AnalyzeDependencyConsistency(context, declarations);
+            AnalyzeDependencyTargetCasingConsistency(context, declarations);
             AnalyzeDependencyTargetUniquenessConsistency(context, declarations);
             AnalyzeDependencySelfReferenceConsistency(context, declarations);
             AnalyzeDependencyDirectionConsistency(context, declarations);
@@ -291,6 +293,51 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
                     dependency.Declaration.Symbol.MetadataScopeLabel(),
                     dependency.SourceId,
                     dependency.TargetId);
+            }
+        }
+
+        private static void AnalyzeDependencyTargetCasingConsistency(
+            CompilationAnalysisContext context,
+            IEnumerable<BoundedContextDeclaration> declarations)
+        {
+            var canonicalIds = declarations
+                .Select(it => it.Id)
+                .Where(it => !IsBlank(it))
+                .Select(it => it!)
+                .GroupBy(it => it, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.OrderBy(it => it, StringComparer.Ordinal).First(),
+                    StringComparer.OrdinalIgnoreCase);
+
+            if (canonicalIds.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var declaration in declarations.Where(it => !IsBlank(it.Id)))
+            {
+                var sourceId = declaration.Id!;
+                foreach (var targetId in declaration.DependsOnContextIds
+                             .Where(it => !IsBlank(it))
+                             .Select(it => it.Trim())
+                             .Distinct(StringComparer.Ordinal))
+                {
+                    if (!canonicalIds.TryGetValue(targetId, out var canonicalTargetId) ||
+                        string.Equals(targetId, canonicalTargetId, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    context.Report(
+                        declaration.Attribute,
+                        declaration.Symbol,
+                        BoundedContextDependenciesShouldUseCanonicalTargetCasingRule,
+                        declaration.Symbol.MetadataScopeLabel(),
+                        sourceId,
+                        targetId,
+                        canonicalTargetId);
+                }
             }
         }
 

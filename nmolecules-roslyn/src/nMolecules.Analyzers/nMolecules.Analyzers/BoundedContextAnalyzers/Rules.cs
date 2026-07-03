@@ -14,6 +14,7 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
         public const string BoundedContextDependenciesShouldNotReferenceSelfId = "XMoleculesBoundedContext0008";
         public const string BoundedContextDependenciesShouldNotContainDuplicateTargetsId = "XMoleculesBoundedContext0009";
         public const string BoundedContextDependenciesShouldBeAcyclicId = "XMoleculesBoundedContext0010";
+        public const string BoundedContextDependenciesShouldUseCanonicalTargetCasingId = "XMoleculesBoundedContext0011";
 
         public static readonly DiagnosticDescriptor BoundedContextShouldDefineIdRule = new(
             BoundedContextShouldDefineIdId,
@@ -134,5 +135,17 @@ namespace NMolecules.Analyzers.BoundedContextAnalyzers
                 "The declared bounded-context dependency graph contains a transitive cycle.",
                 "Context dependencies should describe a clear upstream/downstream direction. Cycles make ownership, integration direction, and deployment impact unclear.",
                 "Break the cycle by extracting a shared upstream context, reversing the incorrect dependency, or merging contexts that actually form one boundary."));
+
+        public static readonly DiagnosticDescriptor BoundedContextDependenciesShouldUseCanonicalTargetCasingRule = new(
+            BoundedContextDependenciesShouldUseCanonicalTargetCasingId,
+            "BoundedContext dependency targets should use canonical Id casing",
+            "BoundedContext on {0} declares dependency '{1} -> {2}', but declared context Id is '{3}'",
+            Category.DDD,
+            DiagnosticSeverity.Warning,
+            true,
+            DiagnosticDescriptions.Create(
+                "A bounded-context dependency references a declared target Id with different casing.",
+                "Dependency metadata should use the canonical context Id spelling so diagrams, docs, and generated catalogs correlate without normalization surprises.",
+                "Change the dependency target to the declared bounded-context Id casing."));
     }
 }

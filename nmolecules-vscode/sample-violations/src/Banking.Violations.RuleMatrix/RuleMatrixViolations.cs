@@ -375,6 +375,58 @@ public sealed class FactoryAlsoEntity
 }
 
 [Factory]
+[AggregateRoot]
+public sealed class FactoryAlsoAggregateRoot
+{
+    [Identity]
+    public Guid Id { get; } = Guid.NewGuid();
+}
+
+[Factory]
+[ValueObject]
+public sealed class FactoryAlsoValueObject : IEquatable<FactoryAlsoValueObject>
+{
+    public bool Equals(FactoryAlsoValueObject? other)
+    {
+        return other is not null;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is FactoryAlsoValueObject other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return 23;
+    }
+}
+
+[Factory]
+[Repository]
+public sealed class FactoryAlsoRepository
+{
+}
+
+[Factory]
+[Service]
+public sealed class FactoryAlsoLegacyService
+{
+}
+
+[Factory]
+[DomainService]
+public sealed class FactoryAlsoDomainService
+{
+}
+
+[Factory]
+[ApplicationService]
+public sealed class FactoryAlsoApplicationService
+{
+}
+
+[Factory]
 public sealed class FactoryDependingOnFactory
 {
     private readonly CoverageFactory factory;
@@ -922,6 +974,38 @@ public sealed class BrickXorRightMarkerAttribute : Attribute
 {
 }
 
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class BrickRangeMarkerAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class BrickForbiddenMarkerAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class BrickNamedSlotMarkerAttribute : Attribute
+{
+    public BrickNamedSlotMarkerAttribute(string name)
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class BrickNamedChannelMarkerAttribute : Attribute
+{
+    public BrickNamedChannelMarkerAttribute(string name)
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
+}
+
 [AttributeUsage(AttributeTargets.Class)]
 [RequireExactlyOneMember(typeof(BrickOnlyOneMarkerAttribute))]
 public sealed class BrickExactlyOneContractAttribute : Attribute
@@ -978,4 +1062,59 @@ public sealed class BrickExclusiveChoiceContractViolation
 
     [BrickXorRightMarker]
     public string Right { get; } = string.Empty;
+}
+
+[AttributeUsage(AttributeTargets.Class)]
+[RequireMemberRange(typeof(BrickRangeMarkerAttribute), 2, 3)]
+public sealed class BrickMemberRangeContractAttribute : Attribute
+{
+}
+
+[BrickMemberRangeContract]
+public sealed class BrickMemberRangeContractViolation
+{
+    [BrickRangeMarker]
+    public string OnlyOne { get; } = string.Empty;
+}
+
+[AttributeUsage(AttributeTargets.Class)]
+[ForbidMember(typeof(BrickForbiddenMarkerAttribute))]
+public sealed class BrickForbiddenMemberContractAttribute : Attribute
+{
+}
+
+[BrickForbiddenMemberContract]
+public sealed class BrickForbiddenMemberContractViolation
+{
+    [BrickForbiddenMarker]
+    public string Forbidden { get; } = string.Empty;
+}
+
+[AttributeUsage(AttributeTargets.Class)]
+[RequireUniqueNamedMember(typeof(BrickNamedSlotMarkerAttribute))]
+public sealed class BrickUniqueNamedMemberContractAttribute : Attribute
+{
+}
+
+[BrickUniqueNamedMemberContract]
+public sealed class BrickUniqueNamedMemberContractViolation
+{
+    [BrickNamedSlotMarker("X")]
+    public string First { get; } = string.Empty;
+
+    [BrickNamedSlotMarker("X")]
+    public string Second { get; } = string.Empty;
+}
+
+[AttributeUsage(AttributeTargets.Class)]
+[RequireNamedMembers(typeof(BrickNamedChannelMarkerAttribute), "X", "Y")]
+public sealed class BrickRequiredNamedMembersContractAttribute : Attribute
+{
+}
+
+[BrickRequiredNamedMembersContract]
+public sealed class BrickRequiredNamedMembersContractViolation
+{
+    [BrickNamedChannelMarker("X")]
+    public string OnlyLeft { get; } = string.Empty;
 }

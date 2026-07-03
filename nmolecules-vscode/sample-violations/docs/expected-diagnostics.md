@@ -9,11 +9,11 @@ The violation workspace is now configured to trigger every currently implemented
 - `XMoleculesValueObject0001` to `XMoleculesValueObject0009`
 - `XMoleculesValueObject1001` to `XMoleculesValueObject1002`
 - `XMoleculesRepository0001` to `XMoleculesRepository0007`
-- `XMoleculesFactory0001` to `XMoleculesFactory0004`
+- `XMoleculesFactory0001` to `XMoleculesFactory0010`
 - `XMoleculesDomainService0001` to `XMoleculesDomainService0004`
 - `XMoleculesApplicationService0001` to `XMoleculesApplicationService0004`
 - `XMoleculesIdentity0001`
-- `XMoleculesBoundedContext0001` to `XMoleculesBoundedContext0010`
+- `XMoleculesBoundedContext0001` to `XMoleculesBoundedContext0011`
 - `XMoleculesModule0001` to `XMoleculesModule0007`
 - `XMoleculesDomainEvent0001` to `XMoleculesDomainEvent0009`
 - `XMoleculesLayered0001`
@@ -28,7 +28,7 @@ The violation workspace is now configured to trigger every currently implemented
 - `XMoleculesEventStorming0001` to `XMoleculesEventStorming0005`
 - `XMoleculesMicroservices0001` to `XMoleculesMicroservices0006`
 - `XMoleculesCrossStyle0001` to `XMoleculesCrossStyle0003`
-- `XMoleculesBricks0001` to `XMoleculesBricks0006`
+- `XMoleculesBricks0001` to `XMoleculesBricks0010`
 - `XMoleculesService0001`
 
 ## Rule-Matrix Projects
@@ -59,6 +59,6 @@ The violation workspace is now configured to trigger every currently implemented
 Run `tools/validate-violations-rule-coverage.ps1` in `sample-violations`.  
 Expected output:
 
-- `Violation workspace rule IDs: 116`
-- `Analyzer code rule IDs:       116`
+- `Violation workspace rule IDs: 127`
+- `Analyzer code rule IDs:       127`
 - `Missing IDs:                  0`

@@ -11,7 +11,11 @@ namespace NMolecules.Analyzers.BricksAnalyzers
             Rules.BrickExactlyOneMemberContractRule,
             Rules.BrickRequireAllMembersContractRule,
             Rules.BrickMemberCountContractRule,
-            Rules.BrickExclusiveChoiceContractRule);
+            Rules.BrickExclusiveChoiceContractRule,
+            Rules.BrickMemberRangeContractRule,
+            Rules.BrickForbiddenMemberContractRule,
+            Rules.BrickUniqueNamedMemberContractRule,
+            Rules.BrickRequiredNamedMembersContractRule);
 
         public override void Initialize(AnalysisContext context)
         {

@@ -51,5 +51,53 @@ namespace NMolecules.Analyzers.BricksAnalyzers
                 "A type marked with a brick contract does not satisfy the required exclusive choice between two marker attributes.",
                 "Exclusive-choice marker contracts model XOR semantics where exactly one of two marker families may appear.",
                 "Keep one allowed marker family and remove the other, or add exactly one marker when neither side is present."));
+
+        public static readonly DiagnosticDescriptor BrickMemberRangeContractRule = new(
+            BrickMemberRangeContractId,
+            "Brick member contract must use the configured marker range",
+            "{0}",
+            Category.Architecture,
+            DiagnosticSeverity.Error,
+            true,
+            DiagnosticDescriptions.Create(
+                "A type marked with a brick contract declares too few or too many members carrying the configured marker attribute.",
+                "Range marker contracts model flexible cardinality where the analyzer enforces a lower and upper member bound.",
+                "Add or remove marked members until the configured minimum and maximum count are satisfied."));
+
+        public static readonly DiagnosticDescriptor BrickForbiddenMemberContractRule = new(
+            BrickForbiddenMemberContractId,
+            "Brick member contract must not declare forbidden markers",
+            "{0}",
+            Category.Architecture,
+            DiagnosticSeverity.Error,
+            true,
+            DiagnosticDescriptions.Create(
+                "A type marked with a brick contract declares a member carrying a marker attribute that the contract forbids.",
+                "Forbidden marker contracts model negative capability or role-exclusion semantics in custom brick ecosystems.",
+                "Remove the forbidden marker, move the member to a compatible type, or adjust the contract when the marker should be allowed."));
+
+        public static readonly DiagnosticDescriptor BrickUniqueNamedMemberContractRule = new(
+            BrickUniqueNamedMemberContractId,
+            "Brick member contract must use unique marker names",
+            "{0}",
+            Category.Architecture,
+            DiagnosticSeverity.Error,
+            true,
+            DiagnosticDescriptions.Create(
+                "A type marked with a brick contract declares duplicate marker names for members carrying the configured marker attribute.",
+                "Unique named marker contracts model named slots where each configured name may appear at most once; unnamed markers also form one slot.",
+                "Give duplicate markers distinct names, remove duplicates, or configure the contract to read the intended marker name argument."));
+
+        public static readonly DiagnosticDescriptor BrickRequiredNamedMembersContractRule = new(
+            BrickRequiredNamedMembersContractId,
+            "Brick member contract must include required marker names",
+            "{0}",
+            Category.Architecture,
+            DiagnosticSeverity.Error,
+            true,
+            DiagnosticDescriptions.Create(
+                "A type marked with a brick contract is missing one or more required marker names on members carrying the configured marker attribute.",
+                "Required named marker contracts model explicit named slots such as X/Y channels, primary/secondary mappings, or input/output pairs.",
+                "Add members with the missing marker names, or configure the contract to read the intended marker name argument."));
     }
 }

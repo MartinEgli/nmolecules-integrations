@@ -44,7 +44,16 @@ This is enforced in `.github/workflows/release-by-tag.yml`.
 ## Manual Smoke Validation
 
 1. Install the packaged extension in a clean VS Code profile.
-2. Open the sample violation workspace.
-3. Run `nMolecules: Refresh Diagnostics`.
-4. Confirm the Problems view is populated and the `nMolecules` output channel reports the selected target.
-5. Confirm workspace documentation and rule-catalog commands still open the expected files.
+2. Open the healthy sample workspace:
+   `nmolecules-vscode/sample-workspace/nmolecules-sample.code-workspace`.
+3. Run `nMolecules: Refresh Diagnostics` and confirm the Problems view has no
+   unexpected diagnostics.
+4. Open the violation sample workspace:
+   `nmolecules-vscode/sample-violations/nmolecules-violations.code-workspace`.
+5. Run `nMolecules: Refresh Diagnostics`.
+6. Confirm the Problems view is populated and the `nMolecules` output channel
+   reports the selected target.
+7. Confirm workspace documentation and rule-catalog commands still open the
+   expected files.
+8. Record the VS Code version, extension version, workspace, and observed
+   diagnostic count in the release notes.

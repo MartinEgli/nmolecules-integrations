@@ -29,37 +29,37 @@ namespace NMolecules.Analyzers.FactoryAnalyzers
         {
             if (type.IsEntity())
             {
-                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), nameof(EntityAttribute).Replace("Attribute", ""));
+                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeEntitiesRule, type.DisplayName(), nameof(EntityAttribute).Replace("Attribute", ""));
             }
 
             if (type.IsAggregateRoot())
             {
-                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), nameof(AggregateRootAttribute).Replace("Attribute", ""));
+                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeAggregateRootsRule, type.DisplayName(), nameof(AggregateRootAttribute).Replace("Attribute", ""));
             }
 
             if (type.Is<ValueObjectAttribute>())
             {
-                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), nameof(ValueObjectAttribute).Replace("Attribute", ""));
+                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeValueObjectsRule, type.DisplayName(), nameof(ValueObjectAttribute).Replace("Attribute", ""));
             }
 
             if (type.IsRepository())
             {
-                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), nameof(RepositoryAttribute).Replace("Attribute", ""));
+                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeRepositoriesRule, type.DisplayName(), nameof(RepositoryAttribute).Replace("Attribute", ""));
             }
 
             if (type.IsLegacyService())
             {
-                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), nameof(ServiceAttribute).Replace("Attribute", ""));
+                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeLegacyServicesRule, type.DisplayName(), nameof(ServiceAttribute).Replace("Attribute", ""));
             }
 
             if (type.IsDomainService())
             {
-                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), "DomainService");
+                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeDomainServicesRule, type.DisplayName(), "DomainService");
             }
 
             if (type.IsApplicationService())
             {
-                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeDomainBuildingBlocksRule, type.DisplayName(), "ApplicationService");
+                yield return type.Diagnostic(Rules.FactoriesShouldNotAlsoBeApplicationServicesRule, type.DisplayName(), "ApplicationService");
             }
         }
     }
